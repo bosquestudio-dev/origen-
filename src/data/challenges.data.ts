@@ -1,0 +1,151 @@
+import type { Challenge } from '@/types/challenge.types'
+
+export const CHALLENGES_DATA: Challenge[] = [
+  {
+    id: 1, day: 1, type: 'text',
+    title: 'Tu primer paso',
+    description: 'Bienvenido a ORIGEN. Hoy comienza un viaje de 24 días para reconectar con lo que importa.',
+    label: 'Cultura',
+    content: { actionText: 'Dedica 5 minutos a escribir qué te motivó a unirte a esta empresa.' },
+  },
+  {
+    id: 2, day: 2, type: 'video',
+    title: 'El poder de la cultura',
+    description: 'Descubre cómo las organizaciones con propósito transforman el mundo.',
+    label: 'Inspiración',
+    content: { videoUrl: 'https://www.youtube.com/embed/u4ZoJKF_VuA', actionText: 'Reflexiona sobre lo que te conecta con tu equipo.' },
+  },
+  {
+    id: 3, day: 3, type: 'text',
+    title: 'Escucha activa',
+    description: 'La conexión empieza cuando dejamos de esperar nuestro turno para hablar.',
+    label: 'Bienestar',
+    content: { actionText: 'Dedica 10 minutos hoy a escuchar activamente a alguien de tu equipo.' },
+  },
+  {
+    id: 4, day: 4, type: 'survey',
+    title: '¿Cómo te sientes hoy?',
+    description: 'Tu bienestar importa. Comparte cómo llegas a este día.',
+    label: 'Bienestar',
+    content: {
+      questions: [
+        { id: 'q1', question: '¿Cómo describirías tu nivel de energía esta semana?', options: ['Muy alto', 'Normal', 'Bajo', 'Necesito un descanso'] },
+        { id: 'q2', question: '¿Qué te ayudaría más ahora mismo?', options: ['Más reconocimiento', 'Más flexibilidad', 'Más conexión con el equipo', 'Un día libre'] },
+      ],
+    },
+  },
+  { id: 5, day: 5, type: 'text', title: 'Desconexión digital', description: 'Hoy no hay reto. Desconecta y recarga.', label: 'Desconexión', content: {} },
+  { id: 6, day: 6, type: 'text', title: 'Desconexión digital', description: 'Fin de semana de descanso.', label: 'Desconexión', content: {} },
+  {
+    id: 7, day: 7, type: 'survey',
+    title: 'Propósito compartido',
+    description: 'Reflexiona sobre lo que nos une como equipo.',
+    label: 'Propósito',
+    content: {
+      questions: [
+        { id: 'q1', question: '¿Qué valor de la empresa sientes más cercano?', options: ['Innovación', 'Colaboración', 'Integridad', 'Impacto social'] },
+        { id: 'q2', question: '¿Qué momento de este año te hizo sentir más orgulloso?', options: ['Un logro de equipo', 'Un reconocimiento personal', 'Ayudar a un compañero', 'Un proyecto exitoso'] },
+      ],
+    },
+  },
+  { id: 8, day: 8, type: 'text', title: 'Desconexión digital', description: 'Día festivo. Descansa.', label: 'Desconexión', content: {} },
+  {
+    id: 9, day: 9, type: 'video',
+    title: 'Liderazgo consciente',
+    description: 'El liderazgo no es un cargo, es una actitud diaria.',
+    label: 'Cultura',
+    content: { videoUrl: 'https://www.youtube.com/embed/RyTQ5-SQYTo', actionText: 'Piensa en alguien que te ha inspirado profesionalmente y díselo hoy.' },
+  },
+  {
+    id: 10, day: 10, type: 'raffle',
+    title: 'Sorteo sorpresa',
+    description: '¡Hoy puedes ganar algo especial! Inscríbete para participar.',
+    label: 'Sorteo',
+    content: { raffleText: 'Participa en el sorteo de una experiencia gastronómica para dos personas.' },
+  },
+  {
+    id: 11, day: 11, type: 'survey',
+    title: 'Tu espacio de trabajo',
+    description: 'Queremos saber cómo mejorar tu día a día.',
+    label: 'Bienestar',
+    content: {
+      questions: [
+        { id: 'q1', question: '¿Qué mejorarías de tu espacio de trabajo?', options: ['Más luz natural', 'Menos ruido', 'Mejor tecnología', 'Más zonas de descanso'] },
+        { id: 'q2', question: '¿Prefieres trabajar...?', options: ['En oficina', 'En remoto', 'Modelo híbrido', 'Depende del día'] },
+        { id: 'q3', question: '¿Cuántas pausas activas haces al día?', options: ['Ninguna', 'Una o dos', 'Tres o más', '¿Qué es una pausa activa?'] },
+      ],
+    },
+  },
+  { id: 12, day: 12, type: 'text', title: 'Desconexión digital', description: 'Fin de semana. Recarga energías.', label: 'Desconexión', content: {} },
+  { id: 13, day: 13, type: 'text', title: 'Desconexión digital', description: 'Sábado de descanso.', label: 'Desconexión', content: {} },
+  {
+    id: 14, day: 14, type: 'text',
+    title: 'Gratitud',
+    description: 'La gratitud transforma lo que tenemos en suficiente.',
+    label: 'Propósito',
+    content: { actionText: 'Escribe una nota de agradecimiento a un compañero y dásela hoy.' },
+  },
+  {
+    id: 15, day: 15, type: 'video',
+    title: 'El futuro del trabajo',
+    description: 'Cómo construir organizaciones más humanas y resilientes.',
+    label: 'Inspiración',
+    content: { videoUrl: 'https://www.youtube.com/embed/iE0vVKPYnBc', actionText: '¿Qué cambiarías de cómo trabajamos? Compártelo con tu equipo.' },
+  },
+  {
+    id: 16, day: 16, type: 'survey',
+    title: 'Conexión de equipo',
+    description: 'Cuéntanos cómo vives la colaboración.',
+    label: 'Cultura',
+    content: {
+      questions: [
+        { id: 'q1', question: '¿Con qué frecuencia colaboras con otros departamentos?', options: ['A diario', 'Semanalmente', 'Raramente', 'Nunca'] },
+        { id: 'q2', question: '¿Qué actividad de equipo preferirías?', options: ['Voluntariado', 'Deporte', 'Taller creativo', 'Comida grupal'] },
+      ],
+    },
+  },
+  {
+    id: 17, day: 17, type: 'raffle',
+    title: 'Segundo sorteo',
+    description: 'Nueva oportunidad de ganar. ¡No te la pierdas!',
+    label: 'Sorteo',
+    content: { raffleText: 'Sorteo de un día libre adicional para empezar el año con calma.' },
+  },
+  {
+    id: 18, day: 18, type: 'text',
+    title: 'Pausa consciente',
+    description: 'A veces lo más productivo es detenerse.',
+    label: 'Bienestar',
+    content: { actionText: 'Haz una pausa consciente de 5 minutos antes de tu próxima reunión. Respira.' },
+  },
+  { id: 19, day: 19, type: 'text', title: 'Desconexión digital', description: 'Viernes de desconexión.', label: 'Desconexión', content: {} },
+  { id: 20, day: 20, type: 'text', title: 'Desconexión digital', description: 'Sábado. Recarga.', label: 'Desconexión', content: {} },
+  {
+    id: 21, day: 21, type: 'text',
+    title: 'Legado personal',
+    description: '¿Qué huella quieres dejar en las personas con las que trabajas?',
+    label: 'Propósito',
+    content: { actionText: 'Escribe en una frase el legado que quieres dejar en tu equipo este año.' },
+  },
+  {
+    id: 22, day: 22, type: 'raffle',
+    title: 'Gran sorteo final',
+    description: 'El último sorteo de ORIGEN. ¡Inscríbete!',
+    label: 'Sorteo',
+    content: { raffleText: 'Sorteo del gran premio: un viaje de fin de semana para dos personas.' },
+  },
+  {
+    id: 23, day: 23, type: 'text',
+    title: 'Carta al futuro',
+    description: 'Mañana es el último día. Hoy, mira atrás y celebra.',
+    label: 'Cultura',
+    content: { actionText: 'Escribe una carta breve a tu yo del futuro. ¿Qué quieres recordar de este diciembre?' },
+  },
+  {
+    id: 24, day: 24, type: 'text',
+    title: 'ORIGEN — El cierre',
+    description: 'Gracias por recorrer este camino. El verdadero origen eres tú.',
+    label: 'Especial',
+    content: { actionText: 'Comparte con alguien lo que más te llevas de estos 24 días.' },
+  },
+]
