@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import AppButton from '@/components/origen/AppButton'
 import { useCalendarStore } from '@/stores/calendar.store'
 import { useAppStore } from '@/stores/app.store'
