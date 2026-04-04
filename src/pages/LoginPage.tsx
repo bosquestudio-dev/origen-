@@ -5,14 +5,14 @@ import AppButton from '@/components/origen/AppButton'
 import AppModal from '@/components/origen/AppModal'
 
 export default function LoginPage() {
-  const { login, isAuthenticated } = useAuth()
+  const { login, isSessionValid } = useAuth()
   const navigate = useNavigate()
   const [loginType, setLoginType] = useState<'email' | 'dni' | null>(null)
   const [identifier, setIdentifier] = useState('')
   const [loading, setLoading] = useState(false)
   const [errorModal, setErrorModal] = useState(false)
 
-  if (isAuthenticated) {
+  if (isSessionValid) {
     navigate('/calendar', { replace: true })
     return null
   }
