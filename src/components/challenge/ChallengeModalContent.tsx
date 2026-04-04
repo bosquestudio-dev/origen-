@@ -45,12 +45,12 @@ function VideoChallenge({ challenge, completed }: { challenge: Challenge; comple
   const [showCta, setShowCta] = useState(completed)
   const [done, setDone] = useState(completed)
 
-  useState(() => {
+  useEffect(() => {
     if (!completed) {
       const timer = setTimeout(() => setShowCta(true), 30000)
       return () => clearTimeout(timer)
     }
-  })
+  }, [completed])
 
   const handleComplete = () => {
     completeDay(challenge.day)
