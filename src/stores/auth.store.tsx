@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useCallback, type ReactNode } from 'react'
+import { createContext, useContext, useState, useCallback, useMemo, type ReactNode } from 'react'
 import type { User } from '@/types/auth.types'
 import { MOCK_USERS } from '@/data/users.data'
 
@@ -15,6 +15,7 @@ interface AuthState {
   user: User | null
   isAuthenticated: boolean
   isSessionValid: boolean
+  isAdmin: boolean
   login: (identifier: string, type: 'email' | 'dni') => boolean
   logout: () => void
 }
@@ -26,7 +27,6 @@ function loadAuth(): { user: User | null; loginTimestamp: number | null } {
     const raw = localStorage.getItem(STORAGE_KEY)
     if (!raw) return { user: null, loginTimestamp: null }
     const parsed: StoredAuth = JSON.parse(raw)
-    // Check 90-day expiry on load
     if (Date.now() - parsed.loginTimestamp > NINETY_DAYS_MS) {
       localStorage.removeItem(STORAGE_KEY)
       localStorage.removeItem(COMPLETIONS_KEY)
@@ -45,10 +45,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   // TODO Fase 2: supabase.auth.getSession() reemplazará esta lógica
   const isSessionValid = !!user && !!loginTimestamp && (Date.now() - loginTimestamp < NINETY_DAYS_MS)
+  const isAdmin = useMemo(() => user?.role === 'admin', [user])
 
   const login = useCallback((identifier: string, type: 'email' | 'dni') => {
     const found = MOCK_USERS.find(u =>
-      type === 'email' ? u.email === identifier : u.dni === identifier
+      type === 'email'
+        ? u.email?.toLowerCase() === identifier.toLowerCase()
+        : u.dni?.toUpperCase() === identifier.toUpperCase()
     )
     if (found) {
       const ts = Date.now()
@@ -56,6 +59,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setLoginTimestamp(ts)
       localStorage.setItem(STORAGE_KEY, JSON.stringify({ user: found, loginTimestamp: ts }))
       return true
+      // TODO Fase 2: supabase.auth.signInWithOtp({ email: identifier })
     }
     return false
   }, [])
@@ -65,11 +69,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setLoginTimestamp(null)
     localStorage.removeItem(STORAGE_KEY)
     localStorage.removeItem(COMPLETIONS_KEY)
-    // En Fase 2: llamar a supabase.auth.signOut() aquí
+    // TODO Fase 2: supabase.auth.signOut()
   }, [])
 
   return (
-    <AuthContext.Provider value={{ user, isAuthenticated: !!user, isSessionValid, login, logout }}>
+    <AuthContext.Provider value={{ user, isAuthenticated: !!user, isSessionValid, isAdmin, login, logout }}>
       {children}
     </AuthContext.Provider>
   )

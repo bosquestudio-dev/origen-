@@ -1,6 +1,6 @@
-// Preparado para Fase 2 — theming multiempresa
 export interface CompanyTheme {
   primaryColor: string
+  secondaryColor: string
   logoUrl?: string
   companyName: string
 }

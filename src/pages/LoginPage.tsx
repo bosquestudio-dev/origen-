@@ -5,7 +5,7 @@ import AppButton from '@/components/origen/AppButton'
 import AppModal from '@/components/origen/AppModal'
 
 export default function LoginPage() {
-  const { login, isSessionValid } = useAuth()
+  const { login, isSessionValid, isAdmin } = useAuth()
   const navigate = useNavigate()
   const [loginType, setLoginType] = useState<'email' | 'dni' | null>(null)
   const [identifier, setIdentifier] = useState('')
@@ -13,7 +13,7 @@ export default function LoginPage() {
   const [errorModal, setErrorModal] = useState(false)
 
   if (isSessionValid) {
-    navigate('/calendar', { replace: true })
+    navigate(isAdmin ? '/admin' : '/calendar', { replace: true })
     return null
   }
 
@@ -25,7 +25,12 @@ export default function LoginPage() {
     const success = login(identifier.trim(), loginType)
     setLoading(false)
     if (success) {
-      navigate('/calendar')
+      // Re-read from store after login to check role
+      const raw = localStorage.getItem('origen_user')
+      if (raw) {
+        const parsed = JSON.parse(raw)
+        navigate(parsed.user.role === 'admin' ? '/admin' : '/calendar')
+      }
     } else {
       setErrorModal(true)
     }
