@@ -8,6 +8,7 @@ export interface Challenge {
   type: ChallengeType
   content: ChallengeContent
   label: string
+  isActive: boolean
 }
 
 export interface ChallengeContent {
