@@ -3,7 +3,7 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { AuthProvider } from "@/stores/auth.store";
 import { CalendarProvider } from "@/stores/calendar.store";
 import { AppProvider } from "@/stores/app.store";
-import { AdminProvider } from "@/stores/admin.store";
+//import { AdminProvider } from "@/stores/admin.store";
 import LoginPage from "@/pages/LoginPage";
 import CalendarPage from "@/pages/CalendarPage";
 
@@ -20,7 +20,7 @@ const App = () => (
     <AuthProvider>
       <CalendarProvider>
         <AppProvider>
-          <AdminProvider>
+         
             <BrowserRouter>
               <Routes>
                 <Route path="/" element={<LoginPage />} />
@@ -33,7 +33,6 @@ const App = () => (
                 <Route path="*" element={<NotFound />} />
               </Routes>
             </BrowserRouter>
-          </AdminProvider>
         </AppProvider>
       </CalendarProvider>
     </AuthProvider>
