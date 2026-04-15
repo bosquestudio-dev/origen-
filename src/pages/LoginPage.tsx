@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '@/stores/auth.store'
 import AppButton from '@/components/origen/AppButton'
@@ -12,10 +12,13 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false)
   const [errorModal, setErrorModal] = useState(false)
 
-  if (isSessionValid) {
-    navigate(isAdmin ? '/admin' : '/calendar', { replace: true })
-    return null
-  }
+  useEffect(() => {
+    if (isSessionValid) {
+      navigate(isAdmin ? '/admin' : '/calendar', { replace: true })
+    }
+  }, [isSessionValid, isAdmin, navigate])
+
+  if (isSessionValid) return null
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -40,11 +43,6 @@ export default function LoginPage() {
     <div className="min-h-screen flex items-center justify-center dot-grid-bg relative">
       <div className="absolute inset-0 bg-background/60" />
       <div className="relative z-10 w-full max-w-md px-6 space-y-10 text-center">
-        <div>
-          <h1 className="text-6xl font-light tracking-[0.2em] text-foreground mb-4">ORIGEN</h1>
-          <p className="text-sm text-muted-foreground">Accede con tu correo corporativo o DNI</p>
-        </div>
-
         <div className="space-y-4">
           <p className="text-xs text-muted-foreground uppercase tracking-widest">¿Tienes correo de empresa?</p>
           <div className="grid grid-cols-2 gap-3">
