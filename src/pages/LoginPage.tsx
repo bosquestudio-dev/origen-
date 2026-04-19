@@ -40,9 +40,14 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center dot-grid-bg relative">
-      <div className="absolute inset-0 bg-background/60" />
-      <div className="relative z-10 w-full max-w-md px-6 space-y-10 text-center">
+    <div className="min-h-screen flex items-center justify-center relative overflow-hidden bg-background">
+      {/* Animated gradient orbs */}
+      <div className="login-orb login-orb-1" />
+      <div className="login-orb login-orb-2" />
+      <div className="login-orb login-orb-3" />
+
+      <div className="relative z-10 w-full max-w-sm px-6">
+        <div className="glass-card rounded-2xl px-8 py-10 space-y-8 text-center">
         <div className="space-y-4">
           <p className="text-xs text-muted-foreground uppercase tracking-widest">¿Tienes correo de empresa?</p>
           <div className="grid grid-cols-2 gap-3">
@@ -83,6 +88,7 @@ export default function LoginPage() {
             </AppButton>
           </form>
         )}
+        </div>
       </div>
 
       <AppModal isOpen={errorModal} onClose={() => setErrorModal(false)}>
