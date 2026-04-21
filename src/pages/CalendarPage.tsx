@@ -13,6 +13,8 @@ import CalendarGrid from '@/components/calendar/CalendarGrid'
 import ChallengeModalContent from '@/components/challenge/ChallengeModalContent'
 import { useEffect, useState } from 'react'
 import { LogOut } from 'lucide-react'
+import { motion } from 'framer-motion'
+import LoadingScreen from '@/components/auth/LoadingScreen'
 
 export default function CalendarPage() {
   const { user, isSessionValid, logout } = useAuth()
@@ -21,6 +23,12 @@ export default function CalendarPage() {
   const { progressPercentage, companionPercentage, completedCount, totalAvailable } = useProgress()
   const navigate = useNavigate()
   const [showLogoutModal, setShowLogoutModal] = useState(false)
+  const [pageReady, setPageReady] = useState(false)
+
+  useEffect(() => {
+    const t = setTimeout(() => setPageReady(true), 100)
+    return () => clearTimeout(t)
+  }, [])
 
   useEffect(() => {
     if (!isSessionValid) {
@@ -41,7 +49,14 @@ export default function CalendarPage() {
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <>
+    <LoadingScreen isVisible={!pageReady} />
+    <motion.div
+      className="min-h-screen bg-background"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: pageReady ? 1 : 0 }}
+      transition={{ duration: 0.4, ease: 'easeOut' }}
+    >
       {/* Header */}
       <header className="sticky top-0 z-40 h-16 bg-background/80 backdrop-blur-md border-b border-border flex items-center px-4 md:px-8">
         <div className="flex-1 flex items-center gap-3">
@@ -92,6 +107,7 @@ export default function CalendarPage() {
       </AppModal>
 
       <AppToast />
-    </div>
+    </motion.div>
+    </>
   )
 }

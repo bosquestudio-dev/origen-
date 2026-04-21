@@ -1,5 +1,6 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { Toaster } from 'sonner'
 import { AuthProvider } from "@/stores/auth.store";
 import { CalendarProvider } from "@/stores/calendar.store";
 import { AppProvider } from "@/stores/app.store";
@@ -21,6 +22,19 @@ const App = () => (
       <CalendarProvider>
         <AppProvider>
          
+            <Toaster
+              position="bottom-center"
+              toastOptions={{
+                style: {
+                  background: 'rgba(255, 255, 255, 0.12)',
+                  backdropFilter: 'blur(20px)',
+                  border: '1px solid rgba(255, 255, 255, 0.2)',
+                  color: '#F5F5F5',
+                  borderRadius: '12px',
+                },
+              }}
+              richColors
+            />
             <BrowserRouter>
               <Routes>
                 <Route path="/" element={<LoginPage />} />

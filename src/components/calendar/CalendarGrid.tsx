@@ -6,8 +6,8 @@ export default function CalendarGrid() {
 
   return (
     <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
-      {calendarDays.map(day => (
-        <DayCard key={day.day} day={day} />
+      {calendarDays.map((day, index) => (
+        <DayCard key={day.day} day={day} index={index} />
       ))}
     </div>
   )
