@@ -1,3 +1,4 @@
+import { motion } from 'framer-motion'
 import type { CalendarDay } from '@/types/calendar.types'
 import AppBadge from '@/components/origen/AppBadge'
 import { useAppStore } from '@/stores/app.store'
@@ -6,6 +7,7 @@ import { DAY_LABELS } from '@/data/calendar.data'
 
 interface DayCardProps {
   day: CalendarDay
+  index: number
 }
 
 const sizeClasses: Record<number, string> = {
@@ -16,7 +18,7 @@ const sizeClasses: Record<number, string> = {
   24: 'col-span-2',
 }
 
-export default function DayCard({ day }: DayCardProps) {
+export default function DayCard({ day, index }: DayCardProps) {
   const { openChallenge, showToast } = useAppStore()
   const { canAttemptDay } = useCalendar()
 
@@ -47,9 +49,12 @@ export default function DayCard({ day }: DayCardProps) {
   }
 
   return (
-    <div
+    <motion.div
       className={`${gridClass} border border-border rounded-card p-4 flex flex-col justify-between gap-3 transition-all duration-200 ${statusStyles[day.status]} ${day.isSpecial ? 'border-gold shimmer-border' : ''}`}
       onClick={handleClick}
+      initial={{ opacity: 0, y: 16 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.35, delay: index * 0.04, ease: 'easeOut' }}
     >
       <div className="flex items-start justify-between">
         <span className={`text-2xl font-medium ${day.status === 'locked' ? 'blur-[2px]' : ''} ${day.isSpecial ? 'text-gold-light' : 'text-foreground'}`}>
@@ -94,6 +99,6 @@ export default function DayCard({ day }: DayCardProps) {
       )}
 
       <p className="text-[10px] text-muted-foreground/60 mt-auto">{day.date}</p>
-    </div>
+    </motion.div>
   )
 }

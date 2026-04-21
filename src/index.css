@@ -45,18 +45,16 @@
   }
 }
 
-/* Animated dot grid background for login */
-@keyframes drift {
-  0%, 100% { transform: translate(0, 0); }
-  25% { transform: translate(10px, -10px); }
-  50% { transform: translate(-5px, 15px); }
-  75% { transform: translate(8px, 5px); }
-}
-
 .dot-grid-bg {
   background-image: radial-gradient(circle, hsl(0 0% 100% / 0.06) 1px, transparent 1px);
   background-size: 32px 32px;
-  animation: drift 20s ease-in-out infinite;
+}
+
+/* ── LOGIN PAGE ── */
+.glass-card { isolation: isolate; }
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
 }
 
 /* Shimmer for day 24 */

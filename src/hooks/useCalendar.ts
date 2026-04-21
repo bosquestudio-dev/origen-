@@ -18,11 +18,17 @@ export function useCalendar() {
   const canAttemptDay = (day: number): boolean => {
     const status = getDayStatus(day)
     if (status === 'locked' || status === 'digital-detox') return false
-    const previousChallengeDays = [day - 1, day - 2]
-      .filter(d => d > 0 && !DIGITAL_DETOX_DAYS.includes(d))
-    return previousChallengeDays.every(d =>
-      completedDays.includes(d) || d >= SIMULATED_TODAY
-    )
+
+    // Past days are always attemptable
+    if (status === 'accessible' || status === 'completed') return true
+
+    // For today: require the 2 most recent previous challenge days to be completed
+    const required: number[] = []
+    for (let d = day - 1; d >= 1 && required.length < 2; d--) {
+      if (!DIGITAL_DETOX_DAYS.includes(d)) required.push(d)
+    }
+
+    return required.every(d => completedDays.includes(d))
   }
 
   const calendarDays: CalendarDay[] = useMemo(() =>
