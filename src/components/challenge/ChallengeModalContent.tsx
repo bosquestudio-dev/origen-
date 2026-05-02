@@ -5,7 +5,12 @@ import { useAppStore } from '@/stores/app.store'
 import { useAuth } from '@/stores/auth.store'
 import type { Challenge } from '@/types/challenge.types'
 
-function TextChallenge({ challenge, completed }: { challenge: Challenge; completed: boolean }) {
+interface SubProps {
+  challenge: Challenge
+  completed: boolean
+}
+
+function TextChallenge({ challenge, completed }: SubProps) {
   const { completeDay } = useCalendarStore()
   const { closeChallenge, showToast } = useAppStore()
   const [done, setDone] = useState(completed)
@@ -39,7 +44,7 @@ function TextChallenge({ challenge, completed }: { challenge: Challenge; complet
   )
 }
 
-function VideoChallenge({ challenge, completed }: { challenge: Challenge; completed: boolean }) {
+function VideoChallenge({ challenge, completed }: SubProps) {
   const { completeDay } = useCalendarStore()
   const { closeChallenge, showToast } = useAppStore()
   const [showCta, setShowCta] = useState(completed)
@@ -89,7 +94,7 @@ function VideoChallenge({ challenge, completed }: { challenge: Challenge; comple
   )
 }
 
-function SurveyChallenge({ challenge, completed }: { challenge: Challenge; completed: boolean }) {
+function SurveyChallenge({ challenge, completed }: SubProps) {
   const { completeDay } = useCalendarStore()
   const { closeChallenge, showToast } = useAppStore()
   const [answers, setAnswers] = useState<Record<string, string>>({})
@@ -108,7 +113,7 @@ function SurveyChallenge({ challenge, completed }: { challenge: Challenge; compl
     }
     completeDay(challenge.day)
     setDone(true)
-    showToast('¡Encuesta enviada!')
+    showToast('¡Has completado el reto!')
     setTimeout(closeChallenge, 1200)
   }
 
@@ -148,7 +153,7 @@ function SurveyChallenge({ challenge, completed }: { challenge: Challenge; compl
   )
 }
 
-function RaffleChallenge({ challenge, completed }: { challenge: Challenge; completed: boolean }) {
+function RaffleChallenge({ challenge, completed }: SubProps) {
   const { completeDay } = useCalendarStore()
   const { closeChallenge, showToast } = useAppStore()
   const { user } = useAuth()
@@ -161,7 +166,8 @@ function RaffleChallenge({ challenge, completed }: { challenge: Challenge; compl
       completeDay(challenge.day)
       setDone(true)
       setSpinning(false)
-      showToast(`¡Estás dentro, ${user?.name?.split(' ')[0]}!`)
+      showToast('¡Has completado el reto!')
+      setTimeout(closeChallenge, 1200)
     }, 2000)
   }
 
@@ -201,7 +207,7 @@ interface ChallengeModalContentProps {
 }
 
 export default function ChallengeModalContent({ challenge, completed }: ChallengeModalContentProps) {
-  const components: Record<string, React.FC<{ challenge: Challenge; completed: boolean }>> = {
+  const components: Record<string, React.FC<SubProps>> = {
     text: TextChallenge,
     video: VideoChallenge,
     survey: SurveyChallenge,
@@ -210,10 +216,25 @@ export default function ChallengeModalContent({ challenge, completed }: Challeng
   const Component = components[challenge.type] || TextChallenge
 
   return (
-    <div className="space-y-4">
-      <div>
-        <p className="text-xs text-muted-foreground uppercase tracking-widest mb-1">Día {challenge.day}</p>
-        <h2 className="text-xl font-medium text-foreground">{challenge.title}</h2>
+    <div style={{ padding: '32px 28px' }}>
+      <div style={{ marginBottom: '20px' }}>
+        <span style={{
+          fontSize: '11px',
+          letterSpacing: '0.1em',
+          textTransform: 'uppercase',
+          color: 'rgba(255,255,255,0.35)',
+        }}>
+          {challenge.label} · Día {challenge.day}
+        </span>
+        <h2 style={{
+          fontSize: '20px',
+          fontWeight: 400,
+          color: 'rgba(255,255,255,0.9)',
+          marginTop: '8px',
+          lineHeight: 1.3,
+        }}>
+          {challenge.title}
+        </h2>
       </div>
       <Component challenge={challenge} completed={completed} />
     </div>

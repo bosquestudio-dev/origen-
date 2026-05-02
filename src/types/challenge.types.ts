@@ -1,4 +1,4 @@
-export type ChallengeType = 'text' | 'video' | 'survey' | 'raffle'
+export type ChallengeType = 'text' | 'video' | 'survey' | 'raffle' | 'donation'
 
 export interface Challenge {
   id: number

@@ -85,7 +85,7 @@ export default function CalendarPage() {
       </main>
 
       {/* Challenge Modal */}
-      <AppModal isOpen={!!activeChallenge} onClose={closeChallenge}>
+      <AppModal isOpen={!!activeChallenge} onClose={closeChallenge} challenge>
         {activeChallenge && (
           <ChallengeModalContent
             challenge={activeChallenge}
