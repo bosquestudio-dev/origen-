@@ -1,0 +1,298 @@
+/* ============================================================
+   DESIGN TOKENS — extraídos de Figma "ESTO SI" (node 388-11963)
+   Archivo: [Origen] UI Kit & Pantallas_ABR2026
+   Última actualización Figma: 2026-04-26
+   ============================================================ */
+
+:root {
+
+  /* ----------------------------------------------------------
+     COLORES BASE
+     ---------------------------------------------------------- */
+  --color-bg-primary: #0F0F1A;
+  --color-bg-surface: #FFFFFF;
+  --color-accent: #7F77DD;
+  --color-accent-hover: #6B62CC;
+
+  /* ----------------------------------------------------------
+     TARJETAS — Estado: Futuro / Próximo
+     Figma: Size=* / State=Futuro (todas las variantes de tamaño)
+     ---------------------------------------------------------- */
+  --card-futuro-bg: transparent;
+  --card-futuro-border-color: #BCBFC7;
+  --card-futuro-border-width: 1px;
+  --card-futuro-opacity: 0.5;
+  --card-futuro-gradient: radial-gradient(circle, rgba(152, 157, 169, 0.18) 0%, rgba(152, 157, 169, 0) 100%);
+  --card-futuro-badge-bg: #EBECEE;
+  --card-futuro-badge-color: #40454D;
+  --card-futuro-day-color: #40454D;
+  --card-futuro-month-color: #717988;
+
+  /* ----------------------------------------------------------
+     TARJETAS — Estado: Pasado
+     Figma: Size=* / State=Pasado
+     ---------------------------------------------------------- */
+  --card-pasado-bg: rgba(246, 247, 248, 0.2);  /* Figma: #F6F7F8 a 20% */
+  --card-pasado-border-color: #BCBFC7;
+  --card-pasado-border-width: 1px;
+  --card-pasado-gradient: radial-gradient(circle, rgba(152, 157, 169, 0.18) 0%, rgba(152, 157, 169, 0) 100%);
+  --card-pasado-badge-bg: #F6F7F8;
+  --card-pasado-badge-color: #717988;
+  --card-pasado-day-color: #40454D;
+  --card-pasado-month-color: #717988;
+
+  /* ----------------------------------------------------------
+     TARJETAS — Estado: Hoy
+     Figma: Size=* / State=Hoy — borde naranja 2px + glow
+     ---------------------------------------------------------- */
+  --card-hoy-bg: rgba(251, 149, 95, 0.1);       /* Figma: #FB955F a 10% */
+  --card-hoy-border-color: #FA7025;
+  --card-hoy-border-width: 2px;
+  --card-hoy-shadow: 0 0 14px 9px rgba(250, 112, 37, 0.1);
+  --card-hoy-gradient: radial-gradient(circle, rgba(253, 215, 195, 0.35) 0%, rgba(253, 215, 195, 0) 100%);
+  --card-hoy-badge-bg: #FA7025;
+  --card-hoy-badge-color: #FFFFFF;
+  --card-hoy-day-color: #B84303;
+  --card-hoy-month-color: #FA7025;
+
+  /* ----------------------------------------------------------
+     TARJETAS — Estado: Completado
+     Figma: Size=* / State=Completado
+     ---------------------------------------------------------- */
+  --card-completado-bg: rgba(34, 195, 93, 0.1);  /* Figma: #22C35D a 10% */
+  --card-completado-border-color: #22C35D;
+  --card-completado-border-width: 1px;
+  --card-completado-gradient: radial-gradient(circle, rgba(198, 245, 215, 0.4) 0%, rgba(198, 245, 215, 0) 100%);
+  --card-completado-badge-bg: #22C35D;
+  --card-completado-badge-color: #FFFFFF;
+  --card-completado-day-color: #15793A;
+  --card-completado-month-color: #22C35D;
+
+  /* ----------------------------------------------------------
+     TARJETAS — Estado: Desconexión / Fin de semana
+     Figma: Size=* / State=Desconexión
+     ---------------------------------------------------------- */
+  --card-desconexion-bg: rgba(122, 66, 255, 0.1); /* Figma: #7A42FF a 10% */
+  --card-desconexion-border-color: #7A42FF;
+  --card-desconexion-border-width: 1px;
+  --card-desconexion-gradient: radial-gradient(circle, rgba(172, 137, 255, 0.2) 0%, rgba(172, 137, 255, 0) 100%);
+  --card-desconexion-badge-bg: #E9E0FF;
+  --card-desconexion-badge-color: #2D0099;
+  --card-desconexion-day-color: #2D0099;
+  --card-desconexion-month-color: #4C00FF;
+
+  /* ----------------------------------------------------------
+     BORDER RADIUS
+     ---------------------------------------------------------- */
+  --radius-card: 12px;           /* Todas las tarjetas */
+  --radius-badge: 100px;        /* Badges dentro de tarjetas (DM Sans 11px) */
+  --radius-badge-sm: 85px;      /* Badges variante Small */
+  --radius-modal: 16px;
+  --radius-alert: 10px;         /* Figma: Alertas y NotificacionesToast */
+  --radius-toast: 10px;
+
+  /* ----------------------------------------------------------
+     BADGES — Componente Badge (standalone)
+     Figma: COMPONENT_SET Badge, variantes State=*
+     ---------------------------------------------------------- */
+  --badge-futuro-bg: #EBECEE;
+  --badge-futuro-color: #40454D;
+
+  --badge-weekend-bg: #E9E0FF;    /* State=Weekend = "Fin de semana" */
+  --badge-weekend-color: #2D0099;
+
+  --badge-pasado-bg: #F6F7F8;
+  --badge-pasado-color: #717988;
+
+  --badge-hoy-bg: #FA7025;
+  --badge-hoy-color: #FFFFFF;
+
+  --badge-completado-bg: #22C35D;
+  --badge-completado-color: #FFFFFF;
+
+  /* Badges de tipo de contenido (sin variante Figma explícita — valores del DS) */
+  --badge-video-bg: #FDE8D8;
+  --badge-video-color: #B84303;
+  --badge-encuesta-bg: #E9E0FF;
+  --badge-encuesta-color: #2D0099;
+  --badge-sorteo-bg: #EDFBF2;
+  --badge-sorteo-color: #15793A;
+  --badge-texto-bg: #EBF3FD;
+  --badge-texto-color: #073E86;
+
+  /* ----------------------------------------------------------
+     TOAST — NotificacionesToast
+     Figma: bg=#FFFFFF con barra izquierda de acento (1% gradient)
+     El gradiente simula border-left: el primer 1% es el color de acento.
+     En CSS lo implementamos como border-left real + bg blanco.
+     ---------------------------------------------------------- */
+  --toast-bg: #FFFFFF;
+  --toast-border-neutral: #DADCE0;
+  --toast-shadow:
+    0 4px 16px rgba(0, 0, 0, 0.08),
+    0 1px 4px  rgba(0, 0, 0, 0.04);
+  --toast-body-color: #292C32;
+
+  /* Info */
+  --toast-info-accent: #0C65D8;
+  --toast-info-border: #DADCE0;
+  --toast-info-icon-color: #0C65D8;
+  --toast-info-action-color: #073E86;
+
+  /* Success */
+  --toast-success-accent: #22C35D;
+  --toast-success-border: #DADCE0;
+  --toast-success-icon-color: #22C35D;
+  --toast-success-action-color: #15793A;
+
+  /* Warning */
+  --toast-warning-accent: #DA8E0B;
+  --toast-warning-border: #DADCE0;
+  --toast-warning-icon-color: #DA8E0B;
+  --toast-warning-action-color: #875807;
+
+  /* Error */
+  --toast-error-accent: #D31212;
+  --toast-error-border: #D31212;  /* Figma usa el acento también como border exterior */
+  --toast-error-icon-color: #D31212;
+  --toast-error-action-color: #830B0B;
+
+  /* ----------------------------------------------------------
+     ALERTAS
+     Figma: COMPONENT_SET Alertas — bg sólido + borde completo
+     ---------------------------------------------------------- */
+  /* Info */
+  --alert-info-bg: #EBF3FD;
+  --alert-info-border: #0C65D8;
+  --alert-info-title-color: #073E86;
+  --alert-info-text-color: #073E86;
+  --alert-info-icon-color: #0C65D8;
+
+  /* Success */
+  --alert-success-bg: #EDFBF2;
+  --alert-success-border: #22C35D;
+  --alert-success-title-color: #15793A;
+  --alert-success-text-color: #15793A;
+  --alert-success-icon-color: #22C35D;
+
+  /* Warning */
+  --alert-warning-bg: #FDF7EB;
+  --alert-warning-border: #DA8E0B;
+  --alert-warning-title-color: #875807;
+  --alert-warning-text-color: #875807;
+  --alert-warning-icon-color: #DA8E0B;
+
+  /* Error */
+  --alert-error-bg: #FDECEC;
+  --alert-error-border: #D31212;
+  --alert-error-title-color: #830B0B;
+  --alert-error-text-color: #830B0B;
+  --alert-error-icon-color: #D31212;
+
+  /* ----------------------------------------------------------
+     TIPOGRAFÍA — extraída de nodos TEXT en Figma
+     ---------------------------------------------------------- */
+
+  /* Badge label (dentro de tarjeta, todos los tamaños salvo Small) */
+  --text-badge-size: 11px;
+  --text-badge-weight: 500;
+  --text-badge-lh: 16px;
+  --text-badge-family: 'DM Sans', sans-serif;
+
+  /* Badge label variante Small (escala proporcional 0.85x) */
+  --text-badge-sm-size: 9.35px;
+  --text-badge-sm-weight: 500;
+  --text-badge-sm-lh: 13.6px;
+
+  /* Day number — Small */
+  --text-day-sm-size: 32px;
+  --text-day-sm-weight: 700;
+  --text-day-sm-lh: 35.2px;
+  --text-day-sm-family: 'Space Grotesk', sans-serif;
+
+  /* Day number — Medium / Large */
+  --text-day-md-size: 40px;
+  --text-day-md-weight: 700;
+  --text-day-md-lh: 44px;
+  --text-day-md-family: 'Space Grotesk', sans-serif;
+
+  /* Day number — X-Large */
+  --text-day-xl-size: 48px;
+  --text-day-xl-weight: 700;
+  --text-day-xl-lh: 52.8px;
+  --text-day-xl-family: 'Space Grotesk', sans-serif;
+
+  /* Month label — Small */
+  --text-month-sm-size: 12px;
+  --text-month-sm-weight: 400;
+  --text-month-sm-lh: 16.8px;
+  --text-month-sm-family: 'DM Sans', sans-serif;
+
+  /* Month label — Medium / Large / X-Large */
+  --text-month-md-size: 13px;
+  --text-month-md-weight: 400;
+  --text-month-md-lh: 18.2px;
+  --text-month-md-family: 'DM Sans', sans-serif;
+
+  /* Month label — X-Large (Frame 19) */
+  --text-month-xl-size: 14px;
+  --text-month-xl-weight: 400;
+  --text-month-xl-lh: 19.6px;
+
+  /* Alerta title */
+  --text-alert-title-size: 14px;
+  --text-alert-title-weight: 700;
+  --text-alert-title-lh: 20px;
+  --text-alert-family: 'DM Sans', sans-serif;
+
+  /* Alerta description */
+  --text-alert-desc-size: 14px;
+  --text-alert-desc-weight: 400;
+  --text-alert-desc-lh: 18px;
+
+  /* Toast body */
+  --text-toast-body-size: 14px;
+  --text-toast-body-weight: 400;
+  --text-toast-body-lh: 20px;
+  --text-toast-family: 'DM Sans', sans-serif;
+
+  /* Toast action link */
+  --text-toast-action-size: 12px;
+  --text-toast-action-weight: 500;
+  --text-toast-action-lh: 16px;
+
+  /* ----------------------------------------------------------
+     TIPOGRAFÍA GLOBAL — escala de tamaños y pesos
+     ---------------------------------------------------------- */
+  --font-sans: 'Inter', sans-serif;
+
+  --text-xs:   11px;
+  --text-sm:   12px;
+  --text-base: 13px;
+  --text-md:   14px;
+  --text-lg:   16px;
+  --text-xl:   18px;
+  --text-2xl:  20px;
+  --text-3xl:  24px;
+
+  --font-light:   300;
+  --font-regular: 400;
+  --font-medium:  500;
+  --font-bold:    700;
+
+  --leading-tight:   1.2;
+  --leading-normal:  1.5;
+  --leading-relaxed: 1.7;
+
+  --tracking-tight:   -0.02em;
+  --tracking-normal:  0;
+  --tracking-wide:    0.05em;
+  --tracking-wider:   0.1em;
+  --tracking-widest:  0.15em;
+
+  /* ----------------------------------------------------------
+     COLORES ESPECIALES
+     ---------------------------------------------------------- */
+  --color-gold: hsl(43 88% 38%);
+  --color-gold-light: hsl(43 69% 52%);
+}

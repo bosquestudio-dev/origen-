@@ -1,5 +1,6 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { Toaster } from 'sonner'
 import { AuthProvider } from "@/stores/auth.store";
 import { CalendarProvider } from "@/stores/calendar.store";
 import { AppProvider } from "@/stores/app.store";
@@ -21,6 +22,24 @@ const App = () => (
       <CalendarProvider>
         <AppProvider>
          
+            <Toaster
+              position="bottom-center"
+              toastOptions={{
+                unstyled: true,
+                classNames: {
+                  toast: 'toast-base',
+                  success: 'toast-success',
+                  error: 'toast-error',
+                  warning: 'toast-warning',
+                  info: 'toast-info',
+                  title: 'toast-title',
+                  description: 'toast-description',
+                  actionButton: 'toast-action',
+                  closeButton: 'toast-close',
+                  icon: 'toast-icon',
+                },
+              }}
+            />
             <BrowserRouter>
               <Routes>
                 <Route path="/" element={<LoginPage />} />
