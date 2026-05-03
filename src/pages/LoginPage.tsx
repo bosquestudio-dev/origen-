@@ -1,10 +1,80 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { toast } from 'sonner'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Mail, CreditCard, ArrowLeft, ArrowRight } from 'lucide-react'
 import { useAuth } from '@/stores/auth.store'
 import LoadingScreen from '@/components/auth/LoadingScreen'
+
+/* ─── SpinBorder component ─────────────────────────────────── */
+const SpinBorder = ({ children, isHovered }: {
+  children: React.ReactNode
+  isHovered: boolean
+}) => {
+  const trackRef = useRef<HTMLDivElement>(null)
+  const angleRef = useRef(0)
+  const rafRef = useRef<number>()
+
+  useEffect(() => {
+    const animate = () => {
+      angleRef.current = (angleRef.current + 0.5) % 360
+      if (trackRef.current) {
+        trackRef.current.style.transform =
+          `translate(-50%, -50%) rotate(${angleRef.current}deg)`
+      }
+      rafRef.current = requestAnimationFrame(animate)
+    }
+    rafRef.current = requestAnimationFrame(animate)
+    return () => {
+      if (rafRef.current) cancelAnimationFrame(rafRef.current)
+    }
+  }, [])
+
+  return (
+    <div style={{
+      position: 'relative',
+      width: '100%',
+      borderRadius: '8px',
+      overflow: 'hidden',
+      padding: '1.5px',
+    }}>
+      <div
+        ref={trackRef}
+        style={{
+          position: 'absolute',
+          top: '50%',
+          left: '50%',
+          width: '1000%',
+          height: '1000%',
+          background: 'conic-gradient(from 0deg, rgba(138,56,245,1) 0deg, rgba(251,112,38,1) 180deg, rgba(138,56,245,1) 360deg)',
+          transform: 'translate(-50%, -50%) rotate(0deg)',
+        }}
+      />
+      <button
+        style={{
+          position: 'relative',
+          zIndex: 1,
+          width: '100%',
+          background: isHovered ? '#17181B' : '#FFFFFF',
+          color: isHovered ? '#FFFFFF' : '#17181B',
+          border: 'none',
+          borderRadius: '6.5px',
+          padding: '14px 16px',
+          fontSize: '14px',
+          fontWeight: 500,
+          fontFamily: 'inherit',
+          cursor: 'default',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          transition: 'background 0.2s ease, color 0.2s ease',
+        }}
+      >
+        {children}
+      </button>
+    </div>
+  )
+}
 
 /* ─── Preserved logic ──────────────────────────────────────── */
 const NINETY_DAYS_MS = 90 * 24 * 60 * 60 * 1000
@@ -77,8 +147,8 @@ function InputEl({
           display: 'flex', pointerEvents: 'none',
         }}>
           {iconType === 'email'
-            ? <Mail size={15} color={hasError ? C.errRed : C.labelTxt} />
-            : <CreditCard size={15} color={hasError ? C.errRed : C.labelTxt} />
+            ? <Mail size={15} color={hasError ? C.errRed : '#9B9B95'} />
+            : <CreditCard size={15} color={hasError ? C.errRed : '#9B9B95'} />
           }
         </div>
       )}
@@ -98,11 +168,11 @@ function InputEl({
           width: '100%', height: 40, boxSizing: 'border-box',
           padding: `10px 12px 10px ${paddingLeft}px`,
           borderRadius: 8,
-          border: `1px solid ${borderColor}`,
-          background: '#FFFFFF',
+          border: hasError ? `1.5px solid ${C.errRed}` : `1px solid ${borderColor}`,
+          background: hasError ? 'rgba(253,236,236,0.5)' : '#FFFFFF',
           fontFamily: DM, fontSize: 14, fontWeight: 400, lineHeight: '16px',
           color: hasError ? C.errRed : C.inputTxt,
-          transition: 'border-color 0.15s ease',
+          transition: hasError ? 'none' : 'border-color 0.15s ease',
           outline: 'none',
         }}
       />
@@ -122,6 +192,7 @@ export default function LoginPage() {
   const [loginType, setLoginType]   = useState<'email' | 'dni' | null>(null)
   const [identifier, setIdentifier] = useState('')
   const [loading, setLoading]       = useState(false)
+  const [btnHovered, setBtnHovered] = useState(false)
   const [showLoader, setShowLoader] = useState(false)
   const [hasError, setHasError]     = useState(false)
   const [consented, setConsented]   = useState(false)
@@ -230,7 +301,7 @@ export default function LoginPage() {
   // Primary button: outline on desktop, filled on mobile (via CSS class)
   const ctaBtn = (active: boolean): React.CSSProperties => ({
     width: '100%', height: 40,
-    display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+    display: 'flex', alignItems: 'center', justifyContent: 'center',
     padding: '0 16px', boxSizing: 'border-box',
     borderRadius: 8, fontFamily: DM,
     fontSize: 14, fontWeight: 400, lineHeight: '16px',
@@ -252,6 +323,8 @@ export default function LoginPage() {
           background: transparent;
           color: ${C.btnDark};
           transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+          position: relative;
+          overflow: hidden;
         }
         /* Active hover → black */
         .btn-cta:not(:disabled):hover {
@@ -259,12 +332,7 @@ export default function LoginPage() {
           color: #FFFFFF !important;
           border-color: #000000 !important;
         }
-        /* Loading state: always filled */
-        .btn-cta.loading {
-          background: ${C.btnDark} !important;
-          color: #FFFFFF !important;
-          border: none !important;
-        }
+        /* ── Loading button wrapper (spinning gradient border) ── */
 
         /* ── Layout ── */
 
@@ -321,13 +389,19 @@ export default function LoginPage() {
             position: relative; flex: 1;
             inset: unset; z-index: auto;
             background: ${C.pageBg};
-            padding: clamp(24px, 4vh, 64px) clamp(24px, 5vw, 72px);
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: center;
+            padding-top: 20vh;
+            padding-left: clamp(24px, 5vw, 72px);
+            padding-right: clamp(24px, 5vw, 72px);
             overflow-y: auto;
           }
           .login-form-card {
             background: transparent;
             border-radius: 0; padding: 0;
-            max-width: 378px; max-height: none;
+            max-width: 420px; width: 100%; margin-left: auto; margin-right: auto; max-height: none;
             height: auto; display: block; overflow: visible;
           }
           .step-motion-wrap, .step-inner { display: block; flex: none; min-height: none; }
@@ -377,12 +451,25 @@ export default function LoginPage() {
           {/* Card (rounded + bg mobile / transparent desktop) */}
           <div className="login-form-card">
 
-            {/* Layout-animated outer container (smooth height transitions) */}
-            <motion.div
-              layout
-              className="step-motion-wrap"
-              transition={{ layout: { duration: 0.3, ease: [0.16, 1, 0.3, 1] } }}
+            {/* Back button — always in DOM, visibility toggled, NO animation */}
+            <button
+              onClick={() => back('selector')}
+              style={{
+                visibility: step === 'input' ? 'visible' : 'hidden',
+                pointerEvents: step === 'input' ? 'auto' : 'none',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                width: 32, height: 32, flexShrink: 0,
+                marginBottom: 16,
+                background: 'transparent',
+                border: '1px solid #EBECEE',
+                borderRadius: '8px',
+                cursor: 'pointer',
+              }}
             >
+              <ArrowLeft size={16} color={C.backIcon} />
+            </button>
+
+            <div className="step-motion-wrap">
               <AnimatePresence mode="wait">
 
                 {/* ══ PASO 1: SELECTOR ══ */}
@@ -396,7 +483,7 @@ export default function LoginPage() {
                     <div className="step-content">
                       {/* Title + Subtitle */}
                       <h1 className="login-heading" style={heading}>Accede a tu calendario</h1>
-                      <p style={subtext}>¿Utilizas en tu día a día el correo de la empresa?</p>
+                      <p style={subtext}>¿Utilizas en tu día a día el correo<br />de la empresa?</p>
 
                       {/* Options — gap: 8px (Figma: Frame 3 gap=8) */}
                       <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
@@ -438,8 +525,7 @@ export default function LoginPage() {
                         disabled={!canContinuar}
                         style={ctaBtn(canContinuar)}
                       >
-                        <span>Continuar</span>
-                        <ArrowRight size={16} />
+                        Continuar
                       </button>
                     </div>
                   </motion.div>
@@ -454,24 +540,9 @@ export default function LoginPage() {
                     initial="initial" animate="animate" exit="exit"
                   >
                     <div className="step-content">
-                      {/* Back button — Figma: Button 40x40, border #989EA9 1.5px, r=8 */}
-                      <button
-                        onClick={() => back('selector')}
-                        style={{
-                          width: 40, height: 40, borderRadius: 8, boxSizing: 'border-box',
-                          border: `1.5px solid ${C.backBdr}`,
-                          background: 'transparent',
-                          display: 'flex', alignItems: 'center', justifyContent: 'center',
-                          cursor: 'pointer',
-                          marginBottom: 16,
-                        }}
-                      >
-                        <ArrowLeft size={16} color={C.backIcon} />
-                      </button>
-
                       {/* Title + Subtitle */}
                       <h1 className="login-heading" style={heading}>Accede a tu calendario</h1>
-                      <p style={subtext}>¿Utilizas en tu día a día el correo de la empresa?</p>
+                      <p style={subtext}>¿Utilizas en tu día a día el correo<br />de la empresa?</p>
 
                       {/* Input + Checkbox — Figma: Frame 37, gap=20 */}
                       <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
@@ -560,12 +631,12 @@ export default function LoginPage() {
                           }}>
                             Acepto los{' '}
                             <a href="#" onClick={e => e.preventDefault()}
-                              style={{ color: C.link, textDecoration: 'underline' }}>
+                              style={{ color: 'var(--color-link, #0D65D9)', textDecoration: 'underline', cursor: 'pointer' }}>
                               términos legales
                             </a>
                             {' '}y la{' '}
                             <a href="#" onClick={e => e.preventDefault()}
-                              style={{ color: C.link, textDecoration: 'underline' }}>
+                              style={{ color: 'var(--color-link, #0D65D9)', textDecoration: 'underline', cursor: 'pointer' }}>
                               política de privacidad
                             </a>
                             .
@@ -576,15 +647,25 @@ export default function LoginPage() {
 
                     {/* Entrar button — pinned to bottom */}
                     <div className="step-footer" style={{ paddingTop: 24 }}>
-                      <button
-                        className={`btn-cta${loading ? ' loading' : ''}`}
-                        onClick={canEntrar ? handleSubmit : undefined}
-                        disabled={!canEntrar}
-                        style={ctaBtn(canEntrar)}
-                      >
-                        <span>{loading ? 'Entrando...' : 'Entrar'}</span>
-                        {loading ? <Spinner /> : <ArrowRight size={16} />}
-                      </button>
+                      {loading ? (
+                        <div
+                          onMouseEnter={() => setBtnHovered(true)}
+                          onMouseLeave={() => setBtnHovered(false)}
+                        >
+                          <SpinBorder isHovered={btnHovered}>
+                            Entrando...
+                          </SpinBorder>
+                        </div>
+                      ) : (
+                        <button
+                          className="btn-cta"
+                          onClick={canEntrar ? handleSubmit : undefined}
+                          disabled={!canEntrar}
+                          style={ctaBtn(canEntrar)}
+                        >
+                          Entrar
+                        </button>
+                      )}
                     </div>
                   </motion.div>
                 )}
@@ -599,8 +680,8 @@ export default function LoginPage() {
                   >
                     <div className="step-content">
                       {/* Title — Figma: DM Sans 700 32px, #000 */}
-                      <h1 className="login-heading" style={heading}>
-                        No hemos podido verificar tu {loginType === 'dni' ? 'DNI' : 'correo'}
+                      <h1 className="login-heading" style={{ ...heading, whiteSpace: 'normal' }}>
+                        No hemos podido<br />verificar tu {loginType === 'dni' ? 'DNI' : 'correo'}
                       </h1>
                       {/* Subtitle — Figma: DM Sans 400 18px, #000 */}
                       <p style={subtext}>
@@ -656,7 +737,7 @@ export default function LoginPage() {
                         onClick={handleSendNotification}
                         style={{
                           flex: 1, height: 40,
-                          display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
+                          display: 'flex', alignItems: 'center', justifyContent: 'center',
                           padding: '0 16px', boxSizing: 'border-box',
                           borderRadius: 8, border: `1.5px solid ${C.btnDark}`,
                           background: 'transparent',
@@ -665,14 +746,13 @@ export default function LoginPage() {
                         }}
                       >
                         Enviar
-                        <ArrowRight size={16} />
                       </button>
                     </div>
                   </motion.div>
                 )}
 
               </AnimatePresence>
-            </motion.div>
+            </div>
           </div>{/* login-form-card */}
         </div>{/* login-form-wrap */}
       </div>{/* login-root */}
