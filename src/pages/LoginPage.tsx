@@ -98,11 +98,11 @@ function InputEl({
           width: '100%', height: 40, boxSizing: 'border-box',
           padding: `10px 12px 10px ${paddingLeft}px`,
           borderRadius: 8,
-          border: `1px solid ${borderColor}`,
-          background: '#FFFFFF',
+          border: hasError ? `1.5px solid ${C.errRed}` : `1px solid ${borderColor}`,
+          background: hasError ? 'rgba(253,236,236,0.5)' : '#FFFFFF',
           fontFamily: DM, fontSize: 14, fontWeight: 400, lineHeight: '16px',
           color: hasError ? C.errRed : C.inputTxt,
-          transition: 'border-color 0.15s ease',
+          transition: hasError ? 'none' : 'border-color 0.15s ease',
           outline: 'none',
         }}
       />
@@ -209,8 +209,7 @@ export default function LoginPage() {
     exit:     { opacity: 0, x: -16 * d, transition: { duration: 0.2, ease: 'easeIn' as const } },
   }
 
-  const canContinuar = loginType !== null
-  const canEntrar    = consented && !loading
+  const canEntrar = consented && !loading
 
   /* ─── Shared styles ─── */
   const heading: React.CSSProperties = {
@@ -252,12 +251,6 @@ export default function LoginPage() {
           background: transparent;
           color: ${C.btnDark};
           transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
-        }
-        /* Active hover → black */
-        .btn-cta:not(:disabled):hover {
-          background: #000000 !important;
-          color: #FFFFFF !important;
-          border-color: #000000 !important;
         }
         /* Loading state: always filled */
         .btn-cta.loading {
@@ -405,7 +398,7 @@ export default function LoginPage() {
                           return (
                             <button
                               key={type}
-                              onClick={() => setLoginType(type)}
+                              onClick={() => { setLoginType(type); forward('input') }}
                               style={{
                                 /* Figma: input-container 378x64, pad 24/24/16/16, r=8 */
                                 width: '100%', height: 64,
@@ -430,18 +423,6 @@ export default function LoginPage() {
                       </div>
                     </div>
 
-                    {/* Continuar button — pinned to bottom */}
-                    <div className="step-footer" style={{ paddingTop: 24 }}>
-                      <button
-                        className="btn-cta"
-                        onClick={canContinuar ? () => forward('input') : undefined}
-                        disabled={!canContinuar}
-                        style={ctaBtn(canContinuar)}
-                      >
-                        <span>Continuar</span>
-                        <ArrowRight size={16} />
-                      </button>
-                    </div>
                   </motion.div>
                 )}
 
@@ -469,9 +450,8 @@ export default function LoginPage() {
                         <ArrowLeft size={16} color={C.backIcon} />
                       </button>
 
-                      {/* Title + Subtitle */}
+                      {/* Title */}
                       <h1 className="login-heading" style={heading}>Accede a tu calendario</h1>
-                      <p style={subtext}>¿Utilizas en tu día a día el correo de la empresa?</p>
 
                       {/* Input + Checkbox — Figma: Frame 37, gap=20 */}
                       <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
