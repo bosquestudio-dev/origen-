@@ -2,15 +2,12 @@ import { useState, useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { toast } from 'sonner'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Mail, CreditCard, ArrowLeft, ArrowRight } from 'lucide-react'
+import { Mail, CreditCard, ArrowLeft } from 'lucide-react'
 import { useAuth } from '@/stores/auth.store'
 import LoadingScreen from '@/components/auth/LoadingScreen'
 
 /* ─── SpinBorder component ─────────────────────────────────── */
-const SpinBorder = ({ children, isHovered }: {
-  children: React.ReactNode
-  isHovered: boolean
-}) => {
+const SpinBorder = ({ children }: { children: React.ReactNode }) => {
   const trackRef = useRef<HTMLDivElement>(null)
   const angleRef = useRef(0)
   const rafRef = useRef<number>()
@@ -55,8 +52,8 @@ const SpinBorder = ({ children, isHovered }: {
           position: 'relative',
           zIndex: 1,
           width: '100%',
-          background: isHovered ? '#17181B' : '#FFFFFF',
-          color: isHovered ? '#FFFFFF' : '#17181B',
+          background: '#FFFFFF',
+          color: '#17181B',
           border: 'none',
           borderRadius: '6.5px',
           padding: '14px 16px',
@@ -67,12 +64,27 @@ const SpinBorder = ({ children, isHovered }: {
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          transition: 'background 0.2s ease, color 0.2s ease',
         }}
       >
         {children}
       </button>
     </div>
+  )
+}
+
+/* ─── AnimatedDots component ────────────────────────────────── */
+const AnimatedDots = () => {
+  const [dots, setDots] = useState(0)
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setDots(prev => (prev + 1) % 4)
+    }, 400)
+    return () => clearInterval(interval)
+  }, [])
+  return (
+    <span style={{ display: 'inline-block', width: '24px', textAlign: 'left', letterSpacing: '1px' }}>
+      {'.'.repeat(dots)}
+    </span>
   )
 }
 
@@ -110,16 +122,6 @@ const C = {
 
 type Step = 'selector' | 'input' | 'soporte'
 
-/* ─── Spinner ───────────────────────────────────────────────── */
-function Spinner() {
-  return (
-    <svg width="16" height="16" viewBox="0 0 16 16"
-      style={{ animation: 'spin 0.8s linear infinite', display: 'block', flexShrink: 0 }}>
-      <circle cx="8" cy="8" r="6" fill="none" stroke="currentColor" strokeWidth="2" strokeOpacity="0.3" />
-      <path d="M8 2 A6 6 0 0 1 14 8" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-    </svg>
-  )
-}
 
 /* ─── Input element ─────────────────────────────────────────── */
 function InputEl({
@@ -192,7 +194,6 @@ export default function LoginPage() {
   const [loginType, setLoginType]   = useState<'email' | 'dni' | null>(null)
   const [identifier, setIdentifier] = useState('')
   const [loading, setLoading]       = useState(false)
-  const [btnHovered, setBtnHovered] = useState(false)
   const [showLoader, setShowLoader] = useState(false)
   const [hasError, setHasError]     = useState(false)
   const [consented, setConsented]   = useState(false)
@@ -241,10 +242,11 @@ export default function LoginPage() {
       toast.error('Introduce un DNI válido', { description: 'Formato: 12345678A', duration: 3000 })
       return
     }
+    const MIN_LOADING_MS = 2800
     setLoading(true)
     setHasError(false)
+    const startTime = Date.now()
     await new Promise(r => setTimeout(r, 50))
-    await new Promise(r => setTimeout(r, 800))
     const success = login(identifier.trim(), loginType)
     if (success) {
       const raw = localStorage.getItem('origen_user')
@@ -253,9 +255,14 @@ export default function LoginPage() {
         const firstName = parsed.user?.name?.split(' ')[0] || 'bienvenido/a'
         toast.success(`Bienvenido/a, ${firstName}`)
         setShowLoader(true)
-        setTimeout(() => navigate(parsed.user.role === 'admin' ? '/admin' : '/calendar'), 1600)
+        const elapsed = Date.now() - startTime
+        const remaining = Math.max(0, MIN_LOADING_MS - elapsed)
+        setTimeout(() => navigate(parsed.user.role === 'admin' ? '/admin' : '/calendar'), remaining)
       }
     } else {
+      const elapsed = Date.now() - startTime
+      const remaining = Math.max(0, MIN_LOADING_MS - elapsed)
+      await new Promise(r => setTimeout(r, remaining))
       setLoading(false)
       setHasError(true)
     }
@@ -270,7 +277,13 @@ export default function LoginPage() {
 
   /* ─── Navigation ─── */
   const forward = (to: Step) => { setGoingBack(false); setStep(to) }
-  const back    = (to: Step) => { setGoingBack(true);  setStep(to) }
+  const back    = (to: Step) => {
+    setGoingBack(true)
+    setStep(to)
+    setIdentifier('')
+    setHasError(false)
+    setConsented(false)
+  }
 
   /* ─── Transition variants (direction-aware) ─── */
   const d = goingBack ? -1 : 1
@@ -321,7 +334,6 @@ export default function LoginPage() {
           border: 1.5px solid ${C.btnDark};
           background: transparent;
           color: ${C.btnDark};
-          transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
           position: relative;
           overflow: hidden;
         }
@@ -338,7 +350,7 @@ export default function LoginPage() {
         .login-root { position: fixed; inset: 0; }
         .login-aurora {
           position: absolute; inset: 0;
-          background: #17181B; overflow: hidden;
+          background: #0D1117; overflow: hidden;
         }
         .login-form-wrap {
           position: absolute; inset: 0; z-index: 10;
@@ -382,6 +394,17 @@ export default function LoginPage() {
           .login-aurora {
             position: relative;
             flex: 0 0 50%; height: 100%;
+            padding: 20px;
+            box-sizing: border-box;
+            background: ${C.pageBg};
+          }
+          .login-aurora-inner {
+            position: relative;
+            border-radius: 20px;
+            overflow: hidden;
+            width: 100%;
+            height: 100%;
+            background: #0D1117;
           }
           .login-form-wrap {
             position: relative; flex: 1;
@@ -429,19 +452,46 @@ export default function LoginPage() {
 
         {/* ── Aurora ── (full-screen mobile / left-half desktop) */}
         <div className="login-aurora">
-          <div style={{
-            position: 'absolute', bottom: '-25%', left: '50%',
-            transform: 'translateX(-50%)',
-            width: '160%', height: '100%',
-            borderRadius: '50%', background: '#FA7025',
-            filter: 'blur(100px)', opacity: 0.45,
-          }} />
-          <div style={{
-            position: 'absolute', bottom: '-35%', left: '10%',
-            width: '110%', height: '90%',
-            borderRadius: '50%', background: '#3D00CC',
-            filter: 'blur(140px)', opacity: 0.45,
-          }} />
+          <div className="login-aurora-inner" style={{
+            background: `
+              radial-gradient(ellipse at 85% 5%, rgba(220,100,60,0.9) 0%, rgba(180,60,80,0.6) 20%, transparent 50%),
+              radial-gradient(ellipse at 60% 50%, rgba(80,120,220,0.5) 0%, transparent 60%),
+              radial-gradient(ellipse at 30% 90%, rgba(30,80,220,0.9) 0%, rgba(20,60,200,0.7) 30%, transparent 65%),
+              radial-gradient(ellipse at 80% 80%, rgba(40,100,230,0.6) 0%, transparent 50%),
+              #0D1117
+            `,
+          }}>
+            <style>{`
+              @keyframes float-1 { 0%,100%{transform:translateY(0px)} 50%{transform:translateY(-6px)} }
+              @keyframes float-2 { 0%,100%{transform:translateY(0px)} 50%{transform:translateY(-8px)} }
+              @keyframes float-3 { 0%,100%{transform:translateY(0px)} 50%{transform:translateY(-5px)} }
+              @keyframes float-4 { 0%,100%{transform:translateY(0px)} 50%{transform:translateY(-7px)} }
+              .aurora-pill { background:rgba(255,255,255,0.12); backdrop-filter:blur(8px); border-radius:100px; padding:10px 20px; color:rgba(255,255,255,0.75); font-size:13px; font-family:'DM Sans',sans-serif; font-weight:400; white-space:nowrap; border:1px solid rgba(255,255,255,0.08); }
+              .aurora-pill-1 { animation:float-1 4s ease-in-out infinite; }
+              .aurora-pill-2 { animation:float-2 5s ease-in-out infinite; }
+              .aurora-pill-3 { animation:float-3 4.5s ease-in-out infinite; }
+              .aurora-pill-4 { animation:float-4 3.8s ease-in-out infinite; }
+            `}</style>
+
+            {/* Pills */}
+            <div style={{
+              position: 'absolute', bottom: 40, left: 0, right: 0,
+              display: 'flex', flexDirection: 'column',
+              alignItems: 'center', gap: 20,
+              padding: '0 32px',
+            }}>
+              {[
+                { text: 'Haz una pausa consciente hoy', opacity: 0.4, cls: 'aurora-pill-1' },
+                { text: 'Escribe una nota de agradecimiento', opacity: 0.65, cls: 'aurora-pill-2' },
+                { text: 'Dedica 10 minutos a escuchar activamente', opacity: 0.82, cls: 'aurora-pill-3' },
+                { text: 'Conecta con tu propósito hoy', opacity: 0.95, cls: 'aurora-pill-4' },
+              ].map((pill, i) => (
+                <div key={i} className={`aurora-pill ${pill.cls}`} style={{ opacity: pill.opacity }}>
+                  {pill.text}
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
 
         {/* ── Form wrap ── (centered overlay mobile / right-half desktop) */}
@@ -527,21 +577,6 @@ export default function LoginPage() {
                     initial="initial" animate="animate" exit="exit"
                   >
                     <div className="step-content">
-                      {/* Back button — Figma: Button 40x40, border #989EA9 1.5px, r=8 */}
-                      <button
-                        onClick={() => back('selector')}
-                        style={{
-                          width: 40, height: 40, borderRadius: 8, boxSizing: 'border-box',
-                          border: `1.5px solid ${C.backBdr}`,
-                          background: 'transparent',
-                          display: 'flex', alignItems: 'center', justifyContent: 'center',
-                          cursor: 'pointer',
-                          marginBottom: 16,
-                        }}
-                      >
-                        <ArrowLeft size={16} color={C.backIcon} />
-                      </button>
-
                       {/* Title */}
                       <h1 className="login-heading" style={heading}>Accede a tu calendario</h1>
 
@@ -649,12 +684,9 @@ export default function LoginPage() {
                     {/* Entrar button — pinned to bottom */}
                     <div className="step-footer" style={{ paddingTop: 24 }}>
                       {loading ? (
-                        <div
-                          onMouseEnter={() => setBtnHovered(true)}
-                          onMouseLeave={() => setBtnHovered(false)}
-                        >
-                          <SpinBorder isHovered={btnHovered}>
-                            Entrando...
+                        <div>
+                          <SpinBorder>
+                            Entrando<AnimatedDots />
                           </SpinBorder>
                         </div>
                       ) : (
