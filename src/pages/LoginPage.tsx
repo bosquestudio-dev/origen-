@@ -1,4 +1,5 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useMemo } from 'react'
+import { MeshGradient } from '@paper-design/shaders-react'
 import { useNavigate } from 'react-router-dom'
 import { toast } from 'sonner'
 import { motion, AnimatePresence } from 'framer-motion'
@@ -203,6 +204,13 @@ export default function LoginPage() {
   const [supportSurname, setSupportSurname] = useState('')
   const [supportContact, setSupportContact] = useState('')
 
+  const auroraPills = useMemo(() => ([
+    'Haz una pausa consciente hoy',
+    'Escribe una nota de agradecimiento',
+    'Dedica 10 minutos a escuchar activamente',
+    'Conecta con tu propósito hoy',
+  ]), [])
+
   /* ─── Session checks (preserved) ─── */
   useEffect(() => {
     try {
@@ -329,36 +337,38 @@ export default function LoginPage() {
       <LoadingScreen isVisible={showLoader} />
 
       <style>{`
-        .login-input::placeholder { color: #585E6A; opacity: 1; }
+        .login-input::placeholder { color: #C5C7D0; }
 
-        /* ── CTA button base ── (colors set via inline ctaBtn()) */
-        .btn-cta { position: relative; overflow: hidden; }
+        /* ── CTA button base ── */
+        .btn-cta {
+          border: none;
+          background: ${C.btnDark};
+          color: #FFFFFF;
+          position: relative;
+          overflow: hidden;
+        }
 
         /* ── Layout ── */
 
-        /* MOBILE (<1024px): gradient full-screen bg, card floats over it */
+        /* MOBILE (<1024px): aurora full-screen bg, card floats over it */
         .login-root { position: fixed; inset: 0; }
         .login-aurora {
           position: absolute; inset: 0;
-          background:
-            radial-gradient(ellipse at 85% 5%, rgba(220,100,60,0.9) 0%, rgba(180,60,80,0.6) 20%, transparent 50%),
-            radial-gradient(ellipse at 30% 90%, rgba(30,80,220,0.9) 0%, rgba(20,60,200,0.7) 30%, transparent 65%),
-            radial-gradient(ellipse at 80% 80%, rgba(40,100,230,0.6) 0%, transparent 50%),
-            #0D1117;
-          overflow: hidden;
+          background: #0D1117; overflow: hidden;
         }
         .login-form-wrap {
-          position: fixed; inset: 0; z-index: 10;
+          position: absolute; inset: 0; z-index: 10;
           display: flex; align-items: center; justify-content: center;
+          padding: 20px; box-sizing: border-box;
         }
         .login-form-card {
           background: #F4F5F0;
-          border-radius: 16px;
-          padding: 50px 24px;
-          width: calc(100% - 40px); max-width: 480px;
+          border-radius: 20px;
+          padding: 28px 24px;
+          width: 100%; max-width: 480px;
           box-sizing: border-box;
           height: calc(100dvh - 40px);
-          margin: 20px;
+          max-height: calc(100dvh - 40px);
           display: flex;
           flex-direction: column;
           overflow: hidden;
@@ -376,9 +386,6 @@ export default function LoginPage() {
           flex-shrink: 0; padding-top: 0;
         }
 
-        /* Mobile: hide pills, aurora is pure gradient bg */
-        .aurora-pills { display: none !important; }
-
         /* DESKTOP (>=1024px): split 50/50 */
         @media (min-width: 1024px) {
           .login-root { display: flex; }
@@ -395,12 +402,8 @@ export default function LoginPage() {
             overflow: hidden;
             width: 100%;
             height: 100%;
-            background: #0D1117;
-            padding: 32px;
-            box-sizing: border-box;
+            background: #0A0E1F;
           }
-          .aurora-pills { display: flex !important; }
-
           .login-form-wrap {
             position: relative; flex: 1;
             inset: unset; z-index: auto;
@@ -425,6 +428,52 @@ export default function LoginPage() {
           .step-footer { padding-top: 0; }
         }
 
+        /* ── Shooting star border button ── */
+        @keyframes shooting-star {
+          0%   { offset-distance: 0%; opacity: 1; }
+          70%  { opacity: 1; }
+          85%  { opacity: 0; }
+          100% { offset-distance: 100%; opacity: 0; }
+        }
+        .btn-star-wrap {
+          position: relative;
+          border-radius: 8px;
+          overflow: hidden;
+        }
+        .btn-star-wrap::before {
+          content: '';
+          position: absolute;
+          inset: 0;
+          border-radius: 8px;
+          border: 1.5px solid rgba(255,255,255,0.15);
+          pointer-events: none;
+          z-index: 2;
+        }
+        .btn-star-comet {
+          position: absolute;
+          inset: 0;
+          border-radius: 8px;
+          pointer-events: none;
+          z-index: 3;
+          overflow: hidden;
+        }
+        .btn-star-comet::after {
+          content: '';
+          position: absolute;
+          top: -1px; left: -1px;
+          width: 80px; height: 3px;
+          background: linear-gradient(90deg, transparent 0%, rgba(180,180,180,0.6) 40%, rgba(255,255,255,1) 100%);
+          border-radius: 2px;
+          offset-path: rect(0px auto auto 0px round 8px);
+          animation: shooting-star 2.2s ease-in-out infinite;
+        }
+        .btn-star-wrap .btn-cta {
+          position: relative;
+          z-index: 1;
+          width: 100%;
+          border-radius: 6.5px !important;
+        }
+
         /* Very small screens: allow title to wrap */
         @media (max-width: 380px) {
           .login-heading { white-space: normal !important; font-size: 20px !important; }
@@ -436,44 +485,61 @@ export default function LoginPage() {
 
         {/* ── Aurora ── (full-screen mobile / left-half desktop) */}
         <div className="login-aurora">
-          <div className="login-aurora-inner" style={{
-            background: `
-              radial-gradient(ellipse at 85% 5%, rgba(220,100,60,0.9) 0%, rgba(180,60,80,0.6) 20%, transparent 50%),
-              radial-gradient(ellipse at 60% 50%, rgba(80,120,220,0.5) 0%, transparent 60%),
-              radial-gradient(ellipse at 30% 90%, rgba(30,80,220,0.9) 0%, rgba(20,60,200,0.7) 30%, transparent 65%),
-              radial-gradient(ellipse at 80% 80%, rgba(40,100,230,0.6) 0%, transparent 50%),
-              #0D1117
-            `,
-          }}>
+          <div className="login-aurora-inner">
+            {/* Shader de gradiente animado como fondo */}
+            <div style={{ position: 'absolute', inset: 0 }}>
+              <MeshGradient
+                style={{ width: '100%', height: '100%' }}
+                colors={["#0A0E1F", "#161528", "#B23A1A", "#DE6A38", "#F2D6C8", "#6BA6DA", "#1E55CE", "#0B2A8E"]}
+                distortion={1.2}
+                swirl={0.6}
+                grainMixer={0}
+                grainOverlay={0}
+                speed={0.3}
+                offsetX={0.08}
+              />
+            </div>
             <style>{`
-              @keyframes float-1 { 0%,100%{transform:translateY(0px)} 50%{transform:translateY(-6px)} }
-              @keyframes float-2 { 0%,100%{transform:translateY(0px)} 50%{transform:translateY(-8px)} }
-              @keyframes float-3 { 0%,100%{transform:translateY(0px)} 50%{transform:translateY(-5px)} }
-              @keyframes float-4 { 0%,100%{transform:translateY(0px)} 50%{transform:translateY(-7px)} }
-              .aurora-pill { background:rgba(255,255,255,0.12); backdrop-filter:blur(8px); border-radius:100px; padding:10px 20px; color:rgba(255,255,255,0.75); font-size:13px; font-family:'DM Sans',sans-serif; font-weight:400; white-space:nowrap; border:1px solid rgba(255,255,255,0.08); }
-              .aurora-pill-1 { animation:float-1 4s ease-in-out infinite; }
-              .aurora-pill-2 { animation:float-2 5s ease-in-out infinite; }
-              .aurora-pill-3 { animation:float-3 4.5s ease-in-out infinite; }
-              .aurora-pill-4 { animation:float-4 3.8s ease-in-out infinite; }
+              @keyframes aurora-stream-slow {
+                0%   { transform: translateY(0%); }
+                100% { transform: translateY(-50%); }
+              }
+              .aurora-pill { background:rgba(255,255,255,0.12); backdrop-filter:blur(12px); border-radius:100px; padding:10px 20px; color:rgba(255,255,255,0.95); font-size:14px; font-family:'DM Sans',sans-serif; font-weight:500; white-space:nowrap; border:1px solid rgba(255,255,255,0.30); text-shadow:0 1px 8px rgba(0,0,0,0.60); box-shadow:0 4px 18px rgba(0,0,0,0.20); }
+              .aurora-credits-window {
+                position: absolute;
+                left: 50%;
+                top: 50%;
+                transform: translate(-50%, -50%);
+                width: min(92%, 560px);
+                height: 290px;
+                overflow: hidden;
+                pointer-events: none;
+                mask-image: linear-gradient(to bottom, transparent 0%, black 18%, black 82%, transparent 100%);
+              }
+              .aurora-credits-track {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                gap: 30px;
+                animation: aurora-stream-slow 120s linear infinite;
+                will-change: transform;
+              }
+              .aurora-credit-line {
+                width: fit-content;
+                max-width: 100%;
+                text-align: center;
+              }
             `}</style>
 
-            {/* Pills */}
-            <div className="aurora-pills" style={{
-              position: 'absolute', bottom: 40, left: 0, right: 0,
-              flexDirection: 'column',
-              alignItems: 'center', gap: 20,
-              padding: '0 32px',
-            }}>
-              {[
-                { text: 'Haz una pausa consciente hoy', opacity: 0.4, cls: 'aurora-pill-1' },
-                { text: 'Escribe una nota de agradecimiento', opacity: 0.65, cls: 'aurora-pill-2' },
-                { text: 'Dedica 10 minutos a escuchar activamente', opacity: 0.82, cls: 'aurora-pill-3' },
-                { text: 'Conecta con tu propósito hoy', opacity: 0.95, cls: 'aurora-pill-4' },
-              ].map((pill, i) => (
-                <div key={i} className={`aurora-pill ${pill.cls}`} style={{ opacity: pill.opacity }}>
-                  {pill.text}
-                </div>
-              ))}
+            {/* Pills tipo créditos de película */}
+            <div className="aurora-credits-window">
+              <div className="aurora-credits-track">
+                {Array.from({ length: 12 }).flatMap(() => auroraPills).map((text, i) => (
+                  <div key={i} className="aurora-pill aurora-credit-line">
+                    {text}
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
         </div>
@@ -677,14 +743,17 @@ export default function LoginPage() {
                           </SpinBorder>
                         </div>
                       ) : (
-                        <button
-                          className="btn-cta"
-                          onClick={canEntrar ? handleSubmit : undefined}
-                          disabled={!canEntrar}
-                          style={ctaBtn(canEntrar)}
-                        >
-                          Entrar
-                        </button>
+                        <div className="btn-star-wrap">
+                          <div className="btn-star-comet" />
+                          <button
+                            className="btn-cta"
+                            onClick={canEntrar ? handleSubmit : undefined}
+                            disabled={!canEntrar}
+                            style={ctaBtn(canEntrar)}
+                          >
+                            <span>Entrar</span>
+                          </button>
+                        </div>
                       )}
                     </div>
                   </motion.div>
