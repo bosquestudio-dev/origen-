@@ -14,6 +14,10 @@
   --color-accent: #7F77DD;
   --color-accent-hover: #6B62CC;
   --color-link: #0D65D9;
+  --neutral-100: #F4F5F0;
+  --neutral-200: #DBDDE1;
+  --neutral-400: #989EA9;
+  --neutral-500: #585E6A;
 
   /* ----------------------------------------------------------
      TARJETAS — Estado: Futuro / Próximo
@@ -265,7 +269,7 @@
   /* ----------------------------------------------------------
      TIPOGRAFÍA GLOBAL — escala de tamaños y pesos
      ---------------------------------------------------------- */
-  --font-sans: 'Inter', sans-serif;
+  --font-sans: 'DM Sans', sans-serif;
 
   --text-xs:   11px;
   --text-sm:   12px;

@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { toast } from 'sonner'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Mail, CreditCard, ArrowLeft } from 'lucide-react'
+import { Mail, CreditCard, ArrowLeft, ArrowRight } from 'lucide-react'
 import { useAuth } from '@/stores/auth.store'
 import LoadingScreen from '@/components/auth/LoadingScreen'
 
@@ -171,7 +171,7 @@ function InputEl({
           padding: `10px 12px 10px ${paddingLeft}px`,
           borderRadius: 8,
           border: hasError ? `1.5px solid ${C.errRed}` : `1px solid ${borderColor}`,
-          background: hasError ? 'rgba(253,236,236,0.5)' : '#FFFFFF',
+          background: hasError ? 'rgba(253,236,236,0.5)' : C.pageBg,
           fontFamily: DM, fontSize: 14, fontWeight: 400, lineHeight: '16px',
           color: hasError ? C.errRed : C.inputTxt,
           transition: hasError ? 'none' : 'border-color 0.15s ease',
@@ -310,16 +310,18 @@ export default function LoginPage() {
     fontWeight: 400, lineHeight: '24px', color: C.body,
   }
 
-  // Primary button: outline on desktop, filled on mobile (via CSS class)
+  // Primary button — always dark fill, disabled state is grey
   const ctaBtn = (active: boolean): React.CSSProperties => ({
     width: '100%', height: 40,
     display: 'flex', alignItems: 'center', justifyContent: 'center',
     padding: '0 16px', boxSizing: 'border-box',
     borderRadius: 8, fontFamily: DM,
     fontSize: 14, fontWeight: 400, lineHeight: '16px',
+    border: 'none',
+    background: active ? '#17181B' : '#E5E5E0',
+    color: active ? '#FFFFFF' : '#9B9B95',
     cursor: active ? 'pointer' : 'not-allowed',
-    opacity: active ? 1 : 0.45,
-    transition: 'opacity 0.2s ease',
+    transition: 'background 0.2s ease, color 0.2s ease',
   })
 
   return (
@@ -327,44 +329,36 @@ export default function LoginPage() {
       <LoadingScreen isVisible={showLoader} />
 
       <style>{`
-        .login-input::placeholder { color: #C5C7D0; }
+        .login-input::placeholder { color: #585E6A; opacity: 1; }
 
-        /* ── CTA button base ── */
-        .btn-cta {
-          border: 1.5px solid ${C.btnDark};
-          background: transparent;
-          color: ${C.btnDark};
-          position: relative;
-          overflow: hidden;
-        }
-        /* Loading state: always filled */
-        .btn-cta.loading {
-          background: ${C.btnDark} !important;
-          color: #FFFFFF !important;
-          border: none !important;
-        }
+        /* ── CTA button base ── (colors set via inline ctaBtn()) */
+        .btn-cta { position: relative; overflow: hidden; }
 
         /* ── Layout ── */
 
-        /* MOBILE (<1024px): aurora full-screen bg, card floats over it */
+        /* MOBILE (<1024px): gradient full-screen bg, card floats over it */
         .login-root { position: fixed; inset: 0; }
         .login-aurora {
           position: absolute; inset: 0;
-          background: #0D1117; overflow: hidden;
+          background:
+            radial-gradient(ellipse at 85% 5%, rgba(220,100,60,0.9) 0%, rgba(180,60,80,0.6) 20%, transparent 50%),
+            radial-gradient(ellipse at 30% 90%, rgba(30,80,220,0.9) 0%, rgba(20,60,200,0.7) 30%, transparent 65%),
+            radial-gradient(ellipse at 80% 80%, rgba(40,100,230,0.6) 0%, transparent 50%),
+            #0D1117;
+          overflow: hidden;
         }
         .login-form-wrap {
-          position: absolute; inset: 0; z-index: 10;
+          position: fixed; inset: 0; z-index: 10;
           display: flex; align-items: center; justify-content: center;
-          padding: 20px; box-sizing: border-box;
         }
         .login-form-card {
           background: #F4F5F0;
-          border-radius: 20px;
-          padding: 28px 24px;
-          width: 100%; max-width: 480px;
+          border-radius: 16px;
+          padding: 50px 24px;
+          width: calc(100% - 40px); max-width: 480px;
           box-sizing: border-box;
           height: calc(100dvh - 40px);
-          max-height: calc(100dvh - 40px);
+          margin: 20px;
           display: flex;
           flex-direction: column;
           overflow: hidden;
@@ -381,12 +375,9 @@ export default function LoginPage() {
         .step-footer {
           flex-shrink: 0; padding-top: 0;
         }
-        /* Mobile: filled button */
-        .btn-cta {
-          background: ${C.btnDark} !important;
-          color: #FFFFFF !important;
-          border: none !important;
-        }
+
+        /* Mobile: hide pills, aurora is pure gradient bg */
+        .aurora-pills { display: none !important; }
 
         /* DESKTOP (>=1024px): split 50/50 */
         @media (min-width: 1024px) {
@@ -405,7 +396,11 @@ export default function LoginPage() {
             width: 100%;
             height: 100%;
             background: #0D1117;
+            padding: 32px;
+            box-sizing: border-box;
           }
+          .aurora-pills { display: flex !important; }
+
           .login-form-wrap {
             position: relative; flex: 1;
             inset: unset; z-index: auto;
@@ -428,17 +423,6 @@ export default function LoginPage() {
           .step-motion-wrap, .step-inner { display: block; flex: none; min-height: none; }
           .step-content { flex: none; overflow-y: visible; min-height: none; }
           .step-footer { padding-top: 0; }
-          /* Desktop: outline button */
-          .btn-cta {
-            border: 1.5px solid ${C.btnDark} !important;
-            background: transparent !important;
-            color: ${C.btnDark} !important;
-          }
-          .btn-cta.loading {
-            background: ${C.btnDark} !important;
-            color: #FFFFFF !important;
-            border: none !important;
-          }
         }
 
         /* Very small screens: allow title to wrap */
@@ -474,9 +458,9 @@ export default function LoginPage() {
             `}</style>
 
             {/* Pills */}
-            <div style={{
+            <div className="aurora-pills" style={{
               position: 'absolute', bottom: 40, left: 0, right: 0,
-              display: 'flex', flexDirection: 'column',
+              flexDirection: 'column',
               alignItems: 'center', gap: 20,
               padding: '0 32px',
             }}>
@@ -499,7 +483,7 @@ export default function LoginPage() {
           {/* Card (rounded + bg mobile / transparent desktop) */}
           <div className="login-form-card">
 
-            {/* Back button — always in DOM, visibility toggled, NO animation */}
+            {/* 1. Back button — always in DOM, visibility toggled, NO animation */}
             <button
               onClick={() => back('selector')}
               style={{
@@ -509,13 +493,20 @@ export default function LoginPage() {
                 width: 32, height: 32, flexShrink: 0,
                 marginBottom: 16,
                 background: 'transparent',
-                border: '1px solid #EBECEE',
+                border: '1px solid #989EA9',
                 borderRadius: '8px',
                 cursor: 'pointer',
               }}
             >
-              <ArrowLeft size={16} color={C.backIcon} />
+              <ArrowLeft size={16} color="#989EA9" />
             </button>
+
+            {/* 2. Fixed title — always visible on selector and input, hidden on soporte */}
+            {step !== 'soporte' && (
+              <h1 className="login-heading" style={{ ...heading, marginBottom: 8 }}>
+                Accede a tu calendario
+              </h1>
+            )}
 
             <div className="step-motion-wrap">
               <AnimatePresence mode="wait">
@@ -529,8 +520,7 @@ export default function LoginPage() {
                     initial="initial" animate="animate" exit="exit"
                   >
                     <div className="step-content">
-                      {/* Title + Subtitle */}
-                      <h1 className="login-heading" style={heading}>Accede a tu calendario</h1>
+                      {/* Subtitle */}
                       <p style={subtext}>¿Utilizas en tu día a día el correo<br />de la empresa?</p>
 
                       {/* Options — gap: 8px (Figma: Frame 3 gap=8) */}
@@ -551,7 +541,7 @@ export default function LoginPage() {
                                 textAlign: 'left', cursor: 'pointer',
                                 transition: 'all 0.15s ease',
                                 border: sel ? `1px solid ${C.optSelBdr}` : `1px solid ${C.optBdr}`,
-                                background: sel ? C.optSelBg : 'transparent',
+                                background: sel ? C.optSelBg : C.pageBg,
                                 color: sel ? C.optSelTxt : C.optTxt,
                               }}
                             >
@@ -577,9 +567,6 @@ export default function LoginPage() {
                     initial="initial" animate="animate" exit="exit"
                   >
                     <div className="step-content">
-                      {/* Title */}
-                      <h1 className="login-heading" style={heading}>Accede a tu calendario</h1>
-
                       {/* Input + Checkbox — Figma: Frame 37, gap=20 */}
                       <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
 
@@ -749,36 +736,35 @@ export default function LoginPage() {
 
                     {/* Buttons row — pinned to bottom */}
                     <div className="step-footer" style={{ paddingTop: 24, display: 'flex', gap: 20 }}>
-                      {/* Volver — Figma: r=4, border #17191C 1px */}
+                      {/* Volver */}
                       <button
                         onClick={() => back('input')}
                         style={{
-                          flex: 1, height: 40,
+                          flex: 1, padding: '13px 16px', boxSizing: 'border-box',
                           display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
-                          padding: '0 16px', boxSizing: 'border-box',
-                          borderRadius: 4, border: `1px solid ${C.btnDark}`,
-                          background: 'transparent',
-                          fontFamily: DM, fontSize: 14, fontWeight: 400, lineHeight: '16px',
-                          color: C.btnDark, cursor: 'pointer',
+                          borderRadius: 8, border: `1.5px solid #17181B`,
+                          background: '#F4F5F0',
+                          fontFamily: DM, fontSize: 14, fontWeight: 400,
+                          color: '#17181B', cursor: 'pointer',
                         }}
                       >
                         <ArrowLeft size={16} />
                         Volver
                       </button>
-                      {/* Enviar — Figma: r=8, border #17191C 1.5px */}
+                      {/* Enviar */}
                       <button
                         onClick={handleSendNotification}
                         style={{
-                          flex: 1, height: 40,
-                          display: 'flex', alignItems: 'center', justifyContent: 'center',
-                          padding: '0 16px', boxSizing: 'border-box',
-                          borderRadius: 8, border: `1.5px solid ${C.btnDark}`,
-                          background: 'transparent',
-                          fontFamily: DM, fontSize: 14, fontWeight: 400, lineHeight: '16px',
-                          color: C.btnDark, cursor: 'pointer',
+                          flex: 1, padding: '13px 16px', boxSizing: 'border-box',
+                          display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
+                          borderRadius: 8, border: 'none',
+                          background: '#17181B',
+                          fontFamily: DM, fontSize: 14, fontWeight: 400,
+                          color: '#FFFFFF', cursor: 'pointer',
                         }}
                       >
                         Enviar
+                        <ArrowRight size={16} />
                       </button>
                     </div>
                   </motion.div>
