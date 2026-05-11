@@ -1,164 +1,113 @@
-import { useState, useEffect, useRef, useMemo } from 'react'
-import { MeshGradient } from '@paper-design/shaders-react'
-import { useNavigate } from 'react-router-dom'
-import { toast } from 'sonner'
-import { motion, AnimatePresence } from 'framer-motion'
-import { Mail, CreditCard, ArrowLeft, ArrowRight } from 'lucide-react'
-import { useAuth } from '@/stores/auth.store'
-import LoadingScreen from '@/components/auth/LoadingScreen'
-
-/* ─── SpinBorder component ─────────────────────────────────── */
-const SpinBorder = ({ children }: { children: React.ReactNode }) => {
-  const trackRef = useRef<HTMLDivElement>(null)
-  const angleRef = useRef(0)
-  const rafRef = useRef<number>()
-
-  useEffect(() => {
-    const animate = () => {
-      angleRef.current = (angleRef.current + 0.5) % 360
-      if (trackRef.current) {
-        trackRef.current.style.transform =
-          `translate(-50%, -50%) rotate(${angleRef.current}deg)`
-      }
-      rafRef.current = requestAnimationFrame(animate)
-    }
-    rafRef.current = requestAnimationFrame(animate)
-    return () => {
-      if (rafRef.current) cancelAnimationFrame(rafRef.current)
-    }
-  }, [])
-
-  return (
-    <div style={{
-      position: 'relative',
-      width: '100%',
-      borderRadius: '8px',
-      overflow: 'hidden',
-      padding: '1.5px',
-    }}>
-      <div
-        ref={trackRef}
-        style={{
-          position: 'absolute',
-          top: '50%',
-          left: '50%',
-          width: '1000%',
-          height: '1000%',
-          background: 'conic-gradient(from 0deg, rgba(138,56,245,1) 0deg, rgba(251,112,38,1) 180deg, rgba(138,56,245,1) 360deg)',
-          transform: 'translate(-50%, -50%) rotate(0deg)',
-        }}
-      />
-      <button
-        style={{
-          position: 'relative',
-          zIndex: 1,
-          width: '100%',
-          background: '#FFFFFF',
-          color: '#17181B',
-          border: 'none',
-          borderRadius: '6.5px',
-          padding: '14px 16px',
-          fontSize: '14px',
-          fontWeight: 500,
-          fontFamily: 'inherit',
-          cursor: 'default',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-        }}
-      >
-        {children}
-      </button>
-    </div>
-  )
-}
+import { useState, useEffect, useMemo } from 'react';
+import { MeshGradient } from '@paper-design/shaders-react';
+import { useNavigate } from 'react-router-dom';
+import { toast } from 'sonner';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Mail, CreditCard, ArrowLeft, ArrowRight } from 'lucide-react';
+import { useAuth } from '@/stores/auth.store';
+import LoadingScreen from '@/components/auth/LoadingScreen';
 
 /* ─── AnimatedDots component ────────────────────────────────── */
 const AnimatedDots = () => {
-  const [dots, setDots] = useState(0)
+  const [dots, setDots] = useState(0);
   useEffect(() => {
     const interval = setInterval(() => {
-      setDots(prev => (prev + 1) % 4)
-    }, 400)
-    return () => clearInterval(interval)
-  }, [])
+      setDots((prev) => (prev + 1) % 4);
+    }, 400);
+    return () => clearInterval(interval);
+  }, []);
   return (
-    <span style={{ display: 'inline-block', width: '24px', textAlign: 'left', letterSpacing: '1px' }}>
+    <span
+      style={{ display: 'inline-block', width: '24px', textAlign: 'left', letterSpacing: '1px' }}
+    >
       {'.'.repeat(dots)}
     </span>
-  )
-}
+  );
+};
 
 /* ─── Preserved logic ──────────────────────────────────────── */
-const NINETY_DAYS_MS = 90 * 24 * 60 * 60 * 1000
-const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-const DNI_RE   = /^[0-9]{7,8}[A-Za-z]$/
+const NINETY_DAYS_MS = 90 * 24 * 60 * 60 * 1000;
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const DNI_RE = /^[0-9]{7,8}[A-Za-z]$/;
 
 /* ─── Figma design tokens ───────────────────────────────────── */
-const DM = "'DM Sans', sans-serif"
-const GK = "'Space Grotesk', sans-serif"
+const DM = "'DM Sans', sans-serif";
+const GK = "'Space Grotesk', sans-serif";
 
 // Colors (extracted from Figma nodes 538-19053, 544-21594)
 const C = {
-  pageBg:    '#F4F5F0',  // page background (desktop right half + mobile card)
-  title:     '#000000',  // DM Sans 700 32px / 24px mobile
-  body:      '#000000',  // DM Sans 400 18px / 15px mobile
-  labelTxt:  '#2A2D32',  // label above input
-  ckboxTxt:  '#585E6A',  // checkbox label
-  helper:    '#727988',  // helper text
-  errRed:    '#D31212',  // error text color
-  optSelBg:  '#EAE0FF',  // selected option background
-  optSelBdr: '#2E0099',  // selected option border
-  optSelTxt: '#20006B',  // selected option text
-  optBdr:    '#DBDDE1',  // unselected option border
-  optTxt:    '#2A2D32',  // unselected option text
-  inputBdr:  '#DBDDE1',  // default input border
-  inputFoc:  '#2E0099',  // focused input border
-  inputTxt:  '#17191C',  // input text
-  backBdr:   '#989EA9',  // back button border (1.5px)
-  backIcon:  '#727988',  // back button arrow color
-  btnDark:   '#17191C',  // primary button dark (text + border desktop / bg mobile)
-  link:      '#2E0099',  // interactive link color
-}
+  pageBg: '#F4F5F0', // page background (desktop right half + mobile card)
+  title: '#000000', // DM Sans 700 32px / 24px mobile
+  body: '#000000', // DM Sans 400 18px / 15px mobile
+  labelTxt: '#2A2D32', // label above input
+  ckboxTxt: '#585E6A', // checkbox label
+  helper: '#727988', // helper text
+  errRed: '#D31212', // error text color
+  optSelBg: '#EAE0FF', // selected option background
+  optSelBdr: '#2E0099', // selected option border
+  optSelTxt: '#20006B', // selected option text
+  optBdr: '#DBDDE1', // unselected option border
+  optTxt: '#2A2D32', // unselected option text
+  inputBdr: '#DBDDE1', // default input border
+  inputFoc: '#2E0099', // focused input border
+  inputTxt: '#17191C', // input text
+  backBdr: '#989EA9', // back button border (1.5px)
+  backIcon: '#727988', // back button arrow color
+  btnDark: '#17191C', // primary button dark (text + border desktop / bg mobile)
+  link: '#2E0099', // interactive link color
+};
 
-type Step = 'selector' | 'input' | 'soporte'
-
+type Step = 'selector' | 'input' | 'soporte';
 
 /* ─── Input element ─────────────────────────────────────────── */
 function InputEl({
-  value, onChange, type = 'text', autoComplete, autoCapitalize, placeholder,
-  hasError, iconType, paddingLeft = 12,
+  value,
+  onChange,
+  type = 'text',
+  autoComplete,
+  autoCapitalize,
+  placeholder,
+  hasError,
+  iconType,
+  paddingLeft = 12,
 }: {
-  value: string
-  onChange: (v: string) => void
-  type?: string
-  autoComplete?: string
-  autoCapitalize?: string
-  placeholder?: string
-  hasError?: boolean
-  iconType?: 'email' | 'dni'
-  paddingLeft?: number
+  value: string;
+  onChange: (v: string) => void;
+  type?: string;
+  autoComplete?: string;
+  autoCapitalize?: string;
+  placeholder?: string;
+  hasError?: boolean;
+  iconType?: 'email' | 'dni';
+  paddingLeft?: number;
 }) {
-  const [focused, setFocused] = useState(false)
-  const borderColor = hasError ? C.errRed : focused ? C.inputFoc : C.inputBdr
+  const [focused, setFocused] = useState(false);
+  const borderColor = hasError ? C.errRed : focused ? C.inputFoc : C.inputBdr;
 
   return (
     <div style={{ position: 'relative' }}>
       {iconType && (
-        <div style={{
-          position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)',
-          display: 'flex', pointerEvents: 'none',
-        }}>
-          {iconType === 'email'
-            ? <Mail size={15} color={hasError ? C.errRed : '#9B9B95'} />
-            : <CreditCard size={15} color={hasError ? C.errRed : '#9B9B95'} />
-          }
+        <div
+          style={{
+            position: 'absolute',
+            left: 12,
+            top: '50%',
+            transform: 'translateY(-50%)',
+            display: 'flex',
+            pointerEvents: 'none',
+          }}
+        >
+          {iconType === 'email' ? (
+            <Mail size={15} color={hasError ? C.errRed : '#9B9B95'} />
+          ) : (
+            <CreditCard size={15} color={hasError ? C.errRed : '#9B9B95'} />
+          )}
         </div>
       )}
       <input
         type={type}
         value={value}
-        onChange={e => onChange(e.target.value)}
+        onChange={(e) => onChange(e.target.value)}
         onFocus={() => setFocused(true)}
         onBlur={() => setFocused(false)}
         autoComplete={autoComplete}
@@ -168,169 +117,199 @@ function InputEl({
         placeholder={placeholder}
         className="login-input"
         style={{
-          width: '100%', height: 40, boxSizing: 'border-box',
+          width: '100%',
+          height: 40,
+          boxSizing: 'border-box',
           padding: `10px 12px 10px ${paddingLeft}px`,
           borderRadius: 8,
           border: hasError ? `1.5px solid ${C.errRed}` : `1px solid ${borderColor}`,
           background: hasError ? 'rgba(253,236,236,0.5)' : C.pageBg,
-          fontFamily: DM, fontSize: 14, fontWeight: 400, lineHeight: '16px',
+          fontFamily: DM,
+          fontSize: 14,
+          fontWeight: 400,
+          lineHeight: '16px',
           color: hasError ? C.errRed : C.inputTxt,
           transition: hasError ? 'none' : 'border-color 0.15s ease',
           outline: 'none',
         }}
       />
     </div>
-  )
+  );
 }
 
 /* ─── Page ──────────────────────────────────────────────────── */
 export default function LoginPage() {
-  const { login, isSessionValid, isAdmin } = useAuth()
-  const navigate = useNavigate()
+  const { login, isSessionValid, isAdmin } = useAuth();
+  const navigate = useNavigate();
 
-  const [step, setStep]           = useState<Step>('selector')
-  const [goingBack, setGoingBack] = useState(false)
+  const [step, setStep] = useState<Step>('selector');
+  const [goingBack, setGoingBack] = useState(false);
 
   // Preserved state
-  const [loginType, setLoginType]   = useState<'email' | 'dni' | null>(null)
-  const [identifier, setIdentifier] = useState('')
-  const [loading, setLoading]       = useState(false)
-  const [showLoader, setShowLoader] = useState(false)
-  const [hasError, setHasError]     = useState(false)
-  const [consented, setConsented]   = useState(false)
+  const [loginType, setLoginType] = useState<'email' | 'dni' | null>(null);
+  const [identifier, setIdentifier] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [showLoader, setShowLoader] = useState(false);
+  const [hasError, setHasError] = useState(false);
+  const [consented, setConsented] = useState(false);
 
   // Support form state
-  const [supportName, setSupportName]       = useState('')
-  const [supportSurname, setSupportSurname] = useState('')
-  const [supportContact, setSupportContact] = useState('')
+  const [supportName, setSupportName] = useState('');
+  const [supportSurname, setSupportSurname] = useState('');
+  const [supportContact, setSupportContact] = useState('');
 
-  const auroraPills = useMemo(() => ([
-    'Haz una pausa consciente hoy',
-    'Escribe una nota de agradecimiento',
-    'Dedica 10 minutos a escuchar activamente',
-    'Conecta con tu propósito hoy',
-  ]), [])
+  const auroraPills = useMemo(
+    () => [
+      'Haz una pausa consciente hoy',
+      'Escribe una nota de agradecimiento',
+      'Dedica 10 minutos a escuchar activamente',
+      'Conecta con tu propósito hoy',
+    ],
+    []
+  );
 
   /* ─── Session checks (preserved) ─── */
   useEffect(() => {
     try {
-      const raw = localStorage.getItem('origen_user')
+      const raw = localStorage.getItem('origen_user');
       if (raw) {
-        const parsed = JSON.parse(raw)
-        const elapsed = Date.now() - (parsed.loginTimestamp ?? 0)
+        const parsed = JSON.parse(raw);
+        const elapsed = Date.now() - (parsed.loginTimestamp ?? 0);
         if (elapsed < NINETY_DAYS_MS) {
-          navigate(parsed.user?.role === 'admin' ? '/admin' : '/calendar', { replace: true })
+          navigate(parsed.user?.role === 'admin' ? '/admin' : '/calendar', { replace: true });
         } else {
-          localStorage.removeItem('origen_user')
-          localStorage.removeItem('origen_completions')
-          toast.info('Tu sesión ha expirado. Vuelve a acceder.', { duration: 4000 })
+          localStorage.removeItem('origen_user');
+          localStorage.removeItem('origen_completions');
+          toast.info('Tu sesión ha expirado. Vuelve a acceder.', { duration: 4000 });
         }
       }
-    } catch { localStorage.removeItem('origen_user') }
-  }, [navigate])
+    } catch {
+      localStorage.removeItem('origen_user');
+    }
+  }, [navigate]);
 
   useEffect(() => {
-    if (isSessionValid) navigate(isAdmin ? '/admin' : '/calendar', { replace: true })
-  }, [isSessionValid, isAdmin, navigate])
+    if (isSessionValid) navigate(isAdmin ? '/admin' : '/calendar', { replace: true });
+  }, [isSessionValid, isAdmin, navigate]);
 
-  if (isSessionValid) return null
+  if (isSessionValid) return null;
 
   /* ─── Handlers (preserved logic) ─── */
   const handleSubmit = async () => {
-    if (!loginType || !consented) return
+    if (!loginType || !consented) return;
     if (!identifier.trim()) {
-      toast.error('El campo no puede estar vacío', { duration: 2500 })
-      return
+      toast.error('El campo no puede estar vacío', { duration: 2500 });
+      return;
     }
     if (loginType === 'email' && !EMAIL_RE.test(identifier.trim())) {
-      toast.error('Introduce un email válido', { description: 'Ejemplo: tu.nombre@empresa.com', duration: 3000 })
-      return
+      toast.error('Introduce un email válido', {
+        description: 'Ejemplo: tu.nombre@empresa.com',
+        duration: 3000,
+      });
+      return;
     }
     if (loginType === 'dni' && !DNI_RE.test(identifier.trim())) {
-      toast.error('Introduce un DNI válido', { description: 'Formato: 12345678A', duration: 3000 })
-      return
+      toast.error('Introduce un DNI válido', { description: 'Formato: 12345678A', duration: 3000 });
+      return;
     }
-    const MIN_LOADING_MS = 2800
-    setLoading(true)
-    setHasError(false)
-    const startTime = Date.now()
-    await new Promise(r => setTimeout(r, 50))
-    const success = login(identifier.trim(), loginType)
+    const MIN_LOADING_MS = 2800;
+    const SUCCESS_LOADING_MS = 8000;
+    setLoading(true);
+    setHasError(false);
+    const startTime = Date.now();
+    await new Promise((r) => setTimeout(r, 50));
+    const success = login(identifier.trim(), loginType);
     if (success) {
-      const raw = localStorage.getItem('origen_user')
+      const raw = localStorage.getItem('origen_user');
       if (raw) {
-        const parsed = JSON.parse(raw)
-        const firstName = parsed.user?.name?.split(' ')[0] || 'bienvenido/a'
-        toast.success(`Bienvenido/a, ${firstName}`)
-        setShowLoader(true)
-        const elapsed = Date.now() - startTime
-        const remaining = Math.max(0, MIN_LOADING_MS - elapsed)
-        setTimeout(() => navigate(parsed.user.role === 'admin' ? '/admin' : '/calendar'), remaining)
+        const parsed = JSON.parse(raw);
+        const firstName = parsed.user?.name?.split(' ')[0] || 'bienvenido/a';
+        toast.success(`Bienvenido/a, ${firstName}`);
+        setShowLoader(true);
+        setTimeout(
+          () => navigate(parsed.user.role === 'admin' ? '/admin' : '/calendar', { replace: true }),
+          SUCCESS_LOADING_MS
+        );
       }
     } else {
-      const elapsed = Date.now() - startTime
-      const remaining = Math.max(0, MIN_LOADING_MS - elapsed)
-      await new Promise(r => setTimeout(r, remaining))
-      setLoading(false)
-      setHasError(true)
+      const elapsed = Date.now() - startTime;
+      const remaining = Math.max(0, MIN_LOADING_MS - elapsed);
+      await new Promise((r) => setTimeout(r, remaining));
+      setLoading(false);
+      setHasError(true);
     }
-  }
+  };
 
   const handleSendNotification = () => {
-    setGoingBack(true)
-    setStep('selector')
-    setHasError(false)
-    toast.success('Notificación enviada correctamente')
-  }
+    setGoingBack(true);
+    setStep('selector');
+    setHasError(false);
+    toast.success('Notificación enviada correctamente');
+  };
 
   /* ─── Navigation ─── */
-  const forward = (to: Step) => { setGoingBack(false); setStep(to) }
-  const back    = (to: Step) => {
-    setGoingBack(true)
-    setStep(to)
-    setIdentifier('')
-    setHasError(false)
-    setConsented(false)
-  }
+  const forward = (to: Step) => {
+    setGoingBack(false);
+    setStep(to);
+  };
+  const back = (to: Step) => {
+    setGoingBack(true);
+    setStep(to);
+    setIdentifier('');
+    setHasError(false);
+    setConsented(false);
+  };
 
   /* ─── Transition variants (direction-aware) ─── */
-  const d = goingBack ? -1 : 1
+  const d = goingBack ? -1 : 1;
   const stepVariants = {
-    initial:  { opacity: 0, x: 16 * d },
-    animate:  { opacity: 1, x: 0, transition: { duration: 0.25, ease: 'easeOut' as const } },
-    exit:     { opacity: 0, x: -16 * d, transition: { duration: 0.2, ease: 'easeIn' as const } },
-  }
+    initial: { opacity: 0, x: 16 * d },
+    animate: { opacity: 1, x: 0, transition: { duration: 0.25, ease: 'easeOut' as const } },
+    exit: { opacity: 0, x: -16 * d, transition: { duration: 0.2, ease: 'easeIn' as const } },
+  };
 
-  const canEntrar = consented && !loading
+  const canEntrar = consented && !loading;
 
   /* ─── Shared styles ─── */
   const heading: React.CSSProperties = {
-    margin: '0 0 8px', fontFamily: DM,
-    fontWeight: 700, color: C.title,
+    margin: '0 0 8px',
+    fontFamily: DM,
+    fontWeight: 700,
+    color: C.title,
     fontSize: 'clamp(20px, 3.5vw, 32px)',
     lineHeight: 'clamp(24px, 4vw, 38px)',
     whiteSpace: 'nowrap',
-  }
+  };
 
   const subtext: React.CSSProperties = {
-    margin: '0 0 32px', fontFamily: DM,
+    margin: '0 0 32px',
+    fontFamily: DM,
     fontSize: 'clamp(15px, 1.5vw, 18px)',
-    fontWeight: 400, lineHeight: '24px', color: C.body,
-  }
+    fontWeight: 400,
+    lineHeight: '24px',
+    color: C.body,
+  };
 
   // Primary button — always dark fill, disabled state is grey
   const ctaBtn = (active: boolean): React.CSSProperties => ({
-    width: '100%', height: 40,
-    display: 'flex', alignItems: 'center', justifyContent: 'center',
-    padding: '0 16px', boxSizing: 'border-box',
-    borderRadius: 8, fontFamily: DM,
-    fontSize: 14, fontWeight: 400, lineHeight: '16px',
+    width: '100%',
+    height: 40,
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: '0 16px',
+    boxSizing: 'border-box',
+    borderRadius: 8,
+    fontFamily: DM,
+    fontSize: 14,
+    fontWeight: 400,
+    lineHeight: '16px',
     border: 'none',
     background: active ? '#17181B' : '#E5E5E0',
     color: active ? '#FFFFFF' : '#9B9B95',
     cursor: active ? 'pointer' : 'not-allowed',
     transition: 'background 0.2s ease, color 0.2s ease',
-  })
+  });
 
   return (
     <>
@@ -482,7 +461,6 @@ export default function LoginPage() {
 
       {/* ── Root ── */}
       <div className="login-root">
-
         {/* ── Aurora ── (full-screen mobile / left-half desktop) */}
         <div className="login-aurora">
           <div className="login-aurora-inner">
@@ -490,12 +468,21 @@ export default function LoginPage() {
             <div style={{ position: 'absolute', inset: 0 }}>
               <MeshGradient
                 style={{ width: '100%', height: '100%' }}
-                colors={["#0A0E1F", "#161528", "#B23A1A", "#DE6A38", "#F2D6C8", "#6BA6DA", "#1E55CE", "#0B2A8E"]}
+                colors={[
+                  '#0A0E1F',
+                  '#161528',
+                  '#B23A1A',
+                  '#DE6A38',
+                  '#F2D6C8',
+                  '#6BA6DA',
+                  '#1E55CE',
+                  '#0B2A8E',
+                ]}
                 distortion={1.2}
                 swirl={0.6}
                 grainMixer={0}
                 grainOverlay={0}
-                speed={0.3}
+                speed={0.15}
                 offsetX={0.08}
               />
             </div>
@@ -520,7 +507,7 @@ export default function LoginPage() {
                 display: flex;
                 flex-direction: column;
                 align-items: center;
-                gap: 30px;
+                gap: 60px;
                 animation: aurora-stream-slow 120s linear infinite;
                 will-change: transform;
               }
@@ -534,11 +521,13 @@ export default function LoginPage() {
             {/* Pills tipo créditos de película */}
             <div className="aurora-credits-window">
               <div className="aurora-credits-track">
-                {Array.from({ length: 12 }).flatMap(() => auroraPills).map((text, i) => (
-                  <div key={i} className="aurora-pill aurora-credit-line">
-                    {text}
-                  </div>
-                ))}
+                {Array.from({ length: 12 })
+                  .flatMap(() => auroraPills)
+                  .map((text, i) => (
+                    <div key={i} className="aurora-pill aurora-credit-line">
+                      {text}
+                    </div>
+                  ))}
               </div>
             </div>
           </div>
@@ -548,15 +537,18 @@ export default function LoginPage() {
         <div className="login-form-wrap">
           {/* Card (rounded + bg mobile / transparent desktop) */}
           <div className="login-form-card">
-
             {/* 1. Back button — always in DOM, visibility toggled, NO animation */}
             <button
               onClick={() => back('selector')}
               style={{
                 visibility: step === 'input' ? 'visible' : 'hidden',
                 pointerEvents: step === 'input' ? 'auto' : 'none',
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                width: 32, height: 32, flexShrink: 0,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                width: 32,
+                height: 32,
+                flexShrink: 0,
                 marginBottom: 16,
                 background: 'transparent',
                 border: '1px solid #989EA9',
@@ -576,35 +568,50 @@ export default function LoginPage() {
 
             <div className="step-motion-wrap">
               <AnimatePresence mode="wait">
-
                 {/* ══ PASO 1: SELECTOR ══ */}
                 {step === 'selector' && (
                   <motion.div
                     key="selector"
                     className="step-inner"
                     variants={stepVariants}
-                    initial="initial" animate="animate" exit="exit"
+                    initial="initial"
+                    animate="animate"
+                    exit="exit"
                   >
                     <div className="step-content">
                       {/* Subtitle */}
-                      <p style={subtext}>¿Utilizas en tu día a día el correo<br />de la empresa?</p>
+                      <p style={subtext}>
+                        ¿Utilizas en tu día a día el correo
+                        <br />
+                        de la empresa?
+                      </p>
 
                       {/* Options — gap: 8px (Figma: Frame 3 gap=8) */}
                       <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-                        {(['email', 'dni'] as const).map(type => {
-                          const sel = loginType === type
+                        {(['email', 'dni'] as const).map((type) => {
+                          const sel = loginType === type;
                           return (
                             <button
                               key={type}
-                              onClick={() => { setLoginType(type); forward('input') }}
+                              onClick={() => {
+                                setLoginType(type);
+                                forward('input');
+                              }}
                               style={{
                                 /* Figma: input-container 378x64, pad 24/24/16/16, r=8 */
-                                width: '100%', height: 64,
-                                padding: '0 16px', boxSizing: 'border-box',
-                                display: 'flex', alignItems: 'center',
+                                width: '100%',
+                                height: 64,
+                                padding: '0 16px',
+                                boxSizing: 'border-box',
+                                display: 'flex',
+                                alignItems: 'center',
                                 borderRadius: 8,
-                                fontFamily: DM, fontSize: 14, fontWeight: 400, lineHeight: '16px',
-                                textAlign: 'left', cursor: 'pointer',
+                                fontFamily: DM,
+                                fontSize: 14,
+                                fontWeight: 400,
+                                lineHeight: '16px',
+                                textAlign: 'left',
+                                cursor: 'pointer',
                                 transition: 'all 0.15s ease',
                                 border: sel ? `1px solid ${C.optSelBdr}` : `1px solid ${C.optBdr}`,
                                 background: sel ? C.optSelBg : C.pageBg,
@@ -613,14 +620,12 @@ export default function LoginPage() {
                             >
                               {type === 'email'
                                 ? 'Sí, trabajo con el correo de la empresa'
-                                : 'No, no uso el correo en mi día a día'
-                              }
+                                : 'No, no uso el correo en mi día a día'}
                             </button>
-                          )
+                          );
                         })}
                       </div>
                     </div>
-
                   </motion.div>
                 )}
 
@@ -630,32 +635,42 @@ export default function LoginPage() {
                     key="input"
                     className="step-inner"
                     variants={stepVariants}
-                    initial="initial" animate="animate" exit="exit"
+                    initial="initial"
+                    animate="animate"
+                    exit="exit"
                   >
                     <div className="step-content">
                       {/* Input + Checkbox — Figma: Frame 37, gap=20 */}
                       <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
-
                         {/* Input field — Figma: Frame 34, gap=4 (label → input → helper) */}
                         <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
                           {/* Label — DM Sans 400 12px, #2A2D32 */}
-                          <span style={{
-                            fontFamily: DM, fontSize: 12, fontWeight: 400,
-                            lineHeight: '16px', color: C.labelTxt,
-                          }}>
+                          <span
+                            style={{
+                              fontFamily: DM,
+                              fontSize: 12,
+                              fontWeight: 400,
+                              lineHeight: '16px',
+                              color: C.labelTxt,
+                            }}
+                          >
                             {loginType === 'email' ? 'Correo' : 'DNI'}
                           </span>
 
                           {/* Input — Figma: input-container 378x40, r=8, pad 10/10/12/12 */}
                           <InputEl
                             value={identifier}
-                            onChange={v => { setIdentifier(v); if (hasError) setHasError(false) }}
+                            onChange={(v) => {
+                              setIdentifier(v);
+                              if (hasError) setHasError(false);
+                            }}
                             type={loginType === 'email' ? 'email' : 'text'}
                             autoComplete={loginType === 'email' ? 'email' : 'off'}
                             autoCapitalize={loginType === 'dni' ? 'characters' : 'off'}
-                            placeholder={loginType === 'email'
-                              ? 'Introduce tu correo de empresa'
-                              : 'Introduce tu DNI sin guiones'
+                            placeholder={
+                              loginType === 'email'
+                                ? 'Introduce tu correo de empresa'
+                                : 'Introduce tu DNI sin guiones'
                             }
                             hasError={hasError}
                             iconType={loginType}
@@ -672,18 +687,24 @@ export default function LoginPage() {
                                 exit={{ opacity: 0, height: 0 }}
                                 transition={{ duration: 0.25 }}
                                 style={{
-                                  margin: 0, overflow: 'hidden',
-                                  fontFamily: GK, fontSize: 10, fontWeight: 500,
-                                  lineHeight: '12px', color: C.errRed,
+                                  margin: 0,
+                                  overflow: 'hidden',
+                                  fontFamily: GK,
+                                  fontSize: 10,
+                                  fontWeight: 500,
+                                  lineHeight: '12px',
+                                  color: C.errRed,
                                 }}
                               >
-                                El {loginType === 'email' ? 'correo' : 'DNI'} introducido no corresponde a ningún usuario.{' '}
-                                Si el problema persiste{' '}
+                                El {loginType === 'email' ? 'correo' : 'DNI'} introducido no
+                                corresponde a ningún usuario. Si el problema persiste{' '}
                                 <span
                                   onClick={() => forward('soporte')}
                                   style={{
-                                    color: C.link, textDecoration: 'underline',
-                                    cursor: 'pointer', fontWeight: 500,
+                                    color: C.link,
+                                    textDecoration: 'underline',
+                                    cursor: 'pointer',
+                                    fontWeight: 500,
                                   }}
                                 >
                                   haz click aquí
@@ -695,37 +716,76 @@ export default function LoginPage() {
                         </div>
 
                         {/* Checkbox — Figma: Checkbox 378x20, r=4, border #DBDDE1 1.5px unchecked / bg #000 checked */}
-                        <label style={{ display: 'flex', gap: 8, alignItems: 'flex-start', cursor: 'pointer' }}>
+                        <label
+                          style={{
+                            display: 'flex',
+                            gap: 8,
+                            alignItems: 'flex-start',
+                            cursor: 'pointer',
+                          }}
+                        >
                           <div
-                            onClick={() => setConsented(c => !c)}
+                            onClick={() => setConsented((c) => !c)}
                             style={{
-                              width: 16, height: 16, flexShrink: 0, marginTop: 2,
-                              borderRadius: 4, boxSizing: 'border-box', cursor: 'pointer',
+                              width: 16,
+                              height: 16,
+                              flexShrink: 0,
+                              marginTop: 2,
+                              borderRadius: 4,
+                              boxSizing: 'border-box',
+                              cursor: 'pointer',
                               background: consented ? '#000000' : 'transparent',
                               border: consented ? 'none' : `1.5px solid ${C.optBdr}`,
-                              display: 'flex', alignItems: 'center', justifyContent: 'center',
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
                               transition: 'all 0.15s ease',
                             }}
                           >
                             {consented && (
                               <svg width="10" height="8" viewBox="0 0 10 8" fill="none">
-                                <path d="M1 4L3.5 6.5L9 1" stroke="#FFFFFF" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                                <path
+                                  d="M1 4L3.5 6.5L9 1"
+                                  stroke="#FFFFFF"
+                                  strokeWidth="1.5"
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                />
                               </svg>
                             )}
                           </div>
                           {/* DM Sans 400 12px, #585E6A */}
-                          <span style={{
-                            fontFamily: DM, fontSize: 12, fontWeight: 400,
-                            lineHeight: '16px', color: C.ckboxTxt,
-                          }}>
+                          <span
+                            style={{
+                              fontFamily: DM,
+                              fontSize: 12,
+                              fontWeight: 400,
+                              lineHeight: '16px',
+                              color: C.ckboxTxt,
+                            }}
+                          >
                             Acepto los{' '}
-                            <a href="#" onClick={e => e.preventDefault()}
-                              style={{ color: 'var(--color-link, #0D65D9)', textDecoration: 'underline', cursor: 'pointer' }}>
+                            <a
+                              href="#"
+                              onClick={(e) => e.preventDefault()}
+                              style={{
+                                color: 'var(--color-link, #0D65D9)',
+                                textDecoration: 'underline',
+                                cursor: 'pointer',
+                              }}
+                            >
                               términos legales
-                            </a>
-                            {' '}y la{' '}
-                            <a href="#" onClick={e => e.preventDefault()}
-                              style={{ color: 'var(--color-link, #0D65D9)', textDecoration: 'underline', cursor: 'pointer' }}>
+                            </a>{' '}
+                            y la{' '}
+                            <a
+                              href="#"
+                              onClick={(e) => e.preventDefault()}
+                              style={{
+                                color: 'var(--color-link, #0D65D9)',
+                                textDecoration: 'underline',
+                                cursor: 'pointer',
+                              }}
+                            >
                               política de privacidad
                             </a>
                             .
@@ -737,11 +797,19 @@ export default function LoginPage() {
                     {/* Entrar button — pinned to bottom */}
                     <div className="step-footer" style={{ paddingTop: 24 }}>
                       {loading ? (
-                        <div>
-                          <SpinBorder>
-                            Entrando<AnimatedDots />
-                          </SpinBorder>
-                        </div>
+                        <button
+                          type="button"
+                          disabled
+                          style={{
+                            ...ctaBtn(true),
+                            cursor: 'default',
+                          }}
+                        >
+                          <span>
+                            Entrando
+                            <AnimatedDots />
+                          </span>
+                        </button>
                       ) : (
                         <div className="btn-star-wrap">
                           <div className="btn-star-comet" />
@@ -765,12 +833,16 @@ export default function LoginPage() {
                     key="soporte"
                     className="step-inner"
                     variants={stepVariants}
-                    initial="initial" animate="animate" exit="exit"
+                    initial="initial"
+                    animate="animate"
+                    exit="exit"
                   >
                     <div className="step-content">
                       {/* Title — Figma: DM Sans 700 32px, #000 */}
                       <h1 className="login-heading" style={{ ...heading, whiteSpace: 'normal' }}>
-                        No hemos podido<br />verificar tu {loginType === 'dni' ? 'DNI' : 'correo'}
+                        No hemos podido
+                        <br />
+                        verificar tu {loginType === 'dni' ? 'DNI' : 'correo'}
                       </h1>
                       {/* Subtitle — Figma: DM Sans 400 18px, #000 */}
                       <p style={subtext}>
@@ -779,22 +851,44 @@ export default function LoginPage() {
 
                       {/* Fields — Figma: Frame 32, gap=12 */}
                       <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-                        {([
-                          { label: 'Nombre',   placeholder: 'Introduce tu nombre',        value: supportName,    set: setSupportName },
-                          { label: 'Apellidos',placeholder: 'Introduce tus apellidos',     value: supportSurname, set: setSupportSurname },
-                          {
-                            label: loginType === 'dni' ? 'DNI' : 'Correo',
-                            placeholder: loginType === 'dni'
-                              ? 'Introduce tu DNI sin guiones'
-                              : 'Introduce tu correo de empresa',
-                            value: supportContact, set: setSupportContact,
-                          },
-                        ] as const).map(({ label, placeholder, value, set }) => (
-                          <div key={label} style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
-                            <span style={{
-                              fontFamily: DM, fontSize: 12, fontWeight: 400,
-                              lineHeight: '16px', color: C.labelTxt,
-                            }}>
+                        {(
+                          [
+                            {
+                              label: 'Nombre',
+                              placeholder: 'Introduce tu nombre',
+                              value: supportName,
+                              set: setSupportName,
+                            },
+                            {
+                              label: 'Apellidos',
+                              placeholder: 'Introduce tus apellidos',
+                              value: supportSurname,
+                              set: setSupportSurname,
+                            },
+                            {
+                              label: loginType === 'dni' ? 'DNI' : 'Correo',
+                              placeholder:
+                                loginType === 'dni'
+                                  ? 'Introduce tu DNI sin guiones'
+                                  : 'Introduce tu correo de empresa',
+                              value: supportContact,
+                              set: setSupportContact,
+                            },
+                          ] as const
+                        ).map(({ label, placeholder, value, set }) => (
+                          <div
+                            key={label}
+                            style={{ display: 'flex', flexDirection: 'column', gap: 4 }}
+                          >
+                            <span
+                              style={{
+                                fontFamily: DM,
+                                fontSize: 12,
+                                fontWeight: 400,
+                                lineHeight: '16px',
+                                color: C.labelTxt,
+                              }}
+                            >
                               {label}
                             </span>
                             <InputEl value={value} onChange={set} placeholder={placeholder} />
@@ -804,17 +898,29 @@ export default function LoginPage() {
                     </div>
 
                     {/* Buttons row — pinned to bottom */}
-                    <div className="step-footer" style={{ paddingTop: 24, display: 'flex', gap: 20 }}>
+                    <div
+                      className="step-footer"
+                      style={{ paddingTop: 24, display: 'flex', gap: 20 }}
+                    >
                       {/* Volver */}
                       <button
                         onClick={() => back('input')}
                         style={{
-                          flex: 1, padding: '13px 16px', boxSizing: 'border-box',
-                          display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
-                          borderRadius: 8, border: `1.5px solid #17181B`,
+                          flex: 1,
+                          padding: '13px 16px',
+                          boxSizing: 'border-box',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          gap: 8,
+                          borderRadius: 8,
+                          border: `1.5px solid #17181B`,
                           background: '#F4F5F0',
-                          fontFamily: DM, fontSize: 14, fontWeight: 400,
-                          color: '#17181B', cursor: 'pointer',
+                          fontFamily: DM,
+                          fontSize: 14,
+                          fontWeight: 400,
+                          color: '#17181B',
+                          cursor: 'pointer',
                         }}
                       >
                         <ArrowLeft size={16} />
@@ -824,12 +930,21 @@ export default function LoginPage() {
                       <button
                         onClick={handleSendNotification}
                         style={{
-                          flex: 1, padding: '13px 16px', boxSizing: 'border-box',
-                          display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
-                          borderRadius: 8, border: 'none',
+                          flex: 1,
+                          padding: '13px 16px',
+                          boxSizing: 'border-box',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          gap: 8,
+                          borderRadius: 8,
+                          border: 'none',
                           background: '#17181B',
-                          fontFamily: DM, fontSize: 14, fontWeight: 400,
-                          color: '#FFFFFF', cursor: 'pointer',
+                          fontFamily: DM,
+                          fontSize: 14,
+                          fontWeight: 400,
+                          color: '#FFFFFF',
+                          cursor: 'pointer',
                         }}
                       >
                         Enviar
@@ -838,12 +953,14 @@ export default function LoginPage() {
                     </div>
                   </motion.div>
                 )}
-
               </AnimatePresence>
             </div>
-          </div>{/* login-form-card */}
-        </div>{/* login-form-wrap */}
-      </div>{/* login-root */}
+          </div>
+          {/* login-form-card */}
+        </div>
+        {/* login-form-wrap */}
+      </div>
+      {/* login-root */}
     </>
-  )
+  );
 }
