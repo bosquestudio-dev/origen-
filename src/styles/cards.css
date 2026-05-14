@@ -292,3 +292,14 @@
     transparent 65%
   );
 }
+
+/* ── Login mobile typography ── */
+@media (max-width: 1024px) {
+  .login-title        { font-size: var(--text-3xl) !important; font-weight: 700; }
+  .login-subtitle     { font-size: var(--text-lg) !important; }
+  .login-option-btn   { font-size: var(--text-md) !important; }
+  .login-error-text   { font-size: var(--text-2xs) !important; color: #D31212; }
+  .login-input        { font-size: var(--text-sm) !important; }
+  .login-input::placeholder { font-size: var(--text-sm) !important; }
+  .login-checkbox-label { font-size: var(--text-sm) !important; }
+}

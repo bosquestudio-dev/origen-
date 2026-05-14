@@ -47,7 +47,7 @@ export default function CalendarPage() {
   // WhatsApp state
   const [showPopup, setShowPopup] = useState(false)
   const [waNumber, setWaNumber] = useState(localStorage.getItem(WA_NUMBER_KEY) || '')
-  const [dismissed, setDismissed] = useState(localStorage.getItem(WA_KEY) === 'true')
+  const [dismissed, setDismissed] = useState(false)
   const [inputFocused, setInputFocused] = useState(false)
   const [iconHovered, setIconHovered] = useState(false)
   const inputRef = useRef<HTMLInputElement>(null)
@@ -66,8 +66,7 @@ export default function CalendarPage() {
 
   useEffect(() => {
     const hasNumber = localStorage.getItem(WA_NUMBER_KEY)
-    const hasDismissed = localStorage.getItem(WA_KEY)
-    if (!hasNumber && !hasDismissed) {
+    if (!hasNumber) {
       const t = setTimeout(() => setShowPopup(true), 800)
       return () => clearTimeout(t)
     }
@@ -85,8 +84,6 @@ export default function CalendarPage() {
   }
 
   const handleDismiss = () => {
-    localStorage.setItem(WA_KEY, 'true')
-    setDismissed(true)
     setShowPopup(false)
   }
 
@@ -104,35 +101,140 @@ export default function CalendarPage() {
     <>
     <LoadingScreen isVisible={!pageReady} />
     <motion.div
-      className="min-h-screen bg-background"
+      style={{ minHeight: '100vh', background: '#2A2D32' }}
       initial={{ opacity: 0 }}
       animate={{ opacity: pageReady ? 1 : 0 }}
       transition={{ duration: 0.4, ease: 'easeOut' }}
     >
       {/* Header */}
-      <header className="sticky top-0 z-40 h-16 bg-background/80 backdrop-blur-md border-b border-border flex items-center px-4 md:px-8">
-        <div className="flex-1 flex items-center gap-3">
-          <p className="text-sm text-foreground font-light">Hola, <span className="font-medium">{firstName}</span></p>
-          <button
-            onClick={() => setShowLogoutModal(true)}
-            className="text-muted-foreground/50 hover:text-muted-foreground transition-colors"
-            title="Salir"
-          >
-            <LogOut size={14} />
-          </button>
-        </div>
-        <h1 className="text-sm font-medium tracking-[0.15em] text-foreground">ORIGEN</h1>
-        <div className="flex-1 flex items-center justify-end gap-3">
-          <ProgressRing percentage={progressPercentage} />
-          <div className="text-right hidden sm:block">
-            <p className="text-xs text-foreground">{completedCount} / {totalAvailable}</p>
-            <p className="text-[10px] text-muted-foreground">El {companionPercentage}% completó hoy</p>
+      <style>{`
+        .cal-header-outer {
+          position: sticky; top: 0; z-index: 40;
+          background: #2A2D32;
+          border-bottom: 1px solid rgba(255,255,255,0.08);
+          backdrop-filter: blur(8px);
+        }
+        .cal-header {
+          max-width: 1370px;
+          margin: 0 auto;
+          padding: 24px 32px;
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+        }
+        .cal-header-left { display: flex; flex-direction: column; gap: 2px; }
+        .cal-header-right { display: flex; align-items: center; gap: 16px; }
+        .cal-header-logout {
+          background: none; border: none; cursor: pointer;
+          color: rgba(255,255,255,0.5);
+          display: flex; align-items: center; padding: 4px;
+        }
+        /* Metric cards — transparent bg, visible border, fixed height */
+        .cal-metric-card {
+          width: 220px; min-width: 220px;
+          height: 63px; min-height: 63px; max-height: 63px;
+          overflow: hidden;
+          background: transparent;
+          border: 1px solid rgba(255,255,255,0.15);
+          border-radius: 12px;
+          padding: 0 16px;
+          display: flex; align-items: center; box-sizing: border-box;
+        }
+        /* Mobile logout — hidden in desktop (shown via row1) */
+        .cal-logout-mobile { display: none; }
+        .cal-logout-desktop { display: flex; }
+
+        @media (max-width: 767px) {
+          .cal-header { flex-direction: column; align-items: stretch; gap: 12px; padding: 16px; }
+          .cal-header-right { flex-direction: column; gap: 8px; width: 100%; flex-wrap: nowrap; }
+          .cal-metric-card { width: 100% !important; min-width: unset !important; max-width: unset !important; height: auto !important; min-height: unset !important; max-height: unset !important; padding: 12px 16px !important; }
+          .cal-logout-mobile { display: flex; }
+          .cal-logout-desktop { display: none; }
+          .cal-main { padding-left: 16px !important; padding-right: 16px !important; }
+        }
+      `}</style>
+      <div className="cal-header-outer">
+        <div className="cal-header">
+          <div className="cal-header-left">
+            {/* Row 1: greeting + logout (mobile only) */}
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <div
+                style={{
+                  fontFamily: "'DM Sans', sans-serif",
+                  fontSize: 28, lineHeight: '32px',
+                  letterSpacing: '-0.3px', color: '#F4F5F0',
+                }}
+              >
+                <span style={{ fontWeight: 300 }}>Hola, </span>
+                <span style={{ fontWeight: 700 }}>{firstName}</span>
+              </div>
+              <button
+                className="cal-header-logout cal-logout-mobile"
+                onClick={() => setShowLogoutModal(true)}
+                title="Salir"
+              >
+                <LogOut size={18} />
+              </button>
+            </div>
+            {/* Subtitle */}
+            <div
+              style={{
+                fontFamily: "'DM Sans', sans-serif",
+                fontWeight: 500, fontSize: 16, lineHeight: '22px',
+                letterSpacing: '-0.18px', color: '#BCC0C7',
+              }}
+            >
+              Un reto cada día laboral — los findes desconectamos
+            </div>
+          </div>
+
+          {/* Right: TU PROGRESO card + HOY card + logout (desktop) */}
+          <div className="cal-header-right">
+            {/* Card TU PROGRESO — ring left, text right, centered vertically */}
+            <div className="cal-metric-card" style={{ flexDirection: 'row', justifyContent: 'flex-start', gap: 12 }}>
+              <ProgressRing percentage={progressPercentage} size={32} />
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 0, lineHeight: 1.2, justifyContent: 'center' }}>
+                <div style={{ fontSize: 9, fontWeight: 500, letterSpacing: '0.08em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.4)', fontFamily: "'DM Sans', sans-serif" }}>
+                  Tu progreso
+                </div>
+                <div style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 16, fontWeight: 700, color: '#FFFFFF', lineHeight: 1.2 }}>
+                  {completedCount} / {totalAvailable}
+                </div>
+                <div style={{ fontSize: 10, color: 'rgba(255,255,255,0.4)', fontFamily: "'DM Sans', sans-serif", lineHeight: 1.2 }}>
+                  retos completados
+                </div>
+              </div>
+            </div>
+
+            {/* Card HOY — vertically centered, label + row[% + text] */}
+            <div className="cal-metric-card" style={{ flexDirection: 'column', justifyContent: 'center', alignItems: 'flex-start', gap: 2 }}>
+              <div style={{ fontSize: 10, fontWeight: 500, letterSpacing: '0.08em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.4)', fontFamily: "'DM Sans', sans-serif" }}>
+                Hoy
+              </div>
+              <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 8, width: '100%' }}>
+                <div style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 22, fontWeight: 700, color: '#22C55E', lineHeight: 1.2, flexShrink: 0, alignSelf: 'center' }}>
+                  {companionPercentage}%
+                </div>
+                <div style={{ fontSize: 10, color: '#ECEDEF', fontFamily: "'DM Sans', sans-serif", lineHeight: 1.2, alignSelf: 'center', display: 'flex', alignItems: 'center' }}>
+                  de tus compañeros ya lo han completado
+                </div>
+              </div>
+            </div>
+
+            {/* Logout — desktop only */}
+            <button
+              className="cal-header-logout cal-logout-desktop"
+              onClick={() => setShowLogoutModal(true)}
+              title="Salir"
+            >
+              <LogOut size={20} />
+            </button>
           </div>
         </div>
-      </header>
+      </div>
 
       {/* Calendar */}
-      <main className="max-w-5xl mx-auto px-4 md:px-8 py-8">
+      <main style={{ maxWidth: 1370, margin: '0 auto', padding: '40px 32px' }} className="cal-main">
         <CalendarGrid />
       </main>
 

@@ -9,15 +9,18 @@
   /* ----------------------------------------------------------
      COLORES BASE
      ---------------------------------------------------------- */
-  --color-bg-primary: #0F0F1A;
+  --color-bg-primary: #2A2D32;
   --color-bg-surface: #FFFFFF;
   --color-accent: #7F77DD;
   --color-accent-hover: #6B62CC;
   --color-link: #0D65D9;
-  --neutral-100: #F4F5F0;
+  --neutral-100: #ECEDEF;
   --neutral-200: #DBDDE1;
+  --neutral-300: #BCC0C7;
   --neutral-400: #989EA9;
   --neutral-500: #585E6A;
+  --neutral-600: #585E6A;
+  --neutral-700: #41454E;
 
   /* ----------------------------------------------------------
      TARJETAS — Estado: Futuro / Próximo
@@ -213,19 +216,19 @@
   --text-day-sm-size: 32px;
   --text-day-sm-weight: 700;
   --text-day-sm-lh: 35.2px;
-  --text-day-sm-family: 'Space Grotesk', sans-serif;
+  --text-day-sm-family: 'DM Sans', sans-serif;
 
   /* Day number — Medium / Large */
   --text-day-md-size: 40px;
   --text-day-md-weight: 700;
   --text-day-md-lh: 44px;
-  --text-day-md-family: 'Space Grotesk', sans-serif;
+  --text-day-md-family: 'DM Sans', sans-serif;
 
   /* Day number — X-Large */
   --text-day-xl-size: 48px;
   --text-day-xl-weight: 700;
   --text-day-xl-lh: 52.8px;
-  --text-day-xl-family: 'Space Grotesk', sans-serif;
+  --text-day-xl-family: 'DM Sans', sans-serif;
 
   /* Month label — Small */
   --text-month-sm-size: 12px;
@@ -271,6 +274,7 @@
      ---------------------------------------------------------- */
   --font-sans: 'DM Sans', sans-serif;
 
+  --text-2xs:  10px;
   --text-xs:   11px;
   --text-sm:   12px;
   --text-base: 13px;
@@ -298,6 +302,8 @@
   /* ----------------------------------------------------------
      COLORES ESPECIALES
      ---------------------------------------------------------- */
+  --secondary-200: #D1BDFF;
+
   --color-gold: hsl(43 88% 38%);
   --color-gold-light: hsl(43 69% 52%);
 }

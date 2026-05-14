@@ -11,15 +11,17 @@ export default function ProgressRing({ percentage, size = 40 }: ProgressRingProp
 
   return (
     <svg width={size} height={size} className="transform -rotate-90">
+      {/* Track — Figma: r=0.255 g=0.272 b=0.305 → #41454E */}
       <circle
         cx={size / 2} cy={size / 2} r={radius}
-        stroke="hsl(var(--surface-3))"
+        stroke="#41454E"
         strokeWidth={strokeWidth}
         fill="none"
       />
+      {/* Progress — Figma: r=0.135 g=0.765 b=0.366 → #22C35D */}
       <circle
         cx={size / 2} cy={size / 2} r={radius}
-        stroke="hsl(var(--primary))"
+        stroke="#22C35D"
         strokeWidth={strokeWidth}
         fill="none"
         strokeLinecap="round"

@@ -32,7 +32,7 @@ const DNI_RE = /^[0-9]{7,8}[A-Za-z]$/;
 
 /* ─── Figma design tokens ───────────────────────────────────── */
 const DM = "'DM Sans', sans-serif";
-const GK = "'Space Grotesk', sans-serif";
+const GK = "'DM Sans', sans-serif";
 
 // Colors (extracted from Figma nodes 538-19053, 544-21594)
 const C = {
@@ -316,7 +316,7 @@ export default function LoginPage() {
       <LoadingScreen isVisible={showLoader} />
 
       <style>{`
-        .login-input::placeholder { color: #C5C7D0; }
+        .login-input::placeholder { color: var(--neutral-600, #585E6A); }
 
         /* ── CTA button base ── */
         .btn-cta {
@@ -333,23 +333,24 @@ export default function LoginPage() {
         .login-root { position: fixed; inset: 0; }
         .login-aurora {
           position: absolute; inset: 0;
-          background: #0D1117; overflow: hidden;
+          background:
+            radial-gradient(ellipse at 85% 5%, rgba(220,100,60,0.95) 0%, rgba(200,80,50,0.7) 15%, rgba(255,220,180,0.3) 35%, transparent 55%),
+            radial-gradient(ellipse at 70% 30%, rgba(255,255,255,0.08) 0%, transparent 40%),
+            #0D0D0D;
+          overflow: hidden;
         }
         .login-form-wrap {
-          position: absolute; inset: 0; z-index: 10;
+          position: fixed; inset: 0; z-index: 10;
           display: flex; align-items: center; justify-content: center;
-          padding: 20px; box-sizing: border-box;
         }
         .login-form-card {
           background: #F4F5F0;
           border-radius: 20px;
-          padding: 28px 24px;
-          width: 100%; max-width: 480px;
+          padding: 24px 20px;
+          width: calc(100% - 40px); max-width: 480px;
           box-sizing: border-box;
-          height: calc(100dvh - 40px);
-          max-height: calc(100dvh - 40px);
-          display: flex;
-          flex-direction: column;
+          height: 540px; max-height: 540px;
+          display: flex; flex-direction: column;
           overflow: hidden;
         }
         .step-motion-wrap {
@@ -359,11 +360,9 @@ export default function LoginPage() {
           display: flex; flex-direction: column; flex: 1; min-height: 0;
         }
         .step-content {
-          flex: 1; overflow-y: auto; min-height: 0;
+          flex: 1; overflow-y: hidden; min-height: 0;
         }
-        .step-footer {
-          flex-shrink: 0; padding-top: 0;
-        }
+        .step-footer { flex-shrink: 0; padding-top: 0; }
 
         /* DESKTOP (>=1024px): split 50/50 */
         @media (min-width: 1024px) {
@@ -381,7 +380,10 @@ export default function LoginPage() {
             overflow: hidden;
             width: 100%;
             height: 100%;
-            background: #0A0E1F;
+            background:
+              radial-gradient(ellipse at 85% 5%, rgba(220,100,60,0.95) 0%, rgba(200,80,50,0.7) 15%, rgba(255,220,180,0.3) 35%, transparent 55%),
+              radial-gradient(ellipse at 70% 30%, rgba(255,255,255,0.08) 0%, transparent 40%),
+              #0D0D0D;
           }
           .login-form-wrap {
             position: relative; flex: 1;
@@ -464,19 +466,19 @@ export default function LoginPage() {
         {/* ── Aurora ── (full-screen mobile / left-half desktop) */}
         <div className="login-aurora">
           <div className="login-aurora-inner">
-            {/* Shader de gradiente animado como fondo */}
+            {/* Gradiente animado — sin azul */}
             <div style={{ position: 'absolute', inset: 0 }}>
               <MeshGradient
                 style={{ width: '100%', height: '100%' }}
                 colors={[
-                  '#0A0E1F',
-                  '#161528',
-                  '#B23A1A',
-                  '#DE6A38',
-                  '#F2D6C8',
-                  '#6BA6DA',
-                  '#1E55CE',
-                  '#0B2A8E',
+                  '#0D0D0D',
+                  '#1A0A06',
+                  '#C84A1E',
+                  '#E06830',
+                  '#F2C4A0',
+                  '#8B3010',
+                  '#3D1008',
+                  '#0D0D0D',
                 ]}
                 distortion={1.2}
                 swirl={0.6}
@@ -561,7 +563,7 @@ export default function LoginPage() {
 
             {/* 2. Fixed title — always visible on selector and input, hidden on soporte */}
             {step !== 'soporte' && (
-              <h1 className="login-heading" style={{ ...heading, marginBottom: 8 }}>
+              <h1 className="login-heading login-title" style={{ ...heading, marginBottom: 8 }}>
                 Accede a tu calendario
               </h1>
             )}
@@ -580,7 +582,7 @@ export default function LoginPage() {
                   >
                     <div className="step-content">
                       {/* Subtitle */}
-                      <p style={subtext}>
+                      <p className="login-subtitle" style={subtext}>
                         ¿Utilizas en tu día a día el correo
                         <br />
                         de la empresa?
@@ -593,6 +595,7 @@ export default function LoginPage() {
                           return (
                             <button
                               key={type}
+                              className="login-option-btn"
                               onClick={() => {
                                 setLoginType(type);
                                 forward('input');
@@ -610,7 +613,8 @@ export default function LoginPage() {
                                 fontSize: 14,
                                 fontWeight: 400,
                                 lineHeight: '16px',
-                                textAlign: 'left',
+                                textAlign: 'center',
+                                justifyContent: 'center',
                                 cursor: 'pointer',
                                 transition: 'all 0.15s ease',
                                 border: sel ? `1px solid ${C.optSelBdr}` : `1px solid ${C.optBdr}`,
@@ -682,6 +686,7 @@ export default function LoginPage() {
                             {hasError && (
                               <motion.p
                                 key="err"
+                                className="login-error-text"
                                 initial={{ opacity: 0, height: 0 }}
                                 animate={{ opacity: 1, height: 'auto' }}
                                 exit={{ opacity: 0, height: 0 }}
@@ -756,6 +761,7 @@ export default function LoginPage() {
                           </div>
                           {/* DM Sans 400 12px, #585E6A */}
                           <span
+                            className="login-checkbox-label"
                             style={{
                               fontFamily: DM,
                               fontSize: 12,
@@ -839,7 +845,7 @@ export default function LoginPage() {
                   >
                     <div className="step-content">
                       {/* Title — Figma: DM Sans 700 32px, #000 */}
-                      <h1 className="login-heading" style={{ ...heading, whiteSpace: 'normal' }}>
+                      <h1 className="login-heading login-title" style={{ ...heading, whiteSpace: 'normal' }}>
                         No hemos podido
                         <br />
                         verificar tu {loginType === 'dni' ? 'DNI' : 'correo'}
@@ -907,7 +913,7 @@ export default function LoginPage() {
                         onClick={() => back('input')}
                         style={{
                           flex: 1,
-                          padding: '13px 16px',
+                          padding: '12px 16px',
                           boxSizing: 'border-box',
                           display: 'flex',
                           alignItems: 'center',
@@ -931,7 +937,7 @@ export default function LoginPage() {
                         onClick={handleSendNotification}
                         style={{
                           flex: 1,
-                          padding: '13px 16px',
+                          padding: '12px 16px',
                           boxSizing: 'border-box',
                           display: 'flex',
                           alignItems: 'center',

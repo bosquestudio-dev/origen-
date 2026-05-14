@@ -15,7 +15,7 @@
   gap: 10px;
   padding: 12px 16px;
   border-radius: var(--radius-toast, 10px);
-  font-family: var(--font-sans, 'Inter', sans-serif);
+  font-family: var(--font-sans, 'DM Sans', sans-serif);
   font-size: var(--text-base, 13px);
   line-height: var(--leading-normal, 1.5);
   width: 356px;
@@ -133,7 +133,7 @@
   gap: 12px;
   padding: 14px 16px;
   border-radius: var(--radius-alert, 10px);
-  font-family: var(--font-sans, 'Inter', sans-serif);
+  font-family: var(--font-sans, 'DM Sans', sans-serif);
   font-size: var(--text-base, 13px);
   line-height: var(--leading-normal, 1.5);
   width: 100%;

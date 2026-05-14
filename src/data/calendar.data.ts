@@ -1,5 +1,5 @@
 export const SPECIAL_DAY = 24
-export const SIMULATED_TODAY = 10
+export const SIMULATED_TODAY = 4
 
 export const DAY_LABELS: Record<number, string> = {
   1: 'Mar 1',  2: 'Mié 2',  3: 'Jue 3',  4: 'Vie 4',
