@@ -100,9 +100,9 @@ export default function CalendarPage() {
     <LoadingScreen isVisible={!pageReady} />
     <motion.div
       style={{ minHeight: '100vh', background: '#2A2D32' }}
-      initial={{ opacity: 0 }}
-      animate={{ opacity: pageReady ? 1 : 0 }}
-      transition={{ duration: 0.4, ease: 'easeOut' }}
+      initial={{ opacity: 0, scale: 1.6 }}
+      animate={{ opacity: pageReady ? 1 : 0, scale: pageReady ? 1 : 1.6 }}
+      transition={{ duration: 1.8, ease: [0.16, 1, 0.3, 1] }}
     >
       {/* Header */}
       <style>{`
