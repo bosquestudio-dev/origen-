@@ -17,7 +17,6 @@ import { motion, AnimatePresence } from 'framer-motion'
 import LoadingScreen from '@/components/auth/LoadingScreen'
 import { toast } from 'sonner'
 
-const WA_KEY = 'origen_wa_dismissed'
 const WA_NUMBER_KEY = 'origen_wa_number'
 
 const WA_ICON = () => (
@@ -47,7 +46,6 @@ export default function CalendarPage() {
   // WhatsApp state
   const [showPopup, setShowPopup] = useState(false)
   const [waNumber, setWaNumber] = useState(localStorage.getItem(WA_NUMBER_KEY) || '')
-  const [dismissed, setDismissed] = useState(false)
   const [inputFocused, setInputFocused] = useState(false)
   const [iconHovered, setIconHovered] = useState(false)
   const inputRef = useRef<HTMLInputElement>(null)

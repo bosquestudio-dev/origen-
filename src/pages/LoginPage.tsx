@@ -333,7 +333,8 @@ export default function LoginPage() {
         .login-root { position: fixed; inset: 0; }
         .login-aurora {
           position: absolute; inset: 0;
-          background: #0D1117; overflow: hidden;
+          background: #0D0D0D;
+          overflow: hidden;
         }
         .login-form-wrap {
           position: absolute; inset: 0; z-index: 10;
@@ -381,7 +382,7 @@ export default function LoginPage() {
             overflow: hidden;
             width: 100%;
             height: 100%;
-            background: #0A0E1F;
+            background: #0D0D0D;
           }
           .login-form-wrap {
             position: relative; flex: 1;
@@ -472,19 +473,17 @@ export default function LoginPage() {
         {/* ── Aurora ── (full-screen mobile / left-half desktop) */}
         <div className="login-aurora">
           <div className="login-aurora-inner">
-            {/* Shader de gradiente animado como fondo */}
+            {/* Gradiente animado */}
             <div style={{ position: 'absolute', inset: 0 }}>
               <MeshGradient
                 style={{ width: '100%', height: '100%' }}
                 colors={[
-                  '#0A0E1F',
-                  '#161528',
-                  '#B23A1A',
-                  '#DE6A38',
-                  '#F2D6C8',
-                  '#6BA6DA',
-                  '#1E55CE',
-                  '#0B2A8E',
+                  '#AC440B',
+                  '#D75F1B',
+                  '#F77228',
+                  '#FBA74C',
+                  '#FEBE59',
+                  '#FFE1B2',
                 ]}
                 distortion={1.2}
                 swirl={0.6}
