@@ -189,10 +189,10 @@ export default function LoginPage() {
   }, [navigate]);
 
   useEffect(() => {
-    if (isSessionValid) navigate(isAdmin ? '/admin' : '/calendar', { replace: true });
-  }, [isSessionValid, isAdmin, navigate]);
+    if (isSessionValid && !loading) navigate(isAdmin ? '/admin' : '/calendar', { replace: true });
+  }, [isSessionValid, isAdmin, navigate, loading]);
 
-  if (isSessionValid) return null;
+  if (isSessionValid && !loading) return null;
 
   /* ─── Handlers (preserved logic) ─── */
   const handleSubmit = async () => {
@@ -213,7 +213,7 @@ export default function LoginPage() {
       return;
     }
     const MIN_LOADING_MS = 2800;
-    const SUCCESS_LOADING_MS = 8000;
+    const SUCCESS_LOADING_MS = 5000;
     setLoading(true);
     setHasError(false);
     const startTime = Date.now();
@@ -224,12 +224,11 @@ export default function LoginPage() {
       if (raw) {
         const parsed = JSON.parse(raw);
         const firstName = parsed.user?.name?.split(' ')[0] || 'bienvenido/a';
-        toast.success(`Bienvenido/a, ${firstName}`);
-        setShowLoader(true);
-        setTimeout(
-          () => navigate(parsed.user.role === 'admin' ? '/admin' : '/calendar', { replace: true }),
-          SUCCESS_LOADING_MS
-        );
+        const destination = parsed.user.role === 'admin' ? '/admin' : '/calendar';
+        setTimeout(() => {
+          navigate(destination, { replace: true });
+          setTimeout(() => toast.success(`Bienvenido/a, ${firstName}`), 350);
+        }, SUCCESS_LOADING_MS);
       }
     } else {
       const elapsed = Date.now() - startTime;
@@ -477,14 +476,7 @@ export default function LoginPage() {
             <div style={{ position: 'absolute', inset: 0 }}>
               <MeshGradient
                 style={{ width: '100%', height: '100%' }}
-                colors={[
-                  '#AC440B',
-                  '#D75F1B',
-                  '#F77228',
-                  '#FBA74C',
-                  '#FEBE59',
-                  '#FFE1B2',
-                ]}
+                colors={['#AC440B', '#D75F1B', '#F77228', '#FBA74C', '#FEBE59', '#FFE1B2']}
                 distortion={1.2}
                 swirl={0.6}
                 grainMixer={0}

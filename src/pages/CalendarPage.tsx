@@ -34,6 +34,61 @@ const WA_ICON_LG = () => (
   </svg>
 )
 
+/* ─── Typewriter component ──────────────────────────────────── */
+function TypewriterText({ prefix, name, enabled = false }: { prefix: string; name: string; enabled?: boolean }) {
+  const fullText = prefix + name
+  const [displayed, setDisplayed] = useState('')
+  const [showCursor, setShowCursor] = useState(false)
+  const indexRef = useRef(0)
+
+  useEffect(() => {
+    if (!enabled) return
+    setDisplayed('')
+    indexRef.current = 0
+    setShowCursor(true)
+
+    const interval = setInterval(() => {
+      indexRef.current += 1
+      setDisplayed(fullText.slice(0, indexRef.current))
+      if (indexRef.current >= fullText.length) {
+        clearInterval(interval)
+        let blinks = 0
+        const blink = setInterval(() => {
+          setShowCursor(v => !v)
+          blinks++
+          if (blinks >= 6) {
+            clearInterval(blink)
+            setShowCursor(false)
+          }
+        }, 400)
+      }
+    }, 90)
+
+    return () => clearInterval(interval)
+  }, [enabled, fullText])
+
+  const prefixDisplayed = displayed.slice(0, Math.min(displayed.length, prefix.length))
+  const nameDisplayed = displayed.length > prefix.length ? displayed.slice(prefix.length) : ''
+
+  return (
+    <span>
+      <span style={{ fontWeight: 300 }}>{prefixDisplayed}</span>
+      <span style={{ fontWeight: 700 }}>{nameDisplayed}</span>
+      {showCursor && (
+        <span style={{
+          display: 'inline-block',
+          width: '2px',
+          height: '1em',
+          background: '#F4F5F0',
+          marginLeft: '2px',
+          verticalAlign: 'text-bottom',
+          borderRadius: '1px',
+        }} />
+      )}
+    </span>
+  )
+}
+
 export default function CalendarPage() {
   const { user, isSessionValid, logout } = useAuth()
   const { activeModal, closeChallenge } = useAppStore()
@@ -42,6 +97,7 @@ export default function CalendarPage() {
   const navigate = useNavigate()
   const [showLogoutModal, setShowLogoutModal] = useState(false)
   const [pageReady, setPageReady] = useState(false)
+  const [wowDone, setWowDone] = useState(false)
 
   // WhatsApp state
   const [showPopup, setShowPopup] = useState(false)
@@ -100,9 +156,10 @@ export default function CalendarPage() {
     <LoadingScreen isVisible={!pageReady} />
     <motion.div
       style={{ minHeight: '100vh', background: '#2A2D32' }}
-      initial={{ opacity: 0 }}
-      animate={{ opacity: pageReady ? 1 : 0 }}
-      transition={{ duration: 0.4, ease: 'easeOut' }}
+      initial={{ opacity: 0, scale: 1.6 }}
+      animate={{ opacity: pageReady ? 1 : 0, scale: pageReady ? 1 : 1.6 }}
+      transition={{ duration: 1.8, ease: [0.16, 1, 0.3, 1] }}
+      onAnimationComplete={() => { if (pageReady) setWowDone(true) }}
     >
       {/* Header */}
       <style>{`
@@ -163,8 +220,7 @@ export default function CalendarPage() {
                   letterSpacing: '-0.3px', color: '#F4F5F0',
                 }}
               >
-                <span style={{ fontWeight: 300 }}>Hola, </span>
-                <span style={{ fontWeight: 700 }}>{firstName}</span>
+                <TypewriterText prefix="Hola, " name={firstName} enabled={wowDone} />
               </div>
               <button
                 className="cal-header-logout cal-logout-mobile"
