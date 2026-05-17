@@ -43,9 +43,9 @@ const C = {
   ckboxTxt: '#585E6A', // checkbox label
   helper: '#727988', // helper text
   errRed: '#D31212', // error text color
-  optSelBg: '#EAE0FF', // selected option background
-  optSelBdr: '#2E0099', // selected option border
-  optSelTxt: '#20006B', // selected option text
+  optSelBg: '#FEEBE1', // selected option background
+  optSelBdr: '#E65405', // selected option border
+  optSelTxt: '#B94304', // selected option text
   optBdr: '#DBDDE1', // unselected option border
   optTxt: '#2A2D32', // unselected option text
   inputBdr: '#DBDDE1', // default input border

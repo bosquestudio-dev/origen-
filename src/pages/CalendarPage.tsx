@@ -282,6 +282,7 @@ export default function CalendarPage() {
   const [showHelpModal, setShowHelpModal] = useState(false)
   const [showMobileMenu, setShowMobileMenu] = useState(false)
   const [pageReady, setPageReady] = useState(false)
+  const [isMobile, setIsMobile] = useState(() => window.innerWidth < 768)
   const [wowDone, setWowDone] = useState(false)
 
   // WhatsApp state
@@ -309,6 +310,12 @@ export default function CalendarPage() {
       const t = setTimeout(() => setShowPopup(true), 800)
       return () => clearTimeout(t)
     }
+  }, [])
+
+  useEffect(() => {
+    const handler = () => setIsMobile(window.innerWidth < 768)
+    window.addEventListener('resize', handler)
+    return () => window.removeEventListener('resize', handler)
   }, [])
 
   if (!isSessionValid || !user) return null
@@ -383,6 +390,7 @@ export default function CalendarPage() {
         /* Mobile logout — hidden in desktop (shown via row1) */
         .cal-logout-mobile { display: none; }
         .cal-logout-desktop { display: flex; }
+        .cal-mobile-menu { display: none; }
         .cal-metric-card-hoy { width: 226px; min-width: 226px; }
         .cal-main { padding: 40px 32px; }
 
@@ -398,6 +406,7 @@ export default function CalendarPage() {
           .cal-metric-card { display: none !important; }
           .cal-logout-mobile { display: flex; }
           .cal-logout-desktop { display: none; }
+          .cal-mobile-menu { display: flex !important; }
           .cal-main { padding: 24px 20px !important; }
           .cal-metric-progreso-mobile { display: flex !important; }
           .cal-metric-hoy-mobile      { display: flex !important; }
@@ -423,7 +432,7 @@ export default function CalendarPage() {
                 className="cal-header-logout cal-logout-mobile"
                 onClick={() => setShowMobileMenu(true)}
                 title="Menú"
-                style={{ width: 40, height: 40, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                style={{ width: 40, height: 40, alignItems: 'center', justifyContent: 'center' }}
               >
                 <Menu size={22} />
               </button>
@@ -571,7 +580,7 @@ export default function CalendarPage() {
         {showHelpModal && <HelpModal onClose={() => setShowHelpModal(false)} />}
       </AnimatePresence>
 
-      {/* WhatsApp Popup */}
+      {/* WhatsApp Popup — desktop modal / mobile bottom sheet */}
       <AnimatePresence>
         {showPopup && (
           <motion.div
@@ -585,23 +594,25 @@ export default function CalendarPage() {
               background: 'rgba(0,0,0,0.4)',
               backdropFilter: 'blur(4px)',
               zIndex: 100,
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              display: 'flex',
+              alignItems: isMobile ? 'flex-end' : 'center',
+              justifyContent: 'center',
             }}
             onClick={(e) => { if (e.target === e.currentTarget) handleDismiss() }}
           >
             <motion.div
               key="wa-card"
-              initial={{ opacity: 0, scale: 0.9, y: 20 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.9, y: 20 }}
-              transition={{ duration: 0.25, ease: 'easeOut' }}
+              initial={isMobile ? { y: '100%' } : { opacity: 0, scale: 0.9, y: 20 }}
+              animate={isMobile ? { y: 0 } : { opacity: 1, scale: 1, y: 0 }}
+              exit={isMobile ? { y: '100%' } : { opacity: 0, scale: 0.9, y: 20 }}
+              transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
               style={{
-                background: '#1C1C1E',
-                borderRadius: 12,
-                padding: '28px 20px',
-                width: 420,
-                maxWidth: '92vw',
-                height: 436,
+                background: isMobile ? '#17191C' : '#1C1C1E',
+                borderRadius: isMobile ? '20px 20px 0 0' : 12,
+                padding: isMobile ? '24px 24px 40px' : '28px 20px',
+                width: isMobile ? '100%' : 420,
+                maxWidth: isMobile ? '100%' : '92vw',
+                height: isMobile ? 'auto' : 436,
                 boxSizing: 'border-box',
                 border: '1px solid #41454E',
                 boxShadow: '0 24px 60px rgba(0,0,0,0.5)',
@@ -610,6 +621,22 @@ export default function CalendarPage() {
                 flexDirection: 'column',
               }}
             >
+              {/* X close — mobile only */}
+              {isMobile && (
+                <button
+                  onClick={handleDismiss}
+                  style={{
+                    position: 'absolute', top: 16, right: 16,
+                    width: 24, height: 24, background: 'none', border: 'none',
+                    cursor: 'pointer', color: 'rgba(255,255,255,0.5)',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    padding: 0,
+                  }}
+                >
+                  <X size={24} />
+                </button>
+              )}
+
               {/* WA icon — top left */}
               <img src="/icon_wp.svg" alt="WhatsApp" style={{ width: 48, height: 48, marginBottom: 20, display: 'block' }} />
 
@@ -620,7 +647,6 @@ export default function CalendarPage() {
                 color: '#F4F5F0',
                 margin: '0 0 12px',
                 lineHeight: 1.2,
-                whiteSpace: 'nowrap',
               }}>
                 Recibe tus retos en Whatsapp
               </h2>
@@ -672,7 +698,6 @@ export default function CalendarPage() {
 
               {/* Buttons column */}
               <div style={{ display: 'flex', flexDirection: 'column', gap: 12, marginTop: 'auto' }}>
-                {/* Activate button */}
                 <button
                   onClick={handleActivate}
                   style={{
@@ -688,7 +713,6 @@ export default function CalendarPage() {
                   Activar notificaciones
                 </button>
 
-                {/* Ahora no button */}
                 <button
                   onClick={handleDismiss}
                   style={{
@@ -760,7 +784,7 @@ export default function CalendarPage() {
 
       {/* Mobile Menu */}
       <AnimatePresence>
-        {showMobileMenu && (
+        {showMobileMenu && isMobile && (
           <motion.div
             key="mobile-menu"
             initial={{ opacity: 0, y: -16 }}
