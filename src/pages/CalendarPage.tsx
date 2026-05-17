@@ -12,7 +12,7 @@ import AppButton from '@/components/origen/AppButton'
 import CalendarGrid from '@/components/calendar/CalendarGrid'
 import ChallengeModalContent from '@/components/challenge/ChallengeModalContent'
 import { useEffect, useState, useRef } from 'react'
-import { LogOut, X } from 'lucide-react'
+import { LogOut, X, Menu } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import LoadingScreen from '@/components/auth/LoadingScreen'
 import { toast } from 'sonner'
@@ -280,6 +280,7 @@ export default function CalendarPage() {
   const navigate = useNavigate()
   const [showLogoutModal, setShowLogoutModal] = useState(false)
   const [showHelpModal, setShowHelpModal] = useState(false)
+  const [showMobileMenu, setShowMobileMenu] = useState(false)
   const [pageReady, setPageReady] = useState(false)
   const [wowDone, setWowDone] = useState(false)
 
@@ -350,7 +351,7 @@ export default function CalendarPage() {
         .cal-header-outer {
           position: sticky; top: 0; z-index: 40;
           background: #000000;
-          border-bottom: 1px solid rgba(255,255,255,0.08);
+          border-bottom: 2px solid rgba(255,255,255,0.15);
           backdrop-filter: blur(8px);
         }
         .cal-header {
@@ -420,10 +421,11 @@ export default function CalendarPage() {
               </div>
               <button
                 className="cal-header-logout cal-logout-mobile"
-                onClick={() => setShowLogoutModal(true)}
-                title="Salir"
+                onClick={() => setShowMobileMenu(true)}
+                title="Menú"
+                style={{ width: 40, height: 40, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
               >
-                <LogOut size={18} />
+                <Menu size={22} />
               </button>
             </div>
             {/* Subtitle */}
@@ -751,6 +753,121 @@ export default function CalendarPage() {
               >
                 <img src="/icon_wp.svg" alt="WhatsApp" style={{ width: 40, height: 40 }} />
               </motion.button>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Mobile Menu */}
+      <AnimatePresence>
+        {showMobileMenu && (
+          <motion.div
+            key="mobile-menu"
+            initial={{ opacity: 0, y: -16 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -16 }}
+            transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
+            style={{
+              position: 'fixed', top: 0, left: 0, right: 0,
+              zIndex: 200, display: 'flex', flexDirection: 'column',
+              background: '#0D0F11',
+              paddingBottom: 44,
+            }}
+          >
+            {/* Header del menú */}
+            <div style={{
+              display: 'flex', alignItems: 'center', justifyContent: 'flex-end',
+              padding: '16px 16px',
+              borderBottom: '1px solid rgba(255,255,255,0.08)',
+            }}>
+              <button
+                onClick={() => setShowMobileMenu(false)}
+                style={{
+                  width: 40, height: 40, background: 'none', border: 'none',
+                  cursor: 'pointer', color: 'rgba(255,255,255,0.5)',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                }}
+              >
+                <X size={22} />
+              </button>
+            </div>
+
+            {/* Items principales */}
+            <div style={{ padding: '8px 0' }}>
+              {/* Ayuda */}
+              <button
+                onClick={() => { setShowMobileMenu(false); setShowHelpModal(true) }}
+                style={{
+                  width: '100%', background: 'none', border: 'none', cursor: 'pointer',
+                  display: 'flex', alignItems: 'center', gap: 12,
+                  padding: '16px 24px', color: '#DBDDE1',
+                }}
+              >
+                <img src="/help-square.svg" width={20} height={20} alt="Ayuda" />
+                <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 14, fontWeight: 400, lineHeight: '16px', letterSpacing: 0 }}>Ayuda</span>
+              </button>
+
+              {/* Cerrar sesión */}
+              <button
+                onClick={() => { setShowMobileMenu(false); setShowLogoutModal(true) }}
+                style={{
+                  width: '100%', background: 'none', border: 'none', cursor: 'pointer',
+                  display: 'flex', alignItems: 'center', gap: 12,
+                  padding: '16px 24px', color: '#DBDDE1',
+                }}
+              >
+                <LogOut size={20} color="#DBDDE1" />
+                <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 14, fontWeight: 400, lineHeight: '16px', letterSpacing: 0 }}>Cerrar sesión</span>
+              </button>
+            </div>
+
+            {/* Separador */}
+            <div style={{ height: 1, background: 'rgba(255,255,255,0.08)', margin: '0 24px' }} />
+
+            {/* WhatsApp */}
+            <div style={{ padding: '8px 0' }}>
+              <button
+                onClick={() => { setShowMobileMenu(false); setShowPopup(true) }}
+                style={{
+                  width: '100%', background: 'none', border: 'none', cursor: 'pointer',
+                  display: 'flex', alignItems: 'center', gap: 12,
+                  padding: '16px 24px', color: '#DBDDE1',
+                }}
+              >
+                <img src="/icon_wp.svg" width={20} height={20} alt="WhatsApp" />
+                <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 14, fontWeight: 400, lineHeight: '16px', letterSpacing: 0 }}>Recibe tus retos en Whatsapp</span>
+              </button>
+            </div>
+
+            {/* Separador */}
+            <div style={{ height: 1, background: 'rgba(255,255,255,0.08)', margin: '0 24px' }} />
+
+            {/* Links legales */}
+            <div style={{ padding: '8px 0' }}>
+              <a
+                href="/politicas-de-privacidad"
+                style={{
+                  display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                  padding: '16px 24px', color: '#DBDDE1', textDecoration: 'none',
+                  fontFamily: "'DM Sans', sans-serif", fontSize: 14, fontWeight: 400,
+                  lineHeight: '16px', letterSpacing: 0,
+                }}
+              >
+                <span>Políticas de Privacidad</span>
+                <img src="/arrow-right.svg" width={16} height={16} alt="" />
+              </a>
+              <a
+                href="/terminos-legales"
+                style={{
+                  display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                  padding: '16px 24px', color: '#DBDDE1', textDecoration: 'none',
+                  fontFamily: "'DM Sans', sans-serif", fontSize: 14, fontWeight: 400,
+                  lineHeight: '16px', letterSpacing: 0,
+                }}
+              >
+                <span>Términos legales</span>
+                <img src="/arrow-right.svg" width={16} height={16} alt="" />
+              </a>
             </div>
           </motion.div>
         )}
