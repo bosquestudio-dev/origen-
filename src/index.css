@@ -148,3 +148,51 @@
   letter-spacing: 0px;
 }
 
+/* ── Calendar grid & cards ── */
+.cal-grid-wrapper { padding: 20px; background: #17191C; border-radius: 16px; }
+.cal-headers { display: grid; grid-template-columns: repeat(7, minmax(0, 182px)); gap: 12px; margin-bottom: 12px; }
+.cal-grid    { display: grid; grid-template-columns: repeat(7, minmax(0, 182px)); gap: 12px; }
+.cal-empty   { height: 160px; min-height: 160px; }
+
+.day-card-root       { height: 160px; min-height: 160px; }
+.day-number-desktop  { display: block; }
+.day-detox-desktop   { display: flex; }
+.day-badge-desktop   { display: flex; }
+.day-mobile-content  { display: none !important; }
+.day-mobile-detox    { display: none !important; }
+
+@media (max-width: 767px) {
+  .cal-grid-wrapper { padding: 0 !important; background: transparent !important; border-radius: 0 !important; }
+  .cal-headers { display: none !important; }
+  .cal-grid {
+    display: grid !important;
+    grid-template-columns: repeat(4, 1fr) !important;
+    gap: 12px !important;
+  }
+  .cal-empty { display: none !important; }
+
+  .day-card-root {
+    width: 100% !important;
+    height: 78.5px !important;
+    min-height: 78.5px !important;
+    max-height: 78.5px !important;
+    border-radius: 8px !important;
+    padding: 16px !important;
+    box-sizing: border-box !important;
+  }
+
+  .day-card-root[data-status="completed"]     { background: rgba(34,195,93,0.25) !important;   border: 2px solid #22C35D !important; }
+  .day-card-root[data-status="accessible"]    { background: rgba(247,247,248,0.25) !important; border: 2px solid #BCC0C7 !important; }
+  .day-card-root[data-status="today"]         { background: rgba(252,150,95,0.50) !important;  border: 2px solid #FB7026 !important; }
+  .day-card-root[data-status="locked"]        { background: transparent !important;            border: 2px solid #585E6A !important; }
+  .day-card-root[data-status="digital-detox"] { background: transparent !important;            border: 2px solid #2A2D32 !important; }
+  .day-card-root[data-status="catch-up"]      { background: #1A1A2E !important;                border: 1.5px solid #7B6FE8 !important; }
+  .day-card-root[data-special="true"]         { background: rgba(218,165,32,0.40) !important;  border: 2px solid #DAA520 !important; }
+
+  .day-number-desktop { display: none !important; }
+  .day-detox-desktop  { display: none !important; }
+  .day-badge-desktop  { display: none !important; }
+  .day-mobile-content { display: flex !important; }
+  .day-mobile-detox   { display: flex !important; }
+}
+

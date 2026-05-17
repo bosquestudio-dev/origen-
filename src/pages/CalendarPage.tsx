@@ -383,6 +383,7 @@ export default function CalendarPage() {
         .cal-logout-mobile { display: none; }
         .cal-logout-desktop { display: flex; }
         .cal-metric-card-hoy { width: 226px; min-width: 226px; }
+        .cal-main { padding: 40px 32px; }
 
         @media (max-width: 767px) {
           .cal-header { flex-direction: column; align-items: stretch; gap: 12px; padding: 16px; }
@@ -391,7 +392,7 @@ export default function CalendarPage() {
           .cal-metric-card-hoy { width: 100% !important; min-width: unset !important; }
           .cal-logout-mobile { display: flex; }
           .cal-logout-desktop { display: none; }
-          .cal-main { padding-left: 16px !important; padding-right: 16px !important; padding-top: 24px !important; }
+          .cal-main { padding: 24px 20px !important; }
         }
       `}</style>
       <div className="cal-header-outer">
@@ -484,7 +485,7 @@ export default function CalendarPage() {
       </div>
 
       {/* Calendar */}
-      <main style={{ maxWidth: 1370, margin: '0 auto', padding: '40px 32px' }} className="cal-main">
+      <main style={{ maxWidth: 1370, margin: '0 auto' }} className="cal-main">
         <CalendarGrid />
       </main>
 

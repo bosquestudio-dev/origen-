@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion'
 import { RefreshCw, LockKeyhole } from 'lucide-react'
 import { toast } from 'sonner'
+import { useState, useEffect, useLayoutEffect } from 'react'
 import type { CalendarDay } from '@/types/calendar.types'
 import { useAppStore } from '@/stores/app.store'
 import { useCalendar } from '@/hooks/useCalendar'
@@ -86,6 +87,14 @@ const BADGE_CONFIG = {
 export default function DayCard({ day, index, dataStatus, dataSpecial }: DayCardProps) {
   const { openChallenge, showToast } = useAppStore()
   const { canAttemptDay } = useCalendar()
+  const [isMobile, setIsMobile] = useState(false)
+
+  useLayoutEffect(() => {
+    const check = () => setIsMobile(window.innerWidth <= 767)
+    check()
+    window.addEventListener('resize', check)
+    return () => window.removeEventListener('resize', check)
+  }, [])
 
   const handleClick = () => {
     if (day.status === 'digital-detox') return
@@ -110,6 +119,10 @@ export default function DayCard({ day, index, dataStatus, dataSpecial }: DayCard
   const isSpecial = day.isSpecial
   const isDetox = day.status === 'digital-detox'
   const isHoliday = HOLIDAY_DAYS.includes(day.day)
+
+  const desktopCardStyle = isSpecial ? SPECIAL_CARD_DESKTOP : (CARD_STYLES_DESKTOP[day.status] ?? CARD_STYLES_DESKTOP.locked)
+  const mobileCardStyle  = isSpecial ? SPECIAL_CARD_MOBILE  : (CARD_STYLES_MOBILE[day.status]  ?? CARD_STYLES_MOBILE.locked)
+
   const numColor = isSpecial ? SPECIAL_NUM_COLOR : (NUMBER_COLOR[day.status] ?? 'rgba(255,255,255,0.25)')
   const badge = BADGE_CONFIG[day.status as keyof typeof BADGE_CONFIG]
 
@@ -125,12 +138,24 @@ export default function DayCard({ day, index, dataStatus, dataSpecial }: DayCard
       className="day-card-root"
       data-status={dataStatus ?? day.status}
       data-special={dataSpecial ?? (isSpecial ? 'true' : 'false')}
-      style={{
-        /* Desktop styles (overridden by media query class) */
-        ...(isSpecial ? SPECIAL_CARD_DESKTOP : (CARD_STYLES_DESKTOP[day.status] ?? CARD_STYLES_DESKTOP.locked)),
-        borderRadius: 12,
+      style={isMobile ? {
+        ...mobileCardStyle,
+        width: '100%',
+        height: 78.5,
+        minHeight: 78.5,
+        maxHeight: 78.5,
+        borderRadius: 8,
+        position: 'relative',
+        overflow: 'hidden',
+        cursor: (isDetox || day.status === 'catch-up') ? 'default' : (day.status === 'locked' ? 'not-allowed' : 'pointer'),
+        userSelect: 'none',
+        boxSizing: 'border-box',
+        padding: 16,
+      } : {
+        ...desktopCardStyle,
         height: 160,
         minHeight: 160,
+        borderRadius: 12,
         position: 'relative',
         overflow: 'hidden',
         cursor: (isDetox || day.status === 'catch-up') ? 'default' : (day.status === 'locked' ? 'not-allowed' : 'pointer'),
@@ -218,7 +243,6 @@ export default function DayCard({ day, index, dataStatus, dataSpecial }: DayCard
             flexDirection: 'column',
             alignItems: 'center', justifyContent: 'center',
             position: 'absolute', inset: 0, zIndex: 1,
-            paddingTop: 16,
           }}
         >
           <div style={{
@@ -230,9 +254,10 @@ export default function DayCard({ day, index, dataStatus, dataSpecial }: DayCard
           </div>
           <div style={{
             fontFamily: "'DM Sans', sans-serif",
-            fontWeight: 400, fontSize: 10, lineHeight: 1,
+            fontWeight: 500, fontSize: 14, lineHeight: 1,
             color: numColor, textAlign: 'center',
-            marginTop: abbrGap, letterSpacing: '0.03em',
+            marginTop: abbrGap, letterSpacing: 0,
+            textTransform: 'uppercase',
           }}>
             {getDayAbbr(day.day)}
           </div>
