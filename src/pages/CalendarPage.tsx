@@ -95,26 +95,29 @@ function HelpModal({ onClose }: { onClose: () => void }) {
   const [message, setMessage] = useState('')
   const [focusedField, setFocusedField] = useState<string | null>(null)
 
-  const inputStyle = (field: string): React.CSSProperties => ({
-    background: focusedField === field ? 'rgba(255,255,255,0.08)' : 'rgba(255,255,255,0.06)',
-    border: focusedField === field ? '1px solid rgba(127,119,221,0.5)' : '1px solid rgba(255,255,255,0.1)',
+  const inputStyle = (field: string, height?: number): React.CSSProperties => ({
+    background: 'transparent',
+    border: focusedField === field ? '1px solid #F4F5F0' : '1px solid #727988',
     borderRadius: 8,
     padding: '10px 12px',
-    color: '#FFFFFF',
-    fontSize: 13,
+    color: '#F4F5F0',
+    fontSize: 12,
     fontFamily: "'DM Sans', sans-serif",
     width: '100%',
+    height: height ?? 40,
     outline: 'none',
     boxSizing: 'border-box' as const,
+    resize: 'none' as const,
   })
 
   const labelStyle: React.CSSProperties = {
     fontFamily: "'DM Sans', sans-serif",
-    fontSize: 11,
-    fontWeight: 500,
-    color: 'rgba(255,255,255,0.5)',
+    fontSize: 12,
+    fontWeight: 400,
+    color: '#F7F7F8',
     marginBottom: 4,
     display: 'block',
+    lineHeight: '16px',
   }
 
   const handleSubmit = () => {
@@ -163,13 +166,17 @@ function HelpModal({ onClose }: { onClose: () => void }) {
         exit={{ opacity: 0, scale: 0.92, y: 20 }}
         transition={{ duration: 0.25, ease: 'easeOut' }}
         style={{
-          background: '#1A1A1E',
-          borderRadius: 16,
-          padding: '28px 24px',
-          width: 'min(400px, 90vw)',
-          boxShadow: '0 24px 60px rgba(0,0,0,0.5)',
-          border: '1px solid rgba(255,255,255,0.08)',
+          background: '#17191C',
+          borderRadius: 12,
+          padding: 20,
+          width: 'min(388px, 90vw)',
+          height: 'auto',
+          minHeight: 456,
+          boxSizing: 'border-box',
+          border: '1px solid #41454E',
           position: 'relative',
+          display: 'flex',
+          flexDirection: 'column',
         }}
       >
         {/* Close button */}
@@ -186,15 +193,17 @@ function HelpModal({ onClose }: { onClose: () => void }) {
         </button>
 
         {/* Header */}
-        <div style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 18, fontWeight: 700, color: '#FFFFFF', marginBottom: 6 }}>
-          Ayuda y soporte
-        </div>
-        <div style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 13, color: 'rgba(255,255,255,0.45)', marginBottom: 20, lineHeight: 1.5 }}>
-          Cuéntanos tu problema y te responderemos lo antes posible.
+        <div>
+          <div style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 24, fontWeight: 700, color: '#F4F5F0', lineHeight: '28px', letterSpacing: '-0.2px', marginBottom: 16 }}>
+            Ayuda y soporte
+          </div>
+          <div style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 16, fontWeight: 400, color: '#F4F5F0', lineHeight: '20px', letterSpacing: 0, marginBottom: 32 }}>
+            Cuéntanos tu problema y te responderemos lo antes posible.
+          </div>
         </div>
 
         {/* Form */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 12, flex: 1 }}>
           <div>
             <label style={labelStyle}>Nombre</label>
             <input
@@ -203,9 +212,9 @@ function HelpModal({ onClose }: { onClose: () => void }) {
               onChange={e => setName(e.target.value)}
               onFocus={() => setFocusedField('name')}
               onBlur={() => setFocusedField(null)}
-              placeholder="Tu nombre"
+              placeholder="Introduce tu nombre"
               className="help-modal-input"
-              style={inputStyle('name')}
+              style={inputStyle('name', 40)}
             />
           </div>
           <div>
@@ -216,9 +225,9 @@ function HelpModal({ onClose }: { onClose: () => void }) {
               onChange={e => setEmail(e.target.value)}
               onFocus={() => setFocusedField('email')}
               onBlur={() => setFocusedField(null)}
-              placeholder="tu@correo.com"
+              placeholder="Introduce tu correo electrónico"
               className="help-modal-input"
-              style={inputStyle('email')}
+              style={inputStyle('email', 40)}
             />
           </div>
           <div>
@@ -228,9 +237,9 @@ function HelpModal({ onClose }: { onClose: () => void }) {
               onChange={e => setMessage(e.target.value)}
               onFocus={() => setFocusedField('message')}
               onBlur={() => setFocusedField(null)}
-              placeholder="Describe tu problema o consulta..."
+              placeholder="Describe detalladamente tu problema o consulta"
               className="help-modal-input"
-              style={{ ...inputStyle('message'), minHeight: 80, resize: 'none' }}
+              style={{ ...inputStyle('message', 76) }}
             />
           </div>
         </div>
@@ -239,14 +248,21 @@ function HelpModal({ onClose }: { onClose: () => void }) {
         <button
           onClick={handleSubmit}
           style={{
-            width: '100%', marginTop: 20,
-            padding: '12px 16px',
-            background: '#17181B', color: '#FFFFFF',
-            border: 'none', borderRadius: 8,
-            fontSize: 14, fontWeight: 500,
+            width: '100%',
+            height: 40,
+            marginTop: 20,
+            padding: '10px 16px',
+            background: 'transparent',
+            color: '#F4F5F0',
+            border: '1.5px solid #F4F5F0',
+            borderRadius: 8,
+            fontSize: 14,
+            fontWeight: 400,
             fontFamily: "'DM Sans', sans-serif",
+            lineHeight: '16px',
             cursor: 'pointer',
             display: 'flex', alignItems: 'center', justifyContent: 'center',
+            boxSizing: 'border-box',
           }}
         >
           Enviar mensaje
@@ -366,14 +382,16 @@ export default function CalendarPage() {
         /* Mobile logout — hidden in desktop (shown via row1) */
         .cal-logout-mobile { display: none; }
         .cal-logout-desktop { display: flex; }
+        .cal-metric-card-hoy { width: 226px; min-width: 226px; }
 
         @media (max-width: 767px) {
           .cal-header { flex-direction: column; align-items: stretch; gap: 12px; padding: 16px; }
           .cal-header-right { flex-direction: column; gap: 8px; width: 100%; flex-wrap: nowrap; }
           .cal-metric-card { width: 100% !important; min-width: unset !important; max-width: unset !important; height: auto !important; min-height: unset !important; max-height: unset !important; padding: 12px 16px !important; }
+          .cal-metric-card-hoy { width: 100% !important; min-width: unset !important; }
           .cal-logout-mobile { display: flex; }
           .cal-logout-desktop { display: none; }
-          .cal-main { padding-left: 16px !important; padding-right: 16px !important; }
+          .cal-main { padding-left: 16px !important; padding-right: 16px !important; padding-top: 24px !important; }
         }
       `}</style>
       <div className="cal-header-outer">
@@ -430,7 +448,7 @@ export default function CalendarPage() {
             </div>
 
             {/* Card HOY */}
-            <div className="cal-metric-card" style={{ width: 226, minWidth: 226, flexDirection: 'column', justifyContent: 'center', alignItems: 'flex-start', gap: 2 }}>
+            <div className="cal-metric-card cal-metric-card-hoy" style={{ flexDirection: 'column', justifyContent: 'center', alignItems: 'flex-start', gap: 2 }}>
               <div style={{ fontSize: 10, fontWeight: 300, letterSpacing: '0.05em', textTransform: 'uppercase', color: '#989EA9', fontFamily: "'DM Sans', sans-serif" }}>
                 Hoy
               </div>
