@@ -392,8 +392,8 @@ export default function CalendarPage() {
         .cal-metric-hoy-desktop      { display: flex; }
 
         @media (max-width: 767px) {
-          .cal-header { flex-direction: column; align-items: stretch; gap: 12px; padding: 16px; }
-          .cal-header-right { flex-direction: row; gap: 12px; width: 100%; flex-wrap: nowrap; }
+          .cal-header { flex-direction: column; align-items: flex-start; gap: 12px; padding: 16px; }
+          .cal-header-right { flex-direction: row; gap: 12px; width: calc(100% + 32px); margin-left: -16px; padding: 0 16px; flex-wrap: nowrap; box-sizing: border-box; }
           .cal-metric-card { display: none !important; }
           .cal-logout-mobile { display: flex; }
           .cal-logout-desktop { display: none; }
@@ -474,36 +474,42 @@ export default function CalendarPage() {
 
             {/* Card TU PROGRESO — mobile */}
             <div className="cal-metric-progreso-mobile" style={{
-              width: 169, minWidth: 169, height: 86,
+              flex: 1, minWidth: 0, height: 86, flexShrink: 0,
               background: '#17191C', border: '1px solid #41454E',
               borderRadius: 8, padding: 12, boxSizing: 'border-box',
-              flexDirection: 'column', justifyContent: 'space-between', gap: 8,
+              flexDirection: 'column', justifyContent: 'space-between', gap: 4,
             }}>
+              {/* Label arriba */}
               <div style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 8, fontWeight: 300, letterSpacing: '0.05em', textTransform: 'uppercase', color: '#989EA9', lineHeight: 1 }}>
                 Tu progreso
               </div>
-              <div style={{ display: 'flex', alignItems: 'baseline', gap: 2 }}>
-                <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 28, fontWeight: 700, color: '#22C35D', lineHeight: 1 }}>{completedCount}</span>
-                <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 16, fontWeight: 400, color: '#585E6A', lineHeight: 1 }}>/{totalAvailable}</span>
-              </div>
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 10, fontWeight: 400, color: '#ECEDEF', lineHeight: '12px' }}>retos completados</span>
-                <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 8.73, fontWeight: 500, color: '#F7F7F8', lineHeight: 1 }}>{progressPercentage.toFixed(1)}%</span>
+              {/* Anillo + número en fila */}
+              <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 8, flex: 1 }}>
+                <ProgressRing percentage={progressPercentage} size={44} />
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 2, justifyContent: 'center', minWidth: 0 }}>
+                  <div style={{ display: 'flex', alignItems: 'baseline', gap: 2 }}>
+                    <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 28, fontWeight: 700, color: '#22C35D', lineHeight: 1 }}>{completedCount}</span>
+                    <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 16, fontWeight: 400, color: '#585E6A', lineHeight: 1 }}>/{totalAvailable}</span>
+                  </div>
+                  <div style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 10, fontWeight: 400, color: '#ECEDEF', lineHeight: '12px' }}>
+                    retos completados
+                  </div>
+                </div>
               </div>
             </div>
 
             {/* Card HOY — mobile */}
             <div className="cal-metric-hoy-mobile" style={{
-              width: 169, minWidth: 169, height: 85,
+              flex: 1, minWidth: 0, height: 85, flexShrink: 0,
               background: '#17191C', border: '1px solid #41454E',
               borderRadius: 8, padding: 12, boxSizing: 'border-box',
-              flexDirection: 'column', justifyContent: 'space-between', gap: 8,
+              flexDirection: 'column', justifyContent: 'space-between',
             }}>
               <div style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 8, fontWeight: 300, letterSpacing: '0.05em', textTransform: 'uppercase', color: '#989EA9', lineHeight: 1 }}>
                 Hoy
               </div>
-              <div style={{ display: 'flex', alignItems: 'baseline', gap: 2 }}>
-                <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 28, fontWeight: 700, color: '#22C35D', lineHeight: 1 }}>{companionPercentage}%</span>
+              <div style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 28, fontWeight: 700, color: '#22C35D', lineHeight: 1 }}>
+                {companionPercentage}%
               </div>
               <div style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 10, fontWeight: 400, color: '#ECEDEF', lineHeight: '12px' }}>
                 de tus compañeros ya lo han completado
