@@ -137,3 +137,8 @@
   background: rgba(255,255,255,0.25);
 }
 
+/* Help modal placeholder */
+.help-modal-input::placeholder {
+  color: rgba(255,255,255,0.25);
+}
+

@@ -1,4 +1,6 @@
 import { motion } from 'framer-motion'
+import { RefreshCw, LockKeyhole } from 'lucide-react'
+import { toast } from 'sonner'
 import type { CalendarDay } from '@/types/calendar.types'
 import { useAppStore } from '@/stores/app.store'
 import { useCalendar } from '@/hooks/useCalendar'
@@ -12,27 +14,34 @@ interface DayCardProps {
 const getDayAbbr = (day: number) => DAY_LABELS[day]?.split(' ')[0] ?? ''
 
 const CARD_STYLES: Record<string, React.CSSProperties> = {
-  completed:      { background: '#182A22', border: '1px solid #22C35D' },
-  accessible:     { background: '#434548', border: '1px solid #BCC0C7' },
-  today:          { background: '#89573E', border: '2px solid #FB7026' },
-  locked:         { background: '#1C1C20', border: '1px solid rgba(255,255,255,0.12)' },
-  'digital-detox':{ background: 'rgba(41,44,49,0.75)', border: '1px solid #41454E' },
+  // Figma: #22C35D a 10%
+  completed:      { background: 'rgba(34,195,93,0.1)', border: '1px solid #22C35D' },
+  accessible:     { background: 'rgba(247,247,248,0.2)', border: '1px solid #BCC0C7' },
+  // Figma: #FC965F a 10% (mobile) / borde #FB7026 2px
+  today:          { background: 'rgba(252,150,95,0.1)', border: '2px solid #FB7026' },
+  // Figma: transparent / borde #41454E
+  locked:         { background: 'transparent', border: '1px solid #41454E' },
+  'digital-detox':{ background: 'rgba(114,121,136,0.2)', border: '1px solid #585E6A' },
+  // No en Figma — valores propios
+  'catch-up':     { background: '#1A1A2E', border: '1.5px solid #7B6FE8' },
 }
 
 const GRADIENT_OVERLAY: Record<string, string | null> = {
-  completed:      'radial-gradient(ellipse at 40% 60%, rgba(34,197,94,0.2), transparent 60%)',
+  completed:      null,
   accessible:     null,
-  today:          'radial-gradient(ellipse at 40% 60%, rgba(249,115,22,0.25), transparent 60%)',
+  today:          null,
   locked:         null,
-  'digital-detox': null,
+  'digital-detox':null,
+  'catch-up':     null,
 }
 
 const NUMBER_COLOR: Record<string, string> = {
-  completed:      '#22C55E',
-  accessible:     'rgba(255,255,255,0.5)',
-  today:          '#F97316',
-  locked:         'rgba(255,255,255,0.25)',
-  'digital-detox':'rgba(255,255,255,0.06)',
+  completed:      '#22C35D',   // Figma: #22C35D
+  accessible:     '#727988',
+  today:          '#FB7026',   // Figma: #FB7026 (mobile)
+  locked:         '#41454E',   // Figma: #41454E
+  'digital-detox':'#41454E',
+  'catch-up':     '#7B6FE8',
 }
 
 // SVG icon size for regular badges
@@ -42,7 +51,7 @@ const BADGE_CONFIG = {
   today: {
     label: 'Hoy',
     icon: '/today.svg',
-    style: { background: '#F97316', color: '#FFFFFF', border: 'none' } as React.CSSProperties,
+    style: { background: '#FB7026', color: '#F4F5F0', border: 'none' } as React.CSSProperties,
   },
   accessible: {
     label: 'Pasado',
@@ -52,17 +61,23 @@ const BADGE_CONFIG = {
   completed: {
     label: 'Completado',
     icon: '/completed.svg',
-    style: { background: '#22C55E', color: '#FFFFFF', border: 'none' } as React.CSSProperties,
+    style: { background: '#22C35D', color: '#F4F5F0', border: 'none' } as React.CSSProperties,
   },
   locked: {
     label: 'Próximo',
     icon: '/locked-until-available.svg',
-    style: { background: '#ACADB0', color: '#41454E', border: 'none', borderRadius: 85 } as React.CSSProperties,
+    style: { background: '#ECEDEF', color: '#41454E', border: 'none', borderRadius: 85 } as React.CSSProperties,
+  },
+  'catch-up': {
+    label: 'Ponte al día',
+    icon: null,
+    style: { background: '#7B6FE8', color: '#FFFFFF', border: 'none' } as React.CSSProperties,
   },
 } as const
 
-const SPECIAL_CARD: React.CSSProperties = { background: '#3E351D', border: '2px solid #DAA520' }
-const SPECIAL_NUM_COLOR = '#C9A227'
+// Figma: #DAA520 a 20% / borde #DAA520 2px
+const SPECIAL_CARD: React.CSSProperties = { background: 'rgba(218,165,32,0.2)', border: '2px solid #DAA520' }
+const SPECIAL_NUM_COLOR = '#DAA520'
 
 export default function DayCard({ day, index }: DayCardProps) {
   const { openChallenge, showToast } = useAppStore()
@@ -70,6 +85,13 @@ export default function DayCard({ day, index }: DayCardProps) {
 
   const handleClick = () => {
     if (day.status === 'digital-detox') return
+    if (day.status === 'catch-up') {
+      toast.info('Día de ponerse al día', {
+        description: 'Usa este día para completar retos pendientes.',
+        duration: 3000,
+      })
+      return
+    }
     if (day.status === 'locked') {
       showToast(`Disponible el ${DAY_LABELS[day.day]}`)
       return
@@ -102,7 +124,7 @@ export default function DayCard({ day, index }: DayCardProps) {
         minHeight: 160,
         position: 'relative',
         overflow: 'hidden',
-        cursor: isDetox ? 'default' : day.status === 'locked' ? 'not-allowed' : 'pointer',
+        cursor: (isDetox || day.status === 'catch-up') ? 'default' : (day.status === 'locked' ? 'not-allowed' : 'pointer'),
         userSelect: 'none',
         boxSizing: 'border-box',
         padding: 16,
@@ -119,8 +141,8 @@ export default function DayCard({ day, index }: DayCardProps) {
         }} />
       )}
 
-      {/* Day number — siempre visible */}
-      <div style={{ position: 'absolute', bottom: 12, left: 16, zIndex: 1 }}>
+      {/* Day number — zIndex 1 (detox: blurred con filter) */}
+      <div style={{ position: 'absolute', bottom: 12, left: 16, zIndex: 1, filter: isDetox ? 'blur(5px)' : undefined }}>
         <div style={{
           fontFamily: "'DM Sans', sans-serif",
           fontWeight: 700,
@@ -131,52 +153,43 @@ export default function DayCard({ day, index }: DayCardProps) {
           {day.day}
         </div>
         {/* Day name — mobile only */}
-        <div
-          className="day-abbr-mobile"
-          style={{
-            fontFamily: "'DM Sans', sans-serif",
-            fontSize: 11, fontWeight: 400,
-            color: numColor, opacity: 0.6,
-            marginTop: 2, letterSpacing: '0.03em',
-          }}
-        >
-          {getDayAbbr(day.day)}
-        </div>
+        {!isDetox && (
+          <div
+            className="day-abbr-mobile"
+            style={{
+              fontFamily: "'DM Sans', sans-serif",
+              fontSize: 11, fontWeight: 400,
+              color: numColor, opacity: 0.6,
+              marginTop: 2, letterSpacing: '0.03em',
+            }}
+          >
+            {getDayAbbr(day.day)}
+          </div>
+        )}
       </div>
 
-      {/* Digital-detox — overlay oscuro + icono SVG centrado */}
+      {/* Digital-detox — badge centrado (icono + texto), sin overlay */}
       {isDetox && (
-        <>
-          <div style={{
-            position: 'absolute', inset: 0,
-            background: 'rgba(41,44,49,0.82)',
-            borderRadius: 'inherit',
-            zIndex: 1,
-            pointerEvents: 'none',
-          }} />
-          <div style={{
-            position: 'absolute', inset: 0,
-            display: 'flex', flexDirection: 'column',
-            alignItems: 'center', justifyContent: 'center',
-            gap: 8, zIndex: 2,
+        <div style={{
+          position: 'absolute', inset: 0,
+          zIndex: 2,
+          display: 'flex', flexDirection: 'column',
+          alignItems: 'center', justifyContent: 'center',
+          gap: 3.4,
+          pointerEvents: 'none',
+        }}>
+          <LockKeyhole size={24} color="#F4F5F0" strokeWidth={1.5} />
+          <span style={{
+            fontFamily: "'DM Sans', sans-serif",
+            fontSize: 12, fontWeight: 500,
+            color: '#F4F5F0',
+            textAlign: 'center',
+            lineHeight: '14px',
+            whiteSpace: 'pre-line',
           }}>
-            <img
-              src="/weekend-holiday-locked.svg"
-              width={24} height={24}
-              alt={isHoliday ? 'Festivo' : 'Fin de semana'}
-            />
-            <span style={{
-              fontFamily: "'DM Sans', sans-serif",
-              fontSize: 12, fontWeight: 500,
-              color: '#F4F5F0',
-              textAlign: 'center',
-              lineHeight: 1.3,
-              whiteSpace: 'pre-line',
-            }}>
-              {isHoliday ? 'Festivo' : 'Desconexión\ndigital'}
-            </span>
-          </div>
-        </>
+            {isHoliday ? 'Festivo' : 'Desconexión\ndigital'}
+          </span>
+        </div>
       )}
 
       {/* Badge — top right, solo días NO detox */}
@@ -200,7 +213,9 @@ export default function DayCard({ day, index }: DayCardProps) {
         }}>
           {isSpecial
             ? <img src="/final-challenge-medal.svg" width={ICON_SIZE} height={ICON_SIZE} alt="Último día" />
-            : badge && <img src={badge.icon} width={ICON_SIZE} height={ICON_SIZE} alt={badge.label} />
+            : day.status === 'catch-up'
+              ? <RefreshCw size={11} strokeWidth={2} />
+              : badge && badge.icon && <img src={badge.icon} width={ICON_SIZE} height={ICON_SIZE} alt={badge.label} />
           }
           <span>{isSpecial ? 'Último día' : badge?.label}</span>
         </div>

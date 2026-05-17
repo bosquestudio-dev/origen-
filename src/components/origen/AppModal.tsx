@@ -58,7 +58,7 @@ export default function AppModal({ isOpen, onClose, children, challenge = false 
               style={{
                 position: 'relative',
                 width: '100%',
-                maxWidth: '460px',
+                maxWidth: '545px',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',

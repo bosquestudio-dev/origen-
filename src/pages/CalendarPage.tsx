@@ -89,6 +89,173 @@ function TypewriterText({ prefix, name, enabled = false }: { prefix: string; nam
   )
 }
 
+function HelpModal({ onClose }: { onClose: () => void }) {
+  const [name, setName] = useState('')
+  const [email, setEmail] = useState('')
+  const [message, setMessage] = useState('')
+  const [focusedField, setFocusedField] = useState<string | null>(null)
+
+  const inputStyle = (field: string): React.CSSProperties => ({
+    background: focusedField === field ? 'rgba(255,255,255,0.08)' : 'rgba(255,255,255,0.06)',
+    border: focusedField === field ? '1px solid rgba(127,119,221,0.5)' : '1px solid rgba(255,255,255,0.1)',
+    borderRadius: 8,
+    padding: '10px 12px',
+    color: '#FFFFFF',
+    fontSize: 13,
+    fontFamily: "'DM Sans', sans-serif",
+    width: '100%',
+    outline: 'none',
+    boxSizing: 'border-box' as const,
+  })
+
+  const labelStyle: React.CSSProperties = {
+    fontFamily: "'DM Sans', sans-serif",
+    fontSize: 11,
+    fontWeight: 500,
+    color: 'rgba(255,255,255,0.5)',
+    marginBottom: 4,
+    display: 'block',
+  }
+
+  const handleSubmit = () => {
+    if (!name.trim()) {
+      toast.error('Falta el nombre', { description: 'Por favor escribe tu nombre.' })
+      return
+    }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      toast.error('Correo inválido', { description: 'Introduce un correo electrónico válido.' })
+      return
+    }
+    if (!message.trim()) {
+      toast.error('Falta el mensaje', { description: 'Por favor describe tu consulta.' })
+      return
+    }
+    toast.success('Mensaje enviado', {
+      description: 'Te responderemos en menos de 24 horas.',
+      duration: 4000,
+    })
+    setName('')
+    setEmail('')
+    setMessage('')
+    onClose()
+  }
+
+  return (
+    <motion.div
+      key="help-overlay"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.2 }}
+      style={{
+        position: 'fixed', inset: 0,
+        background: 'rgba(0,0,0,0.6)',
+        backdropFilter: 'blur(6px)',
+        WebkitBackdropFilter: 'blur(6px)',
+        zIndex: 100,
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
+      }}
+      onClick={(e) => { if (e.target === e.currentTarget) onClose() }}
+    >
+      <motion.div
+        initial={{ opacity: 0, scale: 0.92, y: 20 }}
+        animate={{ opacity: 1, scale: 1, y: 0 }}
+        exit={{ opacity: 0, scale: 0.92, y: 20 }}
+        transition={{ duration: 0.25, ease: 'easeOut' }}
+        style={{
+          background: '#1A1A1E',
+          borderRadius: 16,
+          padding: '28px 24px',
+          width: 'min(400px, 90vw)',
+          boxShadow: '0 24px 60px rgba(0,0,0,0.5)',
+          border: '1px solid rgba(255,255,255,0.08)',
+          position: 'relative',
+        }}
+      >
+        {/* Close button */}
+        <button
+          onClick={onClose}
+          style={{
+            position: 'absolute', top: 14, right: 14,
+            background: 'transparent', border: 'none',
+            cursor: 'pointer', color: 'rgba(255,255,255,0.4)',
+            padding: 4, lineHeight: 1,
+          }}
+        >
+          <X size={18} />
+        </button>
+
+        {/* Header */}
+        <div style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 18, fontWeight: 700, color: '#FFFFFF', marginBottom: 6 }}>
+          Ayuda y soporte
+        </div>
+        <div style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 13, color: 'rgba(255,255,255,0.45)', marginBottom: 20, lineHeight: 1.5 }}>
+          Cuéntanos tu problema y te responderemos lo antes posible.
+        </div>
+
+        {/* Form */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+          <div>
+            <label style={labelStyle}>Nombre</label>
+            <input
+              type="text"
+              value={name}
+              onChange={e => setName(e.target.value)}
+              onFocus={() => setFocusedField('name')}
+              onBlur={() => setFocusedField(null)}
+              placeholder="Tu nombre"
+              className="help-modal-input"
+              style={inputStyle('name')}
+            />
+          </div>
+          <div>
+            <label style={labelStyle}>Correo electrónico</label>
+            <input
+              type="email"
+              value={email}
+              onChange={e => setEmail(e.target.value)}
+              onFocus={() => setFocusedField('email')}
+              onBlur={() => setFocusedField(null)}
+              placeholder="tu@correo.com"
+              className="help-modal-input"
+              style={inputStyle('email')}
+            />
+          </div>
+          <div>
+            <label style={labelStyle}>Mensaje</label>
+            <textarea
+              value={message}
+              onChange={e => setMessage(e.target.value)}
+              onFocus={() => setFocusedField('message')}
+              onBlur={() => setFocusedField(null)}
+              placeholder="Describe tu problema o consulta..."
+              className="help-modal-input"
+              style={{ ...inputStyle('message'), minHeight: 80, resize: 'none' }}
+            />
+          </div>
+        </div>
+
+        {/* Submit */}
+        <button
+          onClick={handleSubmit}
+          style={{
+            width: '100%', marginTop: 20,
+            padding: '12px 16px',
+            background: '#17181B', color: '#FFFFFF',
+            border: 'none', borderRadius: 8,
+            fontSize: 14, fontWeight: 500,
+            fontFamily: "'DM Sans', sans-serif",
+            cursor: 'pointer',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+          }}
+        >
+          Enviar mensaje
+        </button>
+      </motion.div>
+    </motion.div>
+  )
+}
+
 export default function CalendarPage() {
   const { user, isSessionValid, logout } = useAuth()
   const { activeModal, closeChallenge } = useAppStore()
@@ -96,6 +263,7 @@ export default function CalendarPage() {
   const { progressPercentage, companionPercentage, completedCount, totalAvailable } = useProgress()
   const navigate = useNavigate()
   const [showLogoutModal, setShowLogoutModal] = useState(false)
+  const [showHelpModal, setShowHelpModal] = useState(false)
   const [pageReady, setPageReady] = useState(false)
   const [wowDone, setWowDone] = useState(false)
 
@@ -279,7 +447,7 @@ export default function CalendarPage() {
             {/* Help / Soporte — desktop only */}
             <button
               className="cal-header-logout cal-logout-desktop"
-              onClick={() => {/* TODO: funcionalidad soporte */}}
+              onClick={() => setShowHelpModal(true)}
               title="Ayuda y soporte"
             >
               <img src="/help-square.svg" width={16} height={16} alt="Ayuda" />
@@ -323,6 +491,11 @@ export default function CalendarPage() {
           </div>
         </div>
       </AppModal>
+
+      {/* Help & Support Modal */}
+      <AnimatePresence>
+        {showHelpModal && <HelpModal onClose={() => setShowHelpModal(false)} />}
+      </AnimatePresence>
 
       {/* WhatsApp Popup */}
       <AnimatePresence>

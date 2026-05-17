@@ -6,6 +6,7 @@ export type DayStatus =
   | 'today'
   | 'completed'
   | 'digital-detox'
+  | 'catch-up'
 
 export interface CalendarDay {
   day: number

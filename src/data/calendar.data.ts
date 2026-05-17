@@ -1,5 +1,5 @@
 export const SPECIAL_DAY = 24
-export const SIMULATED_TODAY = 4
+export const SIMULATED_TODAY = 18
 
 export const DAY_LABELS: Record<number, string> = {
   1: 'Mar 1',  2: 'Mié 2',  3: 'Jue 3',  4: 'Vie 4',
@@ -12,6 +12,9 @@ export const DAY_LABELS: Record<number, string> = {
 
 // Festivos — descanso aunque no sean fin de semana
 export const HOLIDAY_DAYS = [8] // 8 dic: Inmaculada Concepción
+
+// Días de "Ponte al día" — sin reto, recordatorio para completar pendientes
+export const CATCH_UP_DAYS = [9, 16, 23]
 
 // Derivado automáticamente de DAY_LABELS + festivos
 export const DIGITAL_DETOX_DAYS = [

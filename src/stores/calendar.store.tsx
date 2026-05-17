@@ -7,12 +7,17 @@ interface CalendarState {
 
 const CalendarContext = createContext<CalendarState | null>(null)
 const STORAGE_KEY = 'origen_completions'
+const DEMO_COMPLETIONS = [1,2,3,4,5,6,7,8,9,10,11]
 
 function loadCompletions(): number[] {
   try {
     const raw = localStorage.getItem(STORAGE_KEY)
-    return raw ? JSON.parse(raw) : []
-  } catch { return [] }
+    if (!raw) {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(DEMO_COMPLETIONS))
+      return DEMO_COMPLETIONS
+    }
+    return JSON.parse(raw)
+  } catch { return DEMO_COMPLETIONS }
 }
 
 export function CalendarProvider({ children }: { children: ReactNode }) {
