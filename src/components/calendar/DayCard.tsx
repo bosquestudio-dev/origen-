@@ -9,42 +9,50 @@ import { DAY_LABELS, HOLIDAY_DAYS } from '@/data/calendar.data'
 interface DayCardProps {
   day: CalendarDay
   index: number
+  dataStatus?: string
+  dataSpecial?: string
 }
 
-const getDayAbbr = (day: number) => DAY_LABELS[day]?.split(' ')[0] ?? ''
+// Returns 3-letter abbreviation from day label e.g. "Lunes 1" → "LUN"
+const getDayAbbr = (day: number) => {
+  const label = DAY_LABELS[day]?.split(' ')[0] ?? ''
+  return label.slice(0, 3).toUpperCase()
+}
 
-const CARD_STYLES: Record<string, React.CSSProperties> = {
-  // Figma: #22C35D a 10%
-  completed:      { background: 'rgba(34,195,93,0.1)', border: '1px solid #22C35D' },
-  accessible:     { background: 'rgba(247,247,248,0.2)', border: '1px solid #BCC0C7' },
-  // Figma: #FC965F a 10% (mobile) / borde #FB7026 2px
-  today:          { background: 'rgba(252,150,95,0.1)', border: '2px solid #FB7026' },
-  // Figma: transparent / borde #41454E
-  locked:         { background: 'transparent', border: '1px solid #41454E' },
-  'digital-detox':{ background: 'rgba(114,121,136,0.2)', border: '1px solid #585E6A' },
-  // No en Figma — valores propios
+// ─── Desktop card styles ───────────────────────────────────────────────────────
+const CARD_STYLES_DESKTOP: Record<string, React.CSSProperties> = {
+  completed:      { background: '#182A22', border: '1px solid #22C35D' },
+  accessible:     { background: '#434548', border: '1px solid #BCC0C7' },
+  today:          { background: '#89573E', border: '2px solid #FB7026' },
+  locked:         { background: '#1C1C20', border: '1px solid rgba(255,255,255,0.12)' },
+  'digital-detox':{ background: 'rgba(41,44,49,0.75)', border: '1px solid #41454E' },
   'catch-up':     { background: '#1A1A2E', border: '1.5px solid #7B6FE8' },
 }
+const SPECIAL_CARD_DESKTOP: React.CSSProperties = { background: '#3E351D', border: '2px solid #DAA520' }
 
-const GRADIENT_OVERLAY: Record<string, string | null> = {
-  completed:      null,
-  accessible:     null,
-  today:          null,
-  locked:         null,
-  'digital-detox':null,
-  'catch-up':     null,
+// ─── Mobile card styles ────────────────────────────────────────────────────────
+const CARD_STYLES_MOBILE: Record<string, React.CSSProperties> = {
+  completed:      { background: 'rgba(34,195,93,0.25)',  border: '2px solid #22C35D' },
+  accessible:     { background: 'rgba(247,247,248,0.25)',border: '2px solid #BCC0C7' },
+  today:          { background: 'rgba(252,150,95,0.50)', border: '2px solid #FB7026' },
+  locked:         { background: 'transparent',           border: '2px solid #585E6A' },
+  'digital-detox':{ background: 'transparent',           border: '2px solid #2A2D32' },
+  'catch-up':     { background: '#1A1A2E',               border: '1.5px solid #7B6FE8' },
 }
+const SPECIAL_CARD_MOBILE: React.CSSProperties = { background: 'rgba(218,165,32,0.40)', border: '2px solid #DAA520' }
 
+// ─── Number colors ─────────────────────────────────────────────────────────────
 const NUMBER_COLOR: Record<string, string> = {
-  completed:      '#22C35D',   // Figma: #22C35D
+  completed:      '#22C35D',
   accessible:     '#727988',
-  today:          '#FB7026',   // Figma: #FB7026 (mobile)
-  locked:         '#41454E',   // Figma: #41454E
+  today:          '#FB7026',
+  locked:         '#585E6A',
   'digital-detox':'#41454E',
   'catch-up':     '#7B6FE8',
 }
+const SPECIAL_NUM_COLOR = '#DAA520'
 
-// SVG icon size for regular badges
+// ─── Badge config ──────────────────────────────────────────────────────────────
 const ICON_SIZE = 10.2
 
 const BADGE_CONFIG = {
@@ -66,7 +74,7 @@ const BADGE_CONFIG = {
   locked: {
     label: 'Próximo',
     icon: '/locked-until-available.svg',
-    style: { background: '#ECEDEF', color: '#41454E', border: 'none', borderRadius: 85 } as React.CSSProperties,
+    style: { background: '#ACADB0', color: '#41454E', border: 'none', borderRadius: 85 } as React.CSSProperties,
   },
   'catch-up': {
     label: 'Ponte al día',
@@ -75,11 +83,7 @@ const BADGE_CONFIG = {
   },
 } as const
 
-// Figma: #DAA520 a 20% / borde #DAA520 2px
-const SPECIAL_CARD: React.CSSProperties = { background: 'rgba(218,165,32,0.2)', border: '2px solid #DAA520' }
-const SPECIAL_NUM_COLOR = '#DAA520'
-
-export default function DayCard({ day, index }: DayCardProps) {
+export default function DayCard({ day, index, dataStatus, dataSpecial }: DayCardProps) {
   const { openChallenge, showToast } = useAppStore()
   const { canAttemptDay } = useCalendar()
 
@@ -106,10 +110,11 @@ export default function DayCard({ day, index }: DayCardProps) {
   const isSpecial = day.isSpecial
   const isDetox = day.status === 'digital-detox'
   const isHoliday = HOLIDAY_DAYS.includes(day.day)
-  const cardStyle = isSpecial ? SPECIAL_CARD : (CARD_STYLES[day.status] ?? CARD_STYLES.locked)
-  const numColor = isSpecial ? SPECIAL_NUM_COLOR : (NUMBER_COLOR[day.status] ?? 'rgba(255,255,255,0.15)')
-  const gradient = isSpecial ? null : (GRADIENT_OVERLAY[day.status] ?? null)
+  const numColor = isSpecial ? SPECIAL_NUM_COLOR : (NUMBER_COLOR[day.status] ?? 'rgba(255,255,255,0.25)')
   const badge = BADGE_CONFIG[day.status as keyof typeof BADGE_CONFIG]
+
+  // Gap between number and day abbreviation (mobile)
+  const abbrGap = (day.status === 'locked' || isSpecial) ? 12.5 : 8
 
   return (
     <motion.div
@@ -117,8 +122,12 @@ export default function DayCard({ day, index }: DayCardProps) {
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3, delay: index * 0.018, ease: 'easeOut' }}
+      className="day-card-root"
+      data-status={dataStatus ?? day.status}
+      data-special={dataSpecial ?? (isSpecial ? 'true' : 'false')}
       style={{
-        ...cardStyle,
+        /* Desktop styles (overridden by media query class) */
+        ...(isSpecial ? SPECIAL_CARD_DESKTOP : (CARD_STYLES_DESKTOP[day.status] ?? CARD_STYLES_DESKTOP.locked)),
         borderRadius: 12,
         height: 160,
         minHeight: 160,
@@ -130,94 +139,126 @@ export default function DayCard({ day, index }: DayCardProps) {
         padding: 16,
       }}
     >
-      {/* Gradient overlay */}
-      {gradient && (
-        <div style={{
-          position: 'absolute', inset: 0,
-          background: gradient,
-          pointerEvents: 'none',
-          borderRadius: 'inherit',
-          zIndex: 0,
-        }} />
-      )}
+      {/* ── DESKTOP layout ──────────────────────────────────────────────────── */}
 
-      {/* Day number — zIndex 1 (detox: blurred con filter) */}
-      <div style={{ position: 'absolute', bottom: 12, left: 16, zIndex: 1, filter: isDetox ? 'blur(5px)' : undefined }}>
+      {/* Day number — bottom left, blurred if detox */}
+      <div
+        className="day-number-desktop"
+        style={{
+          position: 'absolute', bottom: 12, left: 16, zIndex: 1,
+          filter: isDetox ? 'blur(5px)' : undefined,
+        }}
+      >
         <div style={{
           fontFamily: "'DM Sans', sans-serif",
-          fontWeight: 700,
-          fontSize: '40px',
-          lineHeight: 1,
+          fontWeight: 700, fontSize: '40px', lineHeight: 1,
           color: numColor,
         }}>
           {day.day}
         </div>
-        {/* Day name — mobile only */}
-        {!isDetox && (
-          <div
-            className="day-abbr-mobile"
-            style={{
-              fontFamily: "'DM Sans', sans-serif",
-              fontSize: 11, fontWeight: 400,
-              color: numColor, opacity: 0.6,
-              marginTop: 2, letterSpacing: '0.03em',
-            }}
-          >
-            {getDayAbbr(day.day)}
-          </div>
-        )}
       </div>
 
-      {/* Digital-detox — badge centrado (icono + texto), sin overlay */}
+      {/* Digital-detox desktop — lock centered */}
       {isDetox && (
-        <div style={{
-          position: 'absolute', inset: 0,
-          zIndex: 2,
-          display: 'flex', flexDirection: 'column',
-          alignItems: 'center', justifyContent: 'center',
-          gap: 3.4,
-          pointerEvents: 'none',
-        }}>
+        <div
+          className="day-detox-desktop"
+          style={{
+            position: 'absolute', inset: 0, zIndex: 2,
+            display: 'flex', flexDirection: 'column',
+            alignItems: 'center', justifyContent: 'center',
+            gap: 3.4, pointerEvents: 'none',
+          }}
+        >
           <LockKeyhole size={24} color="#F4F5F0" strokeWidth={1.5} />
           <span style={{
             fontFamily: "'DM Sans', sans-serif",
-            fontSize: 12, fontWeight: 500,
-            color: '#F4F5F0',
-            textAlign: 'center',
-            lineHeight: '14px',
-            whiteSpace: 'pre-line',
+            fontSize: 12, fontWeight: 500, color: '#F4F5F0',
+            textAlign: 'center', lineHeight: '14px', whiteSpace: 'pre-line',
           }}>
             {isHoliday ? 'Festivo' : 'Desconexión\ndigital'}
           </span>
         </div>
       )}
 
-      {/* Badge — top right, solo días NO detox */}
+      {/* Badge — top right, desktop, non-detox */}
       {!isDetox && (
-        <div style={{
-          position: 'absolute',
-          top: 10, right: 10,
-          display: 'flex', alignItems: 'center', gap: 4,
-          borderRadius: 85,
-          height: 20.8,
-          padding: '3.4px 6.8px',
-          fontSize: 9.35,
-          fontWeight: 500,
-          fontFamily: "'DM Sans', sans-serif",
-          lineHeight: 1,
-          whiteSpace: 'nowrap',
-          ...(isSpecial
-            ? { background: '#DAA520', color: '#F4F5F0', border: 'none' }
-            : (badge?.style ?? {})),
-          zIndex: 3,
-        }}>
+        <div
+          className="day-badge-desktop"
+          style={{
+            position: 'absolute', top: 10, right: 10,
+            display: 'flex', alignItems: 'center', gap: 4,
+            borderRadius: 85, height: 20.8, padding: '3.4px 6.8px',
+            fontSize: 9.35, fontWeight: 500,
+            fontFamily: "'DM Sans', sans-serif",
+            lineHeight: 1, whiteSpace: 'nowrap',
+            ...(isSpecial
+              ? { background: '#DAA520', color: '#F4F5F0', border: 'none' }
+              : (badge?.style ?? {})),
+            zIndex: 3,
+          }}
+        >
           {isSpecial
             ? <img src="/final-challenge-medal.svg" width={ICON_SIZE} height={ICON_SIZE} alt="Último día" />
             : day.status === 'catch-up'
               ? <RefreshCw size={11} strokeWidth={2} />
-              : badge && badge.icon && <img src={badge.icon} width={ICON_SIZE} height={ICON_SIZE} alt={badge.label} />
+              : badge?.icon && <img src={badge.icon} width={ICON_SIZE} height={ICON_SIZE} alt={badge.label} />
           }
           <span>{isSpecial ? 'Último día' : badge?.label}</span>
+        </div>
+      )}
+
+      {/* ── MOBILE layout ───────────────────────────────────────────────────── */}
+
+      {/* Mobile: number + abbr centered, only for non-detox */}
+      {!isDetox && (
+        <div
+          className="day-mobile-content"
+          style={{
+            display: 'none', /* shown via CSS */
+            flexDirection: 'column',
+            alignItems: 'center', justifyContent: 'center',
+            position: 'absolute', inset: 0, zIndex: 1,
+            paddingTop: 16,
+          }}
+        >
+          <div style={{
+            fontFamily: "'DM Sans', sans-serif",
+            fontWeight: 500, fontSize: 34, lineHeight: 1,
+            color: numColor, textAlign: 'center',
+          }}>
+            {day.day}
+          </div>
+          <div style={{
+            fontFamily: "'DM Sans', sans-serif",
+            fontWeight: 400, fontSize: 10, lineHeight: 1,
+            color: numColor, textAlign: 'center',
+            marginTop: abbrGap, letterSpacing: '0.03em',
+          }}>
+            {getDayAbbr(day.day)}
+          </div>
+        </div>
+      )}
+
+      {/* Mobile: detox — lock + label centered */}
+      {isDetox && (
+        <div
+          className="day-mobile-detox"
+          style={{
+            display: 'none', /* shown via CSS */
+            flexDirection: 'column',
+            alignItems: 'center', justifyContent: 'center',
+            position: 'absolute', inset: 0, zIndex: 2,
+            gap: 6, pointerEvents: 'none',
+          }}
+        >
+          <img src="/weekend-holiday-locked.svg" width={24} height={24} alt={isHoliday ? 'Festivo' : 'Fin de semana'} />
+          <span style={{
+            fontFamily: "'DM Sans', sans-serif",
+            fontSize: 10, fontWeight: 500, color: '#F4F5F0',
+            textAlign: 'center', lineHeight: 1.3, whiteSpace: 'pre-line',
+          }}>
+            {isHoliday ? 'Festivo' : 'Desconexión\ndigital'}
+          </span>
         </div>
       )}
     </motion.div>

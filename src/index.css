@@ -48,6 +48,7 @@
     font-size: var(--text-base);
     font-weight: var(--font-regular);
     line-height: var(--leading-normal);
+    overflow-x: hidden;
   }
 }
 
@@ -139,6 +140,11 @@
 
 /* Help modal placeholder */
 .help-modal-input::placeholder {
-  color: rgba(255,255,255,0.25);
+  color: #727988;
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 16px;
+  letter-spacing: 0px;
 }
 
