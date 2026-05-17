@@ -1,9 +1,8 @@
 import { motion } from 'framer-motion'
-import { Sun, RotateCcw, CheckCircle2, Lock, Moon } from 'lucide-react'
 import type { CalendarDay } from '@/types/calendar.types'
 import { useAppStore } from '@/stores/app.store'
 import { useCalendar } from '@/hooks/useCalendar'
-import { DAY_LABELS } from '@/data/calendar.data'
+import { DAY_LABELS, HOLIDAY_DAYS } from '@/data/calendar.data'
 
 interface DayCardProps {
   day: CalendarDay
@@ -13,11 +12,11 @@ interface DayCardProps {
 const getDayAbbr = (day: number) => DAY_LABELS[day]?.split(' ')[0] ?? ''
 
 const CARD_STYLES: Record<string, React.CSSProperties> = {
-  completed:      { background: '#0D2B1A', border: '1.5px solid #22C55E' },
-  accessible:     { background: '#242428', border: '1px solid #BCC0C7' },
-  today:          { background: '#2D1A0A', border: '1.5px solid #F97316' },
-  locked:         { background: '#1A1A1E', border: '1px solid #BCC0C7' },
-  'digital-detox':{ background: '#18161F', border: '1px solid #D1BDFF' },
+  completed:      { background: '#182A22', border: '1px solid #22C35D' },
+  accessible:     { background: '#434548', border: '1px solid #BCC0C7' },
+  today:          { background: '#89573E', border: '2px solid #FB7026' },
+  locked:         { background: '#1C1C20', border: '1px solid rgba(255,255,255,0.12)' },
+  'digital-detox':{ background: 'rgba(41,44,49,0.75)', border: '1px solid #41454E' },
 }
 
 const GRADIENT_OVERLAY: Record<string, string | null> = {
@@ -25,47 +24,44 @@ const GRADIENT_OVERLAY: Record<string, string | null> = {
   accessible:     null,
   today:          'radial-gradient(ellipse at 40% 60%, rgba(249,115,22,0.25), transparent 60%)',
   locked:         null,
-  'digital-detox':'radial-gradient(ellipse at 50% 60%, rgba(127,119,221,0.12), transparent 60%)',
+  'digital-detox': null,
 }
 
 const NUMBER_COLOR: Record<string, string> = {
   completed:      '#22C55E',
   accessible:     'rgba(255,255,255,0.5)',
   today:          '#F97316',
-  locked:         'rgba(255,255,255,0.15)',
-  'digital-detox':'#D1BDFF',
+  locked:         'rgba(255,255,255,0.25)',
+  'digital-detox':'rgba(255,255,255,0.06)',
 }
+
+// SVG icon size for regular badges
+const ICON_SIZE = 10.2
 
 const BADGE_CONFIG = {
   today: {
-    label: 'Hoy', Icon: Sun,
+    label: 'Hoy',
+    icon: '/today.svg',
     style: { background: '#F97316', color: '#FFFFFF', border: 'none' } as React.CSSProperties,
   },
   accessible: {
-    label: 'Pasado', Icon: RotateCcw,
-    // #ECEDEF bg, dark text
-    style: { background: '#ECEDEF', color: '#2A2D32', border: 'none' } as React.CSSProperties,
+    label: 'Pasado',
+    icon: '/past.svg',
+    style: { background: '#F7F7F8', color: '#727988', border: 'none', borderRadius: 85 } as React.CSSProperties,
   },
   completed: {
-    label: 'Completado', Icon: CheckCircle2,
+    label: 'Completado',
+    icon: '/completed.svg',
     style: { background: '#22C55E', color: '#FFFFFF', border: 'none' } as React.CSSProperties,
   },
   locked: {
-    label: 'Próximo', Icon: Lock,
-    // #ECEDEF bg, dark text
-    style: { background: '#ECEDEF', color: '#2A2D32', border: 'none' } as React.CSSProperties,
-  },
-  'digital-detox': {
-    label: 'Fin de semana', Icon: Moon,
-    style: {
-      background: 'rgba(127,119,221,0.1)',
-      color: '#D1BDFF',
-      border: '1px solid rgba(127,119,221,0.2)',
-    } as React.CSSProperties,
+    label: 'Próximo',
+    icon: '/locked-until-available.svg',
+    style: { background: '#ACADB0', color: '#41454E', border: 'none', borderRadius: 85 } as React.CSSProperties,
   },
 } as const
 
-const SPECIAL_CARD: React.CSSProperties = { background: '#1F1800', border: '1.5px solid #C9A227' }
+const SPECIAL_CARD: React.CSSProperties = { background: '#3E351D', border: '2px solid #DAA520' }
 const SPECIAL_NUM_COLOR = '#C9A227'
 
 export default function DayCard({ day, index }: DayCardProps) {
@@ -87,11 +83,11 @@ export default function DayCard({ day, index }: DayCardProps) {
 
   const isSpecial = day.isSpecial
   const isDetox = day.status === 'digital-detox'
+  const isHoliday = HOLIDAY_DAYS.includes(day.day)
   const cardStyle = isSpecial ? SPECIAL_CARD : (CARD_STYLES[day.status] ?? CARD_STYLES.locked)
   const numColor = isSpecial ? SPECIAL_NUM_COLOR : (NUMBER_COLOR[day.status] ?? 'rgba(255,255,255,0.15)')
   const gradient = isSpecial ? null : (GRADIENT_OVERLAY[day.status] ?? null)
   const badge = BADGE_CONFIG[day.status as keyof typeof BADGE_CONFIG]
-  const { Icon } = badge
 
   return (
     <motion.div
@@ -112,94 +108,103 @@ export default function DayCard({ day, index }: DayCardProps) {
         padding: 16,
       }}
     >
-      {/* Gradient overlay — zIndex 0 */}
+      {/* Gradient overlay */}
       {gradient && (
-        <div
-          style={{
-            position: 'absolute', inset: 0,
-            background: gradient,
-            pointerEvents: 'none',
-            borderRadius: 'inherit',
-            zIndex: 0,
-          }}
-        />
+        <div style={{
+          position: 'absolute', inset: 0,
+          background: gradient,
+          pointerEvents: 'none',
+          borderRadius: 'inherit',
+          zIndex: 0,
+        }} />
       )}
 
-      {/* Day number — zIndex 1 (below detox blur, above gradient) */}
-      <div
-        style={{
-          position: 'absolute',
-          bottom: 12, left: 16,
-          zIndex: 1,
-          opacity: isDetox ? 0.3 : 1,
-        }}
-      >
-        <div
-          style={{
-            fontFamily: "'DM Sans', sans-serif",
-            fontWeight: 700,
-            fontSize: 'clamp(48px, 6vw, 88px)',
-            lineHeight: 1,
-            color: numColor,
-          }}
-        >
+      {/* Day number — siempre visible */}
+      <div style={{ position: 'absolute', bottom: 12, left: 16, zIndex: 1 }}>
+        <div style={{
+          fontFamily: "'DM Sans', sans-serif",
+          fontWeight: 700,
+          fontSize: '40px',
+          lineHeight: 1,
+          color: numColor,
+        }}>
           {day.day}
         </div>
-
         {/* Day name — mobile only */}
         <div
           className="day-abbr-mobile"
           style={{
             fontFamily: "'DM Sans', sans-serif",
-            fontSize: 11,
-            fontWeight: 400,
-            color: numColor,
-            opacity: 0.6,
-            marginTop: 2,
-            letterSpacing: '0.03em',
+            fontSize: 11, fontWeight: 400,
+            color: numColor, opacity: 0.6,
+            marginTop: 2, letterSpacing: '0.03em',
           }}
         >
           {getDayAbbr(day.day)}
         </div>
       </div>
 
-      {/* Digital-detox blur overlay — zIndex 2 (above number) */}
+      {/* Digital-detox — overlay oscuro + icono SVG centrado */}
       {isDetox && (
-        <div
-          style={{
+        <>
+          <div style={{
             position: 'absolute', inset: 0,
-            background: 'rgba(244,240,255,0.10)',
+            background: 'rgba(41,44,49,0.82)',
             borderRadius: 'inherit',
+            zIndex: 1,
             pointerEvents: 'none',
-            backdropFilter: 'blur(4px)',
-            WebkitBackdropFilter: 'blur(4px)',
-            zIndex: 2,
-          }}
-        />
+          }} />
+          <div style={{
+            position: 'absolute', inset: 0,
+            display: 'flex', flexDirection: 'column',
+            alignItems: 'center', justifyContent: 'center',
+            gap: 8, zIndex: 2,
+          }}>
+            <img
+              src="/weekend-holiday-locked.svg"
+              width={24} height={24}
+              alt={isHoliday ? 'Festivo' : 'Fin de semana'}
+            />
+            <span style={{
+              fontFamily: "'DM Sans', sans-serif",
+              fontSize: 12, fontWeight: 500,
+              color: '#F4F5F0',
+              textAlign: 'center',
+              lineHeight: 1.3,
+              whiteSpace: 'pre-line',
+            }}>
+              {isHoliday ? 'Festivo' : 'Desconexión\ndigital'}
+            </span>
+          </div>
+        </>
       )}
 
-      {/* Badge — top right, zIndex 3 (always above blur) */}
-      <div
-        style={{
+      {/* Badge — top right, solo días NO detox */}
+      {!isDetox && (
+        <div style={{
           position: 'absolute',
           top: 10, right: 10,
           display: 'flex', alignItems: 'center', gap: 4,
-          borderRadius: 20,
-          padding: '3px 7px',
-          fontSize: 10,
+          borderRadius: 85,
+          height: 20.8,
+          padding: '3.4px 6.8px',
+          fontSize: 9.35,
           fontWeight: 500,
           fontFamily: "'DM Sans', sans-serif",
           lineHeight: 1,
           whiteSpace: 'nowrap',
           ...(isSpecial
-            ? { background: 'rgba(201,162,39,0.15)', color: '#C9A227', border: '1px solid rgba(201,162,39,0.3)' }
-            : badge.style),
+            ? { background: '#DAA520', color: '#F4F5F0', border: 'none' }
+            : (badge?.style ?? {})),
           zIndex: 3,
-        }}
-      >
-        <Icon size={11} strokeWidth={2} />
-        <span>{isSpecial ? 'Especial' : badge.label}</span>
-      </div>
+        }}>
+          {isSpecial
+            ? <img src="/final-challenge-medal.svg" width={ICON_SIZE} height={ICON_SIZE} alt="Último día" />
+            : badge && <img src={badge.icon} width={ICON_SIZE} height={ICON_SIZE} alt={badge.label} />
+          }
+          <span>{isSpecial ? 'Último día' : badge?.label}</span>
+        </div>
+      )}
     </motion.div>
   )
 }

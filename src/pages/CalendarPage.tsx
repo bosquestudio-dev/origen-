@@ -155,7 +155,7 @@ export default function CalendarPage() {
     <>
     <LoadingScreen isVisible={!pageReady} />
     <motion.div
-      style={{ minHeight: '100vh', background: '#2A2D32' }}
+      style={{ minHeight: '100vh', background: '#000000' }}
       initial={{ opacity: 0, scale: 1.6 }}
       animate={{ opacity: pageReady ? 1 : 0, scale: pageReady ? 1 : 1.6 }}
       transition={{ duration: 1.8, ease: [0.16, 1, 0.3, 1] }}
@@ -165,7 +165,7 @@ export default function CalendarPage() {
       <style>{`
         .cal-header-outer {
           position: sticky; top: 0; z-index: 40;
-          background: #2A2D32;
+          background: #000000;
           border-bottom: 1px solid rgba(255,255,255,0.08);
           backdrop-filter: blur(8px);
         }
@@ -187,12 +187,12 @@ export default function CalendarPage() {
         /* Metric cards — transparent bg, visible border, fixed height */
         .cal-metric-card {
           width: 220px; min-width: 220px;
-          height: 63px; min-height: 63px; max-height: 63px;
+          height: 76px; min-height: 76px; max-height: 76px;
           overflow: hidden;
-          background: transparent;
-          border: 1px solid rgba(255,255,255,0.15);
+          background: #17191C;
+          border: 1px solid #41454E;
           border-radius: 12px;
-          padding: 0 16px;
+          padding: 12px;
           display: flex; align-items: center; box-sizing: border-box;
         }
         /* Mobile logout — hidden in desktop (shown via row1) */
@@ -244,36 +244,46 @@ export default function CalendarPage() {
 
           {/* Right: TU PROGRESO card + HOY card + logout (desktop) */}
           <div className="cal-header-right">
-            {/* Card TU PROGRESO — ring left, text right, centered vertically */}
+            {/* Card TU PROGRESO */}
             <div className="cal-metric-card" style={{ flexDirection: 'row', justifyContent: 'flex-start', gap: 12 }}>
-              <ProgressRing percentage={progressPercentage} size={32} />
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 0, lineHeight: 1.2, justifyContent: 'center' }}>
-                <div style={{ fontSize: 9, fontWeight: 500, letterSpacing: '0.08em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.4)', fontFamily: "'DM Sans', sans-serif" }}>
+              <ProgressRing percentage={progressPercentage} size={52} />
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 1, justifyContent: 'center' }}>
+                <div style={{ fontSize: 10, fontWeight: 300, letterSpacing: '0.05em', textTransform: 'uppercase', color: '#989EA9', fontFamily: "'DM Sans', sans-serif" }}>
                   Tu progreso
                 </div>
-                <div style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 16, fontWeight: 700, color: '#FFFFFF', lineHeight: 1.2 }}>
-                  {completedCount} / {totalAvailable}
+                <div style={{ display: 'flex', alignItems: 'baseline', gap: 2 }}>
+                  <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 24, fontWeight: 700, color: '#22C35D', lineHeight: 1 }}>{completedCount}</span>
+                  <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 12, fontWeight: 400, color: '#585E6A', lineHeight: 1 }}>/{totalAvailable}</span>
                 </div>
-                <div style={{ fontSize: 10, color: 'rgba(255,255,255,0.4)', fontFamily: "'DM Sans', sans-serif", lineHeight: 1.2 }}>
-                  retos completados
+                <div>
+                  <span style={{ fontSize: 12, color: '#ECEDEF', fontFamily: "'DM Sans', sans-serif" }}>retos completados</span>
                 </div>
               </div>
             </div>
 
-            {/* Card HOY — vertically centered, label + row[% + text] */}
-            <div className="cal-metric-card" style={{ flexDirection: 'column', justifyContent: 'center', alignItems: 'flex-start', gap: 2 }}>
-              <div style={{ fontSize: 10, fontWeight: 500, letterSpacing: '0.08em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.4)', fontFamily: "'DM Sans', sans-serif" }}>
+            {/* Card HOY */}
+            <div className="cal-metric-card" style={{ width: 226, minWidth: 226, flexDirection: 'column', justifyContent: 'center', alignItems: 'flex-start', gap: 2 }}>
+              <div style={{ fontSize: 10, fontWeight: 300, letterSpacing: '0.05em', textTransform: 'uppercase', color: '#989EA9', fontFamily: "'DM Sans', sans-serif" }}>
                 Hoy
               </div>
               <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 8, width: '100%' }}>
-                <div style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 22, fontWeight: 700, color: '#22C55E', lineHeight: 1.2, flexShrink: 0, alignSelf: 'center' }}>
+                <div style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 32, fontWeight: 700, color: '#22C35D', lineHeight: 1, flexShrink: 0 }}>
                   {companionPercentage}%
                 </div>
-                <div style={{ fontSize: 10, color: '#ECEDEF', fontFamily: "'DM Sans', sans-serif", lineHeight: 1.2, alignSelf: 'center', display: 'flex', alignItems: 'center' }}>
+                <div style={{ fontSize: 12, color: '#ECEDEF', fontFamily: "'DM Sans', sans-serif", lineHeight: 1.2 }}>
                   de tus compañeros ya lo han completado
                 </div>
               </div>
             </div>
+
+            {/* Help / Soporte — desktop only */}
+            <button
+              className="cal-header-logout cal-logout-desktop"
+              onClick={() => {/* TODO: funcionalidad soporte */}}
+              title="Ayuda y soporte"
+            >
+              <img src="/help-square.svg" width={16} height={16} alt="Ayuda" />
+            </button>
 
             {/* Logout — desktop only */}
             <button
@@ -339,52 +349,55 @@ export default function CalendarPage() {
               exit={{ opacity: 0, scale: 0.9, y: 20 }}
               transition={{ duration: 0.25, ease: 'easeOut' }}
               style={{
-                background: '#FFFFFF',
-                borderRadius: 16,
-                padding: '28px 24px',
-                width: 'min(380px, 90vw)',
-                boxShadow: '0 24px 60px rgba(0,0,0,0.15)',
+                background: '#1C1C1E',
+                borderRadius: 12,
+                padding: '28px 20px',
+                width: 420,
+                maxWidth: '92vw',
+                height: 436,
+                boxSizing: 'border-box',
+                border: '1px solid #41454E',
+                boxShadow: '0 24px 60px rgba(0,0,0,0.5)',
                 position: 'relative',
+                display: 'flex',
+                flexDirection: 'column',
               }}
             >
-              {/* Close button */}
-              <button
-                onClick={handleDismiss}
-                style={{
-                  position: 'absolute', top: 12, right: 12,
-                  background: 'transparent', border: 'none',
-                  cursor: 'pointer', color: '#9B9B95',
-                  width: 24, height: 24,
-                  display: 'flex', alignItems: 'center', justifyContent: 'center',
-                }}
-              >
-                <X size={16} />
-              </button>
-
-              {/* WA icon */}
-              <div style={{ display: 'flex', justifyContent: 'center' }}>
-                <WA_ICON_LG />
-              </div>
+              {/* WA icon — top left */}
+              <img src="/icon_wp.svg" alt="WhatsApp" style={{ width: 48, height: 48, marginBottom: 20, display: 'block' }} />
 
               {/* Title */}
               <h2 style={{
-                fontFamily: "'Space Grotesk', sans-serif",
-                fontSize: 18, fontWeight: 700,
-                color: '#17181B', textAlign: 'center',
-                margin: '12px 0 8px',
+                fontFamily: "'DM Sans', sans-serif",
+                fontSize: 24, fontWeight: 700,
+                color: '#F4F5F0',
+                margin: '0 0 12px',
+                lineHeight: 1.2,
+                whiteSpace: 'nowrap',
               }}>
-                Recibe tus retos en WhatsApp
+                Recibe tus retos en Whatsapp
               </h2>
 
               {/* Subtitle */}
               <p style={{
                 fontFamily: "'DM Sans', sans-serif",
-                fontSize: 14, color: '#40454D',
-                textAlign: 'center', marginBottom: 20,
-                lineHeight: 1.5, margin: '0 0 20px',
+                fontSize: 16, color: '#F4F5F0',
+                lineHeight: 1.5,
+                margin: '0 0 20px',
+                opacity: 0.7,
               }}>
-                Introduce tu número y te avisaremos cada día cuando tu reto esté disponible.
+                Introduce tu número y te avisaremos cada día cuando tu reto esté disponible
               </p>
+
+              {/* Label */}
+              <label style={{
+                display: 'block',
+                fontFamily: "'DM Sans', sans-serif",
+                fontSize: 16, color: '#F7F7F8',
+                marginBottom: 8,
+              }}>
+                Teléfono
+              </label>
 
               {/* Input */}
               <input
@@ -394,49 +407,58 @@ export default function CalendarPage() {
                 onChange={e => setWaNumber(e.target.value)}
                 onFocus={() => setInputFocused(true)}
                 onBlur={() => setInputFocused(false)}
-                placeholder="+34 600 000 000"
+                placeholder="Introduce tu número de teléfono"
                 style={{
                   width: '100%', boxSizing: 'border-box',
-                  background: '#F7F6F2',
-                  border: `1px solid ${inputFocused ? '#25D366' : '#EBECEE'}`,
+                  background: 'transparent',
+                  border: `1px solid ${inputFocused ? '#22C35D' : 'rgba(255,255,255,0.2)'}`,
                   borderRadius: 8,
-                  padding: '12px 14px',
-                  fontSize: 14,
+                  padding: '12px 20px',
+                  fontSize: 16,
                   fontFamily: "'DM Sans', sans-serif",
-                  color: '#17181B',
+                  color: '#F7F7F8',
                   outline: 'none',
                   transition: 'border-color 0.15s ease',
+                  marginBottom: 12,
                 }}
               />
 
-              {/* Activate button */}
-              <button
-                onClick={handleActivate}
-                style={{
-                  width: '100%', marginTop: 12,
-                  background: '#25D366', color: '#FFFFFF',
-                  border: 'none', borderRadius: 8,
-                  padding: '13px 16px',
-                  fontSize: 14, fontWeight: 500,
-                  fontFamily: "'DM Sans', sans-serif",
-                  cursor: 'pointer',
-                }}
-              >
-                {hasLinkedNumber ? 'Actualizar número' : 'Activar notificaciones'}
-              </button>
+              {/* Buttons column */}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 12, marginTop: 'auto' }}>
+                {/* Activate button */}
+                <button
+                  onClick={handleActivate}
+                  style={{
+                    width: '100%',
+                    background: '#22C35D', color: '#FFFFFF',
+                    border: 'none', borderRadius: 8,
+                    padding: '12px 20px',
+                    fontSize: 14, fontWeight: 500,
+                    fontFamily: "'DM Sans', sans-serif",
+                    cursor: 'pointer',
+                  }}
+                >
+                  Activar notificaciones
+                </button>
 
-              {/* Dismiss link */}
-              <span
-                onClick={handleDismiss}
-                style={{
-                  display: 'block', marginTop: 10,
-                  fontSize: 13, color: '#9B9B95',
-                  textDecoration: 'underline',
-                  cursor: 'pointer', textAlign: 'center',
-                }}
-              >
-                Ahora no
-              </span>
+                {/* Ahora no button */}
+                <button
+                  onClick={handleDismiss}
+                  style={{
+                    width: '100%',
+                    background: 'transparent',
+                    border: '1.5px solid #F4F5F0',
+                    borderRadius: 8,
+                    padding: '12px 20px',
+                    fontSize: 14, fontWeight: 400,
+                    fontFamily: "'DM Sans', sans-serif",
+                    color: '#FFFFFF',
+                    cursor: 'pointer',
+                  }}
+                >
+                  Ahora no
+                </button>
+              </div>
             </motion.div>
           </motion.div>
         )}
@@ -476,13 +498,13 @@ export default function CalendarPage() {
                 style={{
                   width: 52, height: 52,
                   borderRadius: '50%',
-                  background: hasLinkedNumber ? '#25D366' : '#E5E5E0',
+                  background: 'transparent',
                   border: 'none', cursor: 'pointer',
                   display: 'flex', alignItems: 'center', justifyContent: 'center',
                   boxShadow: '0 4px 16px rgba(0,0,0,0.2)',
                 }}
               >
-                <WA_ICON />
+                <img src="/icon_wp.svg" alt="WhatsApp" style={{ width: 40, height: 40 }} />
               </motion.button>
             </div>
           </motion.div>
