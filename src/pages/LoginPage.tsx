@@ -472,17 +472,12 @@ export default function LoginPage() {
         {/* ── Aurora ── (full-screen mobile / left-half desktop) */}
         <div className="login-aurora">
           <div className="login-aurora-inner">
-            {/* Gradiente animado */}
+            {/* Imagen estática de fondo */}
             <div style={{ position: 'absolute', inset: 0 }}>
-              <MeshGradient
-                style={{ width: '100%', height: '100%' }}
-                colors={['#AC440B', '#D75F1B', '#F77228', '#FBA74C', '#FEBE59', '#FFE1B2']}
-                distortion={1.2}
-                swirl={0.6}
-                grainMixer={0}
-                grainOverlay={0}
-                speed={0.15}
-                offsetX={0.08}
+              <img
+                src="/login-bg.jpg"
+                alt=""
+                style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
               />
             </div>
             <style>{`

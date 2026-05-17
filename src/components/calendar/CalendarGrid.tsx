@@ -16,11 +16,11 @@ export default function CalendarGrid() {
   ]
 
   return (
-    <div style={{ padding: '0 0 24px' }}>
+    <div style={{ padding: '20px', background: '#17191C', borderRadius: 16 }}>
       <style>{`
         /* Desktop: 7-col fixed 182px cards */
-        .cal-headers { display: grid; grid-template-columns: repeat(7, minmax(0, 182px)); gap: 8px; margin-bottom: 8px; }
-        .cal-grid    { display: grid; grid-template-columns: repeat(7, minmax(0, 182px)); gap: 8px; }
+        .cal-headers { display: grid; grid-template-columns: repeat(7, minmax(0, 182px)); gap: 12px; margin-bottom: 12px; }
+        .cal-grid    { display: grid; grid-template-columns: repeat(7, minmax(0, 182px)); gap: 12px; }
         .cal-empty   { height: 160px; min-height: 160px; }
         .day-abbr-mobile { display: none; }
 
@@ -39,11 +39,11 @@ export default function CalendarGrid() {
           <div
             key={d}
             style={{
-              fontSize: 11,
-              fontWeight: 500,
+              fontSize: 12,
+              fontWeight: 400,
               textTransform: 'uppercase',
               letterSpacing: '0.08em',
-              color: 'rgba(255,255,255,0.3)',
+              color: '#989EA9',
               textAlign: 'center',
               paddingBottom: 8,
               fontFamily: "'DM Sans', sans-serif",
