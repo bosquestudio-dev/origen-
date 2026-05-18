@@ -87,8 +87,8 @@ export const CHALLENGES_DATA: Challenge[] = [
     label: 'Bienestar', isActive: true,
     content: {
       questions: [
-        { id: 'q1', question: '¿Cómo describirías tu estado de ánimo esta semana?', options: ['Con energía', 'Tranquilo', 'Algo cansado', 'Necesito un descanso'] },
-        { id: 'q2', question: '¿Qué es lo que más valoras de tu equipo?', options: ['La comunicación', 'El apoyo mutuo', 'La diversidad de ideas', 'El sentido del humor'] },
+        { id: 'q1', question: '¿Cómo describirías tu estado de ánimo esta semana?', options: ['Con energía', 'Necesito un descanso'] },
+        { id: 'q2', question: '¿Qué es lo que más valoras de tu equipo?', options: ['La comunicación', 'El apoyo mutuo'] },
       ],
     },
   },

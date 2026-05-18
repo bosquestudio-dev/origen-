@@ -373,10 +373,10 @@ function SurveyChallenge({ challenge, completed }: SubProps) {
         })}
       </div>
 
-      {/* Reserved button space — always present, visible only on last question */}
+      {/* Reserved button space — always present, button only on last question after answering */}
       <div style={{ height: 46 }}>
-        {isLast && (
-          <AppButton onClick={handleSubmit} disabled={!answers[q?.id]}>
+        {isLast && answers[q?.id] && (
+          <AppButton onClick={handleSubmit}>
             Enviar
           </AppButton>
         )}

@@ -276,10 +276,10 @@ export default function DayCard({ day, index, dataStatus, dataSpecial }: DayCard
             gap: 6, pointerEvents: 'none',
           }}
         >
-          <img src="/weekend-holiday-locked.svg" width={24} height={24} alt={isHoliday ? 'Festivo' : 'Fin de semana'} />
+          <img src="/weekend-holiday-locked.svg" width={20} height={20} alt={isHoliday ? 'Festivo' : 'Fin de semana'} />
           <span style={{
             fontFamily: "'DM Sans', sans-serif",
-            fontSize: 10, fontWeight: 500, color: '#F4F5F0',
+            fontSize: 8, fontWeight: 500, color: '#F4F5F0',
             textAlign: 'center', lineHeight: 1.3, whiteSpace: 'pre-line',
           }}>
             {isHoliday ? 'Festivo' : 'Desconexión\ndigital'}
