@@ -7,7 +7,7 @@ interface CalendarState {
 
 const CalendarContext = createContext<CalendarState | null>(null)
 const STORAGE_KEY = 'origen_completions'
-const DEMO_COMPLETIONS = [1,2,3,4,5,6,7,8,9,10,11]
+const DEMO_COMPLETIONS = [1,2,3,4,5,6,7,8,10,11,12]
 
 function loadCompletions(): number[] {
   try {

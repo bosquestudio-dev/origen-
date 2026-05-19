@@ -3,6 +3,7 @@ import { useState, useLayoutEffect } from 'react'
 import type { CalendarDay } from '@/types/calendar.types'
 import { useAppStore } from '@/stores/app.store'
 import { useCalendar } from '@/hooks/useCalendar'
+import { RefreshCw } from 'lucide-react'
 import { DAY_LABELS, HOLIDAY_DAYS, WEDNESDAY_DAYS } from '@/data/calendar.data'
 
 interface DayCardProps {
@@ -139,7 +140,7 @@ export default function DayCard({ day, index, dataStatus, dataSpecial }: DayCard
         borderRadius: 8,
         position: 'relative',
         overflow: 'hidden',
-        cursor: (isDetox || day.status === 'catch-up') ? 'default' : (day.status === 'locked' ? 'not-allowed' : 'pointer'),
+        cursor: isDetox ? 'default' : (day.status === 'locked' ? 'not-allowed' : 'pointer'),
         userSelect: 'none',
         boxSizing: 'border-box',
         padding: 16,
@@ -150,7 +151,7 @@ export default function DayCard({ day, index, dataStatus, dataSpecial }: DayCard
         borderRadius: 12,
         position: 'relative',
         overflow: 'hidden',
-        cursor: (isDetox || day.status === 'catch-up') ? 'default' : (day.status === 'locked' ? 'not-allowed' : 'pointer'),
+        cursor: isDetox ? 'default' : (day.status === 'locked' ? 'not-allowed' : 'pointer'),
         userSelect: 'none',
         boxSizing: 'border-box',
         padding: 16,

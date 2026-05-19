@@ -107,7 +107,7 @@ export default function AppModal({ isOpen, onClose, children, challenge = false 
                 animate={{ opacity: 1, scale: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.92, y: 24 }}
                 transition={{ duration: 0.35, ease: [0.25, 0.46, 0.45, 0.94] }}
-                className="modal-scroll"
+                className="modal-scroll challenge-card"
                 style={{
                   position: 'relative',
                   zIndex: 52,
@@ -116,8 +116,8 @@ export default function AppModal({ isOpen, onClose, children, challenge = false 
                   borderRadius: '20px',
                   border: '1px solid rgba(127,119,221,0.2)',
                   boxShadow: '0 32px 80px rgba(0,0,0,0.6)',
-                  maxHeight: '88dvh',
-                  overflowY: 'auto',
+                  display: 'flex',
+                  flexDirection: 'column',
                 }}
               >
                 {/* X close button */}
@@ -128,31 +128,23 @@ export default function AppModal({ isOpen, onClose, children, challenge = false 
                     top: '16px',
                     right: '16px',
                     zIndex: 60,
-                    width: '28px',
-                    height: '28px',
-                    borderRadius: '50%',
-                    background: 'rgba(255,255,255,0.06)',
-                    border: '1px solid rgba(255,255,255,0.1)',
-                    color: 'rgba(255,255,255,0.4)',
+                    width: '20px',
+                    height: '20px',
+                    background: 'none',
+                    border: 'none',
+                    color: 'rgba(255,255,255,0.5)',
                     cursor: 'pointer',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    transition: 'all 0.2s ease',
+                    padding: 0,
+                    transition: 'color 0.2s ease',
                   }}
-                  onMouseEnter={e => {
-                    e.currentTarget.style.background = 'rgba(255,255,255,0.12)'
-                    e.currentTarget.style.color = 'rgba(255,255,255,0.8)'
-                    e.currentTarget.style.borderColor = 'rgba(255,255,255,0.2)'
-                  }}
-                  onMouseLeave={e => {
-                    e.currentTarget.style.background = 'rgba(255,255,255,0.06)'
-                    e.currentTarget.style.color = 'rgba(255,255,255,0.4)'
-                    e.currentTarget.style.borderColor = 'rgba(255,255,255,0.1)'
-                  }}
+                  onMouseEnter={e => { e.currentTarget.style.color = 'rgba(255,255,255,0.9)' }}
+                  onMouseLeave={e => { e.currentTarget.style.color = 'rgba(255,255,255,0.5)' }}
                 >
-                  <svg width="10" height="10" viewBox="0 0 10 10">
-                    <path d="M1 1L9 9M9 1L1 9" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+                  <svg width="12" height="12" viewBox="0 0 12 12">
+                    <path d="M1 1L11 11M11 1L1 11" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
                   </svg>
                 </button>
 

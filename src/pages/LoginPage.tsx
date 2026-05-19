@@ -348,11 +348,8 @@ export default function LoginPage() {
           padding: 28px 24px;
           width: 100%; max-width: 480px;
           box-sizing: border-box;
-          height: calc(100dvh - 40px);
-          max-height: calc(100dvh - 40px);
           display: flex;
           flex-direction: column;
-          overflow: hidden;
         }
         .step-motion-wrap {
           display: flex; flex-direction: column; flex: 1; min-height: 0;

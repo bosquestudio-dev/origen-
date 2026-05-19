@@ -1,4 +1,4 @@
-export type ChallengeType = 'text' | 'video' | 'survey' | 'raffle' | 'donation'
+export type ChallengeType = 'text' | 'video' | 'survey' | 'raffle' | 'donation' | 'catch-up'
 
 export interface Challenge {
   id: number
@@ -17,6 +17,9 @@ export interface ChallengeContent {
   raffleText?: string
   actionText?: string
   imageUrl?: string
+  donationLink?: string
+  donationText?: string
+  bodyText?: string
 }
 
 export interface SurveyQuestion {

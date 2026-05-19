@@ -3,7 +3,6 @@ import { toast } from 'sonner'
 import AppButton from '@/components/origen/AppButton'
 import { useCalendarStore } from '@/stores/calendar.store'
 import { useAppStore } from '@/stores/app.store'
-import { useAuth } from '@/stores/auth.store'
 import { DAY_LABELS } from '@/data/calendar.data'
 import type { Challenge } from '@/types/challenge.types'
 
@@ -308,80 +307,89 @@ function SurveyChallenge({ challenge, completed }: SubProps) {
   }
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
-      {/* Header */}
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-        <span style={{ fontFamily: 'var(--font-sans)', fontWeight: 400, fontSize: 10, letterSpacing: '0.04em', textTransform: 'uppercase' as const, color: '#989EA9', lineHeight: '13px' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', height: '100%', minHeight: 400 }}>
+      {/* Header + Stepper */}
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 16, flexShrink: 0 }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+          <span style={{ fontFamily: 'var(--font-sans)', fontWeight: 400, fontSize: 10, letterSpacing: '0.04em', textTransform: 'uppercase' as const, color: '#989EA9', lineHeight: '13px' }}>
+            {dateLabel}
+          </span>
+          <h2 style={{ fontFamily: 'var(--font-sans)', fontWeight: 600, fontSize: 24, letterSpacing: '-0.2px', color: '#F4F5F0', lineHeight: '28px', margin: 0 }}>
+            {challenge.title}
+          </h2>
+        </div>
+        {/* Stepper */}
+        <div style={{ display: 'flex', gap: 6 }}>
+          {questions.map((_, i) => (
+            <div key={i} style={{ flex: 1, height: 3, borderRadius: 100, background: i < answeredCount ? '#22C35D' : 'rgba(255,255,255,0.12)', transition: 'background 0.3s ease' }} />
+          ))}
+        </div>
+      </div>
+
+      {/* Question + Options — centered in remaining space */}
+      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 24 }}>
+        <p style={{ fontFamily: 'var(--font-sans)', fontWeight: 400, fontSize: 16, color: '#F4F5F0', lineHeight: '22px', margin: 0, textAlign: 'center' }}>
+          {q?.question}
+        </p>
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12, justifyContent: 'center' }}>
+          {q?.options.map(opt => {
+            const selected = answers[q.id] === opt
+            return (
+              <button
+                key={opt}
+                onClick={() => handleSelect(opt)}
+                style={{
+                  width: 180, height: 85, borderRadius: 8,
+                  border: selected ? '1.5px solid #7B6FE8' : '1px solid #DBDDE1',
+                  background: selected ? 'rgba(123,111,232,0.12)' : 'transparent',
+                  padding: '24px 16px', fontFamily: 'var(--font-sans)', fontSize: 14,
+                  color: selected ? '#F4F5F0' : '#DBDDE1', textAlign: 'center',
+                  cursor: 'pointer', transition: 'all 0.2s ease',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center', lineHeight: '18px',
+                }}
+              >
+                {opt}
+              </button>
+            )
+          })}
+        </div>
+      </div>
+
+      {/* Button — always reserves space, visible only on last + answered */}
+      <div style={{ flexShrink: 0, display: 'flex', justifyContent: 'center', paddingTop: 8, paddingBottom: 4, minHeight: 46 }}>
+        {isLast && answers[q?.id] && (
+          <button
+            onClick={handleSubmit}
+            style={{ width: 164, padding: '12px 0', borderRadius: 8, border: '1.5px solid #F4F5F0', background: 'transparent', fontFamily: 'var(--font-sans)', fontSize: 14, fontWeight: 500, color: '#F4F5F0', cursor: 'pointer', transition: 'all 0.2s ease', textAlign: 'center' }}
+          >
+            Enviar respuestas
+          </button>
+        )}
+      </div>
+    </div>
+  )
+}
+
+/* ── Shared hero layout for raffle & donation ── */
+function HeroHeader({ challenge }: { challenge: Challenge }) {
+  const dateLabel = DAY_LABELS[challenge.day] ? formatChallengeDate(DAY_LABELS[challenge.day]) : `DÍA ${challenge.day}`
+  const imageUrl = challenge.content.imageUrl
+  return (
+    <div style={{ position: 'relative', width: '100%', height: 200, overflow: 'hidden', borderRadius: '20px 20px 0 0', flexShrink: 0 }}>
+      {imageUrl && (
+        <img src={imageUrl} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+      )}
+      {/* gradient overlay */}
+      <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(0,0,0,0.72) 0%, transparent 60%)' }} />
+      {/* date + title */}
+      <div style={{ position: 'absolute', bottom: 20, left: 20, right: 48 }}>
+        <span style={{ fontFamily: 'var(--font-sans)', fontSize: 10, fontWeight: 400, letterSpacing: '0.08em', textTransform: 'uppercase' as const, color: 'rgba(255,255,255,0.7)', lineHeight: '13px', display: 'block', marginBottom: 4 }}>
           {dateLabel}
         </span>
-        <h2 style={{ fontFamily: 'var(--font-sans)', fontWeight: 600, fontSize: 24, letterSpacing: '-0.2px', color: '#F4F5F0', lineHeight: '28px', margin: 0 }}>
+        <h2 style={{ fontFamily: 'var(--font-sans)', fontWeight: 600, fontSize: 24, letterSpacing: '-0.2px', color: '#FFFFFF', lineHeight: '28px', margin: 0 }}>
           {challenge.title}
         </h2>
       </div>
-
-      {/* Stepper */}
-      <div style={{ display: 'flex', gap: 6 }}>
-        {questions.map((_, i) => (
-          <div
-            key={i}
-            style={{
-              flex: 1,
-              height: 3,
-              borderRadius: 100,
-              background: i < answeredCount ? '#22C35D' : 'rgba(255,255,255,0.12)',
-              transition: 'background 0.3s ease',
-            }}
-          />
-        ))}
-      </div>
-
-      {/* Question */}
-      <p style={{ fontFamily: 'var(--font-sans)', fontWeight: 400, fontSize: 16, color: '#F4F5F0', lineHeight: '22px', margin: 0, textAlign: 'center' }}>
-        {q?.question}
-      </p>
-
-      {/* Options */}
-      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12, justifyContent: 'center' }}>
-        {q?.options.map(opt => {
-          const selected = answers[q.id] === opt
-          return (
-            <button
-              key={opt}
-              onClick={() => handleSelect(opt)}
-              style={{
-                width: 180,
-                height: 85,
-                borderRadius: 8,
-                border: selected ? '1.5px solid #7B6FE8' : '1px solid #DBDDE1',
-                background: selected ? 'rgba(123,111,232,0.12)' : 'transparent',
-                padding: '24px 16px',
-                fontFamily: 'var(--font-sans)',
-                fontSize: 14,
-                color: selected ? '#F4F5F0' : '#DBDDE1',
-                textAlign: 'center',
-                cursor: 'pointer',
-                transition: 'all 0.2s ease',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                lineHeight: '18px',
-              }}
-            >
-              {opt}
-            </button>
-          )
-        })}
-      </div>
-
-      {/* Reserved button space — always present, button only on last question after answering */}
-      <div style={{ height: 46 }}>
-        {isLast && answers[q?.id] && (
-          <AppButton onClick={handleSubmit}>
-            Enviar
-          </AppButton>
-        )}
-      </div>
-
     </div>
   )
 }
@@ -389,9 +397,7 @@ function SurveyChallenge({ challenge, completed }: SubProps) {
 function RaffleChallenge({ challenge, completed }: SubProps) {
   const { completeDay } = useCalendarStore()
   const { closeChallenge, showToast } = useAppStore()
-  const { user } = useAuth()
   const [done, setDone] = useState(completed)
-  const [spinning, setSpinning] = useState(false)
 
   useEffect(() => {
     if (completed) {
@@ -403,50 +409,98 @@ function RaffleChallenge({ challenge, completed }: SubProps) {
   }, [completed])
 
   const handleJoin = () => {
-    setSpinning(true)
-    setTimeout(() => {
-      completeDay(challenge.day)
-      setDone(true)
-      setSpinning(false)
-      showToast('¡Has completado el reto!')
-      setTimeout(closeChallenge, 1200)
-    }, 2000)
-  }
-
-  if (done) {
-    return (
-      <div className="space-y-4">
-        <div style={{
-          background: 'rgba(127,119,221,0.1)',
-          border: '1px solid rgba(127,119,221,0.2)',
-          borderRadius: '8px',
-          padding: '14px 16px',
-          textAlign: 'center',
-          color: 'rgba(255,255,255,0.7)',
-          fontSize: '14px',
-        }}>
-          Ya estás inscrito en este sorteo.<br />No puedes participar dos veces.
-        </div>
-        <p className="text-xs text-muted-foreground">Te avisaremos si eres el ganador</p>
-      </div>
-    )
+    completeDay(challenge.day)
+    setDone(true)
+    showToast('¡Has completado el reto!')
+    setTimeout(closeChallenge, 1200)
   }
 
   return (
-    <div className="space-y-6">
-      <p className="text-sm text-muted-foreground">{challenge.description}</p>
-      {challenge.content.raffleText && (
-        <div className="bg-gold/5 border border-gold/20 rounded-card p-4">
-          <p className="text-sm text-gold-light">{challenge.content.raffleText}</p>
-        </div>
-      )}
-      {spinning ? (
-        <div className="h-16 flex items-center justify-center overflow-hidden">
-          <div className="animate-pulse text-lg font-medium text-accent">{user?.name}</div>
-        </div>
-      ) : (
-        <AppButton onClick={handleJoin}>Inscribirme al sorteo</AppButton>
-      )}
+    <div style={{ display: 'flex', flexDirection: 'column' }}>
+      <HeroHeader challenge={challenge} />
+      <div style={{ padding: '24px 20px 20px', display: 'flex', flexDirection: 'column', gap: 24, alignItems: 'center' }}>
+        {done ? (
+          <div style={{ background: 'rgba(127,119,221,0.1)', border: '1px solid rgba(127,119,221,0.2)', borderRadius: 8, padding: '14px 16px', textAlign: 'center', color: 'rgba(255,255,255,0.7)', fontSize: 14 }}>
+            Ya estás inscrito en este sorteo.<br />No puedes participar dos veces.
+          </div>
+        ) : (
+          <>
+            <p style={{ fontFamily: 'var(--font-sans)', fontSize: 14, fontWeight: 400, color: 'rgba(255,255,255,0.85)', lineHeight: '20px', margin: 0, whiteSpace: 'pre-line', alignSelf: 'stretch' }}>
+              {challenge.description}
+            </p>
+            <button
+              onClick={handleJoin}
+              style={{ width: 164, padding: '12px 0', borderRadius: 8, border: '1.5px solid #F4F5F0', background: 'transparent', fontFamily: 'var(--font-sans)', fontSize: 14, fontWeight: 500, color: '#F4F5F0', cursor: 'pointer', transition: 'all 0.2s ease', textAlign: 'center' }}
+            >
+              Participar del sorteo
+            </button>
+          </>
+        )}
+      </div>
+    </div>
+  )
+}
+
+function DonationChallenge({ challenge, completed }: SubProps) {
+  const { completeDay } = useCalendarStore()
+  const { closeChallenge, showToast } = useAppStore()
+  const [done, setDone] = useState(completed)
+
+  const handleDonate = () => {
+    completeDay(challenge.day)
+    setDone(true)
+    showToast('¡Gracias por tu aportación!')
+    setTimeout(closeChallenge, 1200)
+  }
+
+  const parts = (challenge.content.bodyText ?? '').split('\n')
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column' }}>
+      <HeroHeader challenge={challenge} />
+      <div style={{ padding: '24px 20px 20px', display: 'flex', flexDirection: 'column', gap: 24, alignItems: 'center' }}>
+        {done ? (
+          <div style={{ background: 'rgba(34,197,94,0.1)', border: '1px solid rgba(34,197,94,0.2)', borderRadius: 8, padding: '14px 16px', textAlign: 'center', color: 'rgba(255,255,255,0.7)', fontSize: 14 }}>
+            Ya realizaste tu aportación.<br />¡Gracias por tu generosidad!
+          </div>
+        ) : (
+          <>
+            <p style={{ fontFamily: 'var(--font-sans)', fontSize: 14, fontWeight: 400, color: 'rgba(255,255,255,0.85)', lineHeight: '20px', margin: 0, whiteSpace: 'pre-line', alignSelf: 'stretch' }}>
+              {parts.join('\n')}
+              {challenge.content.donationLink && challenge.content.donationText && (
+                <>{'\n'}{challenge.content.donationText}{' '}
+                  <a href={challenge.content.donationLink} target="_blank" rel="noreferrer" style={{ color: '#5B8BF5', textDecoration: 'underline' }}>haz click aquí</a>.
+                </>
+              )}
+            </p>
+            <button
+              onClick={handleDonate}
+              style={{ width: 164, padding: '12px 0', borderRadius: 8, border: '1.5px solid #F4F5F0', background: 'transparent', fontFamily: 'var(--font-sans)', fontSize: 14, fontWeight: 500, color: '#F4F5F0', cursor: 'pointer', transition: 'all 0.2s ease', textAlign: 'center' }}
+            >
+              Hacer donación
+            </button>
+          </>
+        )}
+      </div>
+    </div>
+  )
+}
+
+function CatchUpChallenge({ challenge }: SubProps) {
+  const dateLabel = DAY_LABELS[challenge.day] ? formatChallengeDate(DAY_LABELS[challenge.day]) : `DÍA ${challenge.day}`
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+        <span style={{ fontFamily: 'var(--font-sans)', fontWeight: 400, fontSize: 10, letterSpacing: '0.04em', textTransform: 'uppercase' as const, color: '#989EA9', lineHeight: '13px' }}>
+          {dateLabel}
+        </span>
+        <h2 style={{ fontFamily: 'var(--font-sans)', fontWeight: 600, fontSize: 24, letterSpacing: '-0.2px', color: '#F4F5F0', lineHeight: '28px', margin: 0 }}>
+          {challenge.title}
+        </h2>
+      </div>
+      <p style={{ fontFamily: 'var(--font-sans)', fontSize: 15, fontWeight: 400, color: 'rgba(255,255,255,0.7)', lineHeight: '22px', margin: 0, textAlign: 'center', padding: '8px 0' }}>
+        {challenge.content.bodyText}
+      </p>
     </div>
   )
 }
@@ -462,14 +516,17 @@ export default function ChallengeModalContent({ challenge, completed }: Challeng
     video: VideoChallenge,
     survey: SurveyChallenge,
     raffle: RaffleChallenge,
+    donation: DonationChallenge,
+    'catch-up': CatchUpChallenge,
   }
   const Component = components[challenge.type] || TextChallenge
 
-  const hasOwnHeader = challenge.type === 'video' || challenge.type === 'text' || challenge.type === 'survey'
+  const hasOwnHeader = ['video', 'text', 'survey', 'catch-up'].includes(challenge.type)
+  const noWrapPadding = ['raffle', 'donation'].includes(challenge.type)
 
   return (
-    <div style={{ padding: hasOwnHeader ? '20px' : '32px 28px' }}>
-      {!hasOwnHeader && (
+    <div style={{ padding: noWrapPadding ? 0 : hasOwnHeader ? '20px' : '32px 28px' }}>
+      {!hasOwnHeader && !noWrapPadding && (
         <div style={{ marginBottom: '20px' }}>
           <span style={{
             fontSize: '11px',
