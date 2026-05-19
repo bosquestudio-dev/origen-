@@ -13,13 +13,14 @@ export const DAY_LABELS: Record<number, string> = {
 // Festivos — descanso aunque no sean fin de semana
 export const HOLIDAY_DAYS = [8] // 8 dic: Inmaculada Concepción
 
-// Días de "Ponte al día" — sin reto, recordatorio para completar pendientes
-export const CATCH_UP_DAYS = [9, 16, 23]
+// Miércoles — desconexión digital igual que fines de semana
+export const WEDNESDAY_DAYS = [2, 9, 16, 23]
 
-// Derivado automáticamente de DAY_LABELS + festivos
+// Derivado automáticamente de DAY_LABELS + festivos + miércoles
 export const DIGITAL_DETOX_DAYS = [
   ...Object.entries(DAY_LABELS)
     .filter(([, label]) => label.startsWith('Sáb') || label.startsWith('Dom'))
     .map(([day]) => Number(day)),
   ...HOLIDAY_DAYS,
+  ...WEDNESDAY_DAYS,
 ]

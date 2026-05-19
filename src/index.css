@@ -181,7 +181,7 @@
     box-sizing: border-box !important;
   }
 
-  .day-card-root[data-status="completed"]     { background: rgba(34,195,93,0.25) !important;   border: 2px solid #22C35D !important; }
+  .day-card-root[data-status="completed"]     { background: rgba(48,84,84,0.35) !important;    border: 2px solid #305454 !important; }
   .day-card-root[data-status="accessible"]    { background: rgba(247,247,248,0.25) !important; border: 2px solid #BCC0C7 !important; }
   .day-card-root[data-status="today"]         { background: rgba(252,150,95,0.50) !important;  border: 2px solid #FB7026 !important; }
   .day-card-root[data-status="locked"]        { background: transparent !important;            border: 2px solid #585E6A !important; }

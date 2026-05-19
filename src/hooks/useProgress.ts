@@ -1,10 +1,10 @@
 import { useMemo } from 'react'
 import { useCalendarStore } from '@/stores/calendar.store'
-import { DIGITAL_DETOX_DAYS, CATCH_UP_DAYS, SIMULATED_TODAY } from '@/data/calendar.data'
+import { DIGITAL_DETOX_DAYS, SIMULATED_TODAY } from '@/data/calendar.data'
 
 const TOTAL_CHALLENGES = Array.from({ length: 24 }, (_, i) => i + 1)
-  .filter(d => !DIGITAL_DETOX_DAYS.includes(d) && !CATCH_UP_DAYS.includes(d))
-  .length // 14
+  .filter(d => !DIGITAL_DETOX_DAYS.includes(d))
+  .length
 
 export function useProgress() {
   const { completedDays } = useCalendarStore()
@@ -13,8 +13,7 @@ export function useProgress() {
     Array.from({ length: 24 }, (_, i) => i + 1)
       .filter(d =>
         d <= SIMULATED_TODAY &&
-        !DIGITAL_DETOX_DAYS.includes(d) &&
-        !CATCH_UP_DAYS.includes(d)
+        !DIGITAL_DETOX_DAYS.includes(d)
       ),
     []
   )

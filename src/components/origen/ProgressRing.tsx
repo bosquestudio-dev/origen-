@@ -22,7 +22,7 @@ export default function ProgressRing({ percentage, size = 52 }: ProgressRingProp
         {/* Progress */}
         <circle
           cx={size / 2} cy={size / 2} r={radius}
-          stroke="#22C35D"
+          stroke="#305454"
           strokeWidth={strokeWidth}
           fill="none"
           strokeLinecap="round"

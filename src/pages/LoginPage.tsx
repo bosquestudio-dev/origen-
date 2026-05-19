@@ -152,6 +152,8 @@ export default function LoginPage() {
   const [showLoader, setShowLoader] = useState(false);
   const [hasError, setHasError] = useState(false);
   const [consented, setConsented] = useState(false);
+  const [hoveredOption, setHoveredOption] = useState<'email' | 'dni' | null>(null);
+  const [pendingType, setPendingType] = useState<'email' | 'dni' | null>(null);
 
   // Support form state
   const [supportName, setSupportName] = useState('');
@@ -213,7 +215,7 @@ export default function LoginPage() {
       return;
     }
     const MIN_LOADING_MS = 2800;
-    const SUCCESS_LOADING_MS = 5000;
+    const SUCCESS_LOADING_MS = 3000;
     setLoading(true);
     setHasError(false);
     const startTime = Date.now();
@@ -588,9 +590,15 @@ export default function LoginPage() {
                             <button
                               key={type}
                               onClick={() => {
+                                setPendingType(type);
                                 setLoginType(type);
-                                forward('input');
+                                setTimeout(() => {
+                                  setPendingType(null);
+                                  forward('input');
+                                }, 400);
                               }}
+                              onMouseEnter={() => setHoveredOption(type)}
+                              onMouseLeave={() => setHoveredOption(null)}
                               style={{
                                 /* Figma: input-container 378x64, pad 24/24/16/16, r=8 */
                                 width: '100%',
@@ -607,9 +615,21 @@ export default function LoginPage() {
                                 textAlign: 'left',
                                 cursor: 'pointer',
                                 transition: 'all 0.15s ease',
-                                border: sel ? `1px solid ${C.optSelBdr}` : `1px solid ${C.optBdr}`,
-                                background: sel ? C.optSelBg : C.pageBg,
-                                color: sel ? C.optSelTxt : C.optTxt,
+                                border: (sel || pendingType === type)
+                                  ? `1px solid ${C.optSelBdr}`
+                                  : hoveredOption === type
+                                    ? `1px solid ${C.optSelBdr}`
+                                    : `1px solid ${C.optBdr}`,
+                                background: (sel || pendingType === type)
+                                  ? C.optSelBg
+                                  : hoveredOption === type
+                                    ? '#FFF4EE'
+                                    : C.pageBg,
+                                color: (sel || pendingType === type)
+                                  ? C.optSelTxt
+                                  : hoveredOption === type
+                                    ? C.optSelTxt
+                                    : C.optTxt,
                               }}
                             >
                               {type === 'email'

@@ -459,7 +459,7 @@ export default function CalendarPage() {
                   Tu progreso
                 </div>
                 <div style={{ display: 'flex', alignItems: 'baseline', gap: 2 }}>
-                  <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 24, fontWeight: 700, color: '#22C35D', lineHeight: 1 }}>{completedCount}</span>
+                  <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 24, fontWeight: 700, color: '#305454', lineHeight: 1 }}>{completedCount}</span>
                   <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 12, fontWeight: 400, color: '#585E6A', lineHeight: 1 }}>/{totalAvailable}</span>
                 </div>
                 <div>
@@ -474,7 +474,7 @@ export default function CalendarPage() {
                 Hoy
               </div>
               <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 8, width: '100%' }}>
-                <div style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 32, fontWeight: 700, color: '#22C35D', lineHeight: 1, flexShrink: 0 }}>
+                <div style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 32, fontWeight: 700, color: '#305454', lineHeight: 1, flexShrink: 0 }}>
                   {companionPercentage}%
                 </div>
                 <div style={{ fontSize: 12, color: '#ECEDEF', fontFamily: "'DM Sans', sans-serif", lineHeight: 1.2 }}>
@@ -499,7 +499,7 @@ export default function CalendarPage() {
                 <ProgressRing percentage={progressPercentage} size={44} />
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 2, justifyContent: 'center', minWidth: 0 }}>
                   <div style={{ display: 'flex', alignItems: 'baseline', gap: 2 }}>
-                    <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 28, fontWeight: 700, color: '#22C35D', lineHeight: 1 }}>{completedCount}</span>
+                     <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 28, fontWeight: 700, color: '#305454', lineHeight: 1 }}>{completedCount}</span>
                     <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 16, fontWeight: 400, color: '#585E6A', lineHeight: 1 }}>/{totalAvailable}</span>
                   </div>
                   <div style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 10, fontWeight: 400, color: '#ECEDEF', lineHeight: '12px' }}>
@@ -519,7 +519,7 @@ export default function CalendarPage() {
               <div style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 8, fontWeight: 300, letterSpacing: '0.05em', textTransform: 'uppercase', color: '#989EA9', lineHeight: 1 }}>
                 Hoy
               </div>
-              <div style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 28, fontWeight: 700, color: '#22C35D', lineHeight: 1 }}>
+              <div style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 28, fontWeight: 700, color: '#305454', lineHeight: 1 }}>
                 {companionPercentage}%
               </div>
               <div style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 10, fontWeight: 400, color: '#ECEDEF', lineHeight: '12px' }}>
@@ -735,9 +735,9 @@ export default function CalendarPage() {
         )}
       </AnimatePresence>
 
-      {/* WhatsApp floating icon */}
+      {/* WhatsApp floating icon — desktop only */}
       <AnimatePresence>
-        {!showPopup && (
+        {!showPopup && !isMobile && (
           <motion.div
             key="wa-fab"
             initial={{ opacity: 0, scale: 0 }}

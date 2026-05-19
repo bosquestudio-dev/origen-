@@ -1,11 +1,9 @@
 import { motion } from 'framer-motion'
-import { RefreshCw, LockKeyhole } from 'lucide-react'
-import { toast } from 'sonner'
-import { useState, useEffect, useLayoutEffect } from 'react'
+import { useState, useLayoutEffect } from 'react'
 import type { CalendarDay } from '@/types/calendar.types'
 import { useAppStore } from '@/stores/app.store'
 import { useCalendar } from '@/hooks/useCalendar'
-import { DAY_LABELS, HOLIDAY_DAYS } from '@/data/calendar.data'
+import { DAY_LABELS, HOLIDAY_DAYS, WEDNESDAY_DAYS } from '@/data/calendar.data'
 
 interface DayCardProps {
   day: CalendarDay
@@ -22,7 +20,7 @@ const getDayAbbr = (day: number) => {
 
 // ─── Desktop card styles ───────────────────────────────────────────────────────
 const CARD_STYLES_DESKTOP: Record<string, React.CSSProperties> = {
-  completed:      { background: '#182A22', border: '1px solid #22C35D' },
+  completed:      { background: '#0f2f2e', border: '1px solid #305454' },
   accessible:     { background: '#434548', border: '1px solid #BCC0C7' },
   today:          { background: '#89573E', border: '2px solid #FB7026' },
   locked:         { background: '#1C1C20', border: '1px solid rgba(255,255,255,0.12)' },
@@ -33,7 +31,7 @@ const SPECIAL_CARD_DESKTOP: React.CSSProperties = { background: '#3E351D', borde
 
 // ─── Mobile card styles ────────────────────────────────────────────────────────
 const CARD_STYLES_MOBILE: Record<string, React.CSSProperties> = {
-  completed:      { background: 'rgba(34,195,93,0.25)',  border: '2px solid #22C35D' },
+  completed:      { background: 'rgba(48,84,84,0.35)',  border: '2px solid #305454' },
   accessible:     { background: 'rgba(247,247,248,0.25)',border: '2px solid #BCC0C7' },
   today:          { background: 'rgba(252,150,95,0.50)', border: '2px solid #FB7026' },
   locked:         { background: 'transparent',           border: '2px solid #585E6A' },
@@ -44,7 +42,7 @@ const SPECIAL_CARD_MOBILE: React.CSSProperties = { background: 'rgba(218,165,32,
 
 // ─── Number colors ─────────────────────────────────────────────────────────────
 const NUMBER_COLOR: Record<string, string> = {
-  completed:      '#22C35D',
+  completed:      '#305454',
   accessible:     '#727988',
   today:          '#FB7026',
   locked:         '#585E6A',
@@ -70,7 +68,7 @@ const BADGE_CONFIG = {
   completed: {
     label: 'Completado',
     icon: '/completed.svg',
-    style: { background: '#22C35D', color: '#F4F5F0', border: 'none' } as React.CSSProperties,
+    style: { background: '#305454', color: '#F4F5F0', border: 'none' } as React.CSSProperties,
   },
   locked: {
     label: 'Próximo',
@@ -98,13 +96,6 @@ export default function DayCard({ day, index, dataStatus, dataSpecial }: DayCard
 
   const handleClick = () => {
     if (day.status === 'digital-detox') return
-    if (day.status === 'catch-up') {
-      toast.info('Día de ponerse al día', {
-        description: 'Usa este día para completar retos pendientes.',
-        duration: 3000,
-      })
-      return
-    }
     if (day.status === 'locked') {
       showToast(`Disponible el ${DAY_LABELS[day.day]}`)
       return
@@ -119,6 +110,7 @@ export default function DayCard({ day, index, dataStatus, dataSpecial }: DayCard
   const isSpecial = day.isSpecial
   const isDetox = day.status === 'digital-detox'
   const isHoliday = HOLIDAY_DAYS.includes(day.day)
+  const isWednesday = WEDNESDAY_DAYS.includes(day.day)
 
   const desktopCardStyle = isSpecial ? SPECIAL_CARD_DESKTOP : (CARD_STYLES_DESKTOP[day.status] ?? CARD_STYLES_DESKTOP.locked)
   const mobileCardStyle  = isSpecial ? SPECIAL_CARD_MOBILE  : (CARD_STYLES_MOBILE[day.status]  ?? CARD_STYLES_MOBILE.locked)
@@ -183,7 +175,7 @@ export default function DayCard({ day, index, dataStatus, dataSpecial }: DayCard
         </div>
       </div>
 
-      {/* Digital-detox desktop — lock centered */}
+      {/* Digital-detox desktop — texto centrado, sin candado */}
       {isDetox && (
         <div
           className="day-detox-desktop"
@@ -191,17 +183,25 @@ export default function DayCard({ day, index, dataStatus, dataSpecial }: DayCard
             position: 'absolute', inset: 0, zIndex: 2,
             display: 'flex', flexDirection: 'column',
             alignItems: 'center', justifyContent: 'center',
-            gap: 3.4, pointerEvents: 'none',
+            gap: 4, pointerEvents: 'none', padding: '0 8px',
           }}
         >
-          <LockKeyhole size={24} color="#F4F5F0" strokeWidth={1.5} />
           <span style={{
             fontFamily: "'DM Sans', sans-serif",
             fontSize: 12, fontWeight: 500, color: '#F4F5F0',
             textAlign: 'center', lineHeight: '14px', whiteSpace: 'pre-line',
           }}>
-            {isHoliday ? 'Festivo' : 'Desconexión\ndigital'}
+            {isHoliday ? 'Festivo' : isWednesday ? 'Desconexión\ndigital' : 'Desconexión\ndigital'}
           </span>
+          {isWednesday && (
+            <span style={{
+              fontFamily: "'DM Sans', sans-serif",
+              fontSize: 9, fontWeight: 400, color: 'rgba(244,245,240,0.6)',
+              textAlign: 'center', lineHeight: '12px',
+            }}>
+              Ponte al día con tus retos
+            </span>
+          )}
         </div>
       )}
 
@@ -264,7 +264,7 @@ export default function DayCard({ day, index, dataStatus, dataSpecial }: DayCard
         </div>
       )}
 
-      {/* Mobile: detox — lock + label centered */}
+      {/* Mobile: detox — texto centrado, sin candado */}
       {isDetox && (
         <div
           className="day-mobile-detox"
@@ -273,10 +273,9 @@ export default function DayCard({ day, index, dataStatus, dataSpecial }: DayCard
             flexDirection: 'column',
             alignItems: 'center', justifyContent: 'center',
             position: 'absolute', inset: 0, zIndex: 2,
-            gap: 6, pointerEvents: 'none',
+            gap: 4, pointerEvents: 'none', padding: '0 4px',
           }}
         >
-          <img src="/weekend-holiday-locked.svg" width={20} height={20} alt={isHoliday ? 'Festivo' : 'Fin de semana'} />
           <span style={{
             fontFamily: "'DM Sans', sans-serif",
             fontSize: 8, fontWeight: 500, color: '#F4F5F0',
@@ -284,6 +283,15 @@ export default function DayCard({ day, index, dataStatus, dataSpecial }: DayCard
           }}>
             {isHoliday ? 'Festivo' : 'Desconexión\ndigital'}
           </span>
+          {isWednesday && (
+            <span style={{
+              fontFamily: "'DM Sans', sans-serif",
+              fontSize: 7, fontWeight: 400, color: 'rgba(244,245,240,0.6)',
+              textAlign: 'center', lineHeight: 1.3,
+            }}>
+              Ponte al día con tus retos
+            </span>
+          )}
         </div>
       )}
     </motion.div>
