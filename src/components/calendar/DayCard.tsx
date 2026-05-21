@@ -192,17 +192,8 @@ export default function DayCard({ day, index, dataStatus, dataSpecial }: DayCard
             fontSize: 12, fontWeight: 500, color: '#F4F5F0',
             textAlign: 'center', lineHeight: '14px', whiteSpace: 'pre-line',
           }}>
-            {isHoliday ? 'Festivo' : isWednesday ? 'Desconexión\ndigital' : 'Desconexión\ndigital'}
+            {isHoliday ? 'Festivo' : isWednesday ? 'Ponte al día\ncon tus retos' : 'Desconexión\ndigital'}
           </span>
-          {isWednesday && (
-            <span style={{
-              fontFamily: "'DM Sans', sans-serif",
-              fontSize: 9, fontWeight: 400, color: 'rgba(244,245,240,0.6)',
-              textAlign: 'center', lineHeight: '12px',
-            }}>
-              Ponte al día con tus retos
-            </span>
-          )}
         </div>
       )}
 
@@ -282,17 +273,8 @@ export default function DayCard({ day, index, dataStatus, dataSpecial }: DayCard
             fontSize: 8, fontWeight: 500, color: '#F4F5F0',
             textAlign: 'center', lineHeight: 1.3, whiteSpace: 'pre-line',
           }}>
-            {isHoliday ? 'Festivo' : 'Desconexión\ndigital'}
+            {isHoliday ? 'Festivo' : isWednesday ? 'Ponte al día\ncon tus retos' : 'Desconexión\ndigital'}
           </span>
-          {isWednesday && (
-            <span style={{
-              fontFamily: "'DM Sans', sans-serif",
-              fontSize: 7, fontWeight: 400, color: 'rgba(244,245,240,0.6)',
-              textAlign: 'center', lineHeight: 1.3,
-            }}>
-              Ponte al día con tus retos
-            </span>
-          )}
         </div>
       )}
     </motion.div>

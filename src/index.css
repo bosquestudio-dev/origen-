@@ -152,6 +152,60 @@
   background: rgba(255,255,255,0.25);
 }
 
+/* Notification Banner */
+.notification-banner-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 12px 16px;
+  background: #17191C;
+  border: 1px solid #41454E;
+  border-radius: 12px;
+  margin-bottom: 40px;
+  box-sizing: border-box;
+}
+@media (max-width: 767px) {
+  .notification-banner-item { margin-bottom: 24px; }
+}
+.notification-banner-icon {
+  flex-shrink: 0;
+  margin-top: 1px;
+  color: rgba(255, 255, 255, 0.5);
+}
+.notification-banner-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.9);
+  margin-bottom: 3px;
+  line-height: 1.4;
+  font-family: var(--font-sans);
+}
+.notification-banner-message {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.55);
+  line-height: 1.5;
+  font-family: var(--font-sans);
+}
+.notification-banner-message strong {
+  color: rgba(255, 255, 255, 0.85);
+  font-weight: 600;
+}
+.notification-banner-close {
+  flex-shrink: 0;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: rgba(255, 255, 255, 0.25);
+  padding: 2px;
+  display: flex;
+  align-items: center;
+  transition: color 0.15s ease;
+  margin-top: 1px;
+}
+.notification-banner-close:hover {
+  color: rgba(255, 255, 255, 0.6);
+}
+
 /* Help modal placeholder */
 .help-modal-input::placeholder {
   color: #727988;

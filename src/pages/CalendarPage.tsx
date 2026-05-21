@@ -10,7 +10,9 @@ import AppToast from '@/components/origen/AppToast'
 import AppModal from '@/components/origen/AppModal'
 import AppButton from '@/components/origen/AppButton'
 import CalendarGrid from '@/components/calendar/CalendarGrid'
+import NotificationBanner from '@/components/calendar/NotificationBanner'
 import ChallengeModalContent from '@/components/challenge/ChallengeModalContent'
+import { MOCK_NOTIFICATIONS } from '@/data/notifications.data'
 import { useEffect, useState, useRef } from 'react'
 import { LogOut, X, Menu } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
@@ -445,7 +447,7 @@ export default function CalendarPage() {
                 letterSpacing: '-0.18px', color: '#BCC0C7',
               }}
             >
-              Un reto cada día laboral — los findes desconectamos
+              Este año, abre algo más
             </div>
           </div>
 
@@ -550,6 +552,9 @@ export default function CalendarPage() {
 
       {/* Calendar */}
       <main style={{ maxWidth: 1370, margin: '0 auto' }} className="cal-main">
+        {/* Notification Banner */}
+        <NotificationBanner notifications={MOCK_NOTIFICATIONS} />
+
         <CalendarGrid />
       </main>
 
@@ -583,12 +588,7 @@ export default function CalendarPage() {
       {/* WhatsApp Popup — desktop modal / mobile bottom sheet */}
       <AnimatePresence>
         {showPopup && (
-          <motion.div
-            key="wa-overlay"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.2 }}
+          <div
             style={{
               position: 'fixed', inset: 0,
               background: 'rgba(0,0,0,0.4)',
@@ -602,10 +602,10 @@ export default function CalendarPage() {
           >
             <motion.div
               key="wa-card"
-              initial={isMobile ? { y: '100%' } : { opacity: 0, scale: 0.9, y: 20 }}
-              animate={isMobile ? { y: 0 } : { opacity: 1, scale: 1, y: 0 }}
-              exit={isMobile ? { y: '100%' } : { opacity: 0, scale: 0.9, y: 20 }}
-              transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+              initial={isMobile ? { y: '100%' } : { opacity: 0, y: 20 }}
+              animate={isMobile ? { y: 0 } : { opacity: 1, y: 0 }}
+              exit={isMobile ? { y: '100%' } : { opacity: 0, y: 20 }}
+              transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
               style={{
                 background: isMobile ? '#17191C' : '#1C1C1E',
                 borderRadius: isMobile ? '20px 20px 0 0' : 12,
@@ -731,7 +731,7 @@ export default function CalendarPage() {
                 </button>
               </div>
             </motion.div>
-          </motion.div>
+          </div>
         )}
       </AnimatePresence>
 

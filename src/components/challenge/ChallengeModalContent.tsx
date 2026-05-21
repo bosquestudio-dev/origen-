@@ -441,12 +441,117 @@ function RaffleChallenge({ challenge, completed }: SubProps) {
   )
 }
 
+function StripeForm({ onSuccess, onCancel }: { onSuccess: () => void; onCancel: () => void }) {
+  const [card, setCard] = useState('')
+  const [expiry, setExpiry] = useState('')
+  const [cvc, setCvc] = useState('')
+  const [name, setName] = useState('')
+  const [amount, setAmount] = useState('10')
+  const [loading, setLoading] = useState(false)
+  const [fieldFocus, setFieldFocus] = useState<string | null>(null)
+
+  const formatCard = (v: string) => v.replace(/\D/g, '').slice(0, 16).replace(/(.{4})/g, '$1 ').trim()
+  const formatExpiry = (v: string) => {
+    const d = v.replace(/\D/g, '').slice(0, 4)
+    return d.length >= 3 ? `${d.slice(0, 2)} / ${d.slice(2)}` : d
+  }
+
+  const isValid = card.replace(/\s/g, '').length === 16 && expiry.length >= 4 && cvc.length >= 3 && name.trim().length > 0
+
+  const handleSubmit = () => {
+    if (!isValid) return
+    setLoading(true)
+    setTimeout(() => {
+      setLoading(false)
+      onSuccess()
+    }, 2000)
+  }
+
+  const inputStyle = (field: string): React.CSSProperties => ({
+    width: '100%', boxSizing: 'border-box',
+    padding: '10px 12px', borderRadius: 6,
+    border: `1.5px solid ${fieldFocus === field ? '#635BFF' : 'rgba(255,255,255,0.15)'}`,
+    background: 'rgba(255,255,255,0.04)',
+    fontFamily: 'var(--font-sans)', fontSize: 14,
+    color: '#F4F5F0', outline: 'none',
+    transition: 'border-color 0.15s ease',
+  })
+
+  const AMOUNTS = ['5', '10', '20', '50']
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 16, padding: '20px 20px 20px' }}>
+      {/* Header */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><rect width="24" height="24" rx="4" fill="#635BFF"/><path d="M10.5 7.5c0-.83.67-1.5 1.5-1.5s1.5.67 1.5 1.5v1h1.5v1.5H13.5V12h1.5v1.5H13.5v3h-1.5v-3H10.5V12H12V10.5H10.5V9H12V7.5h-1.5z" fill="white"/></svg>
+        <span style={{ fontFamily: 'var(--font-sans)', fontSize: 14, fontWeight: 600, color: '#F4F5F0' }}>Pago seguro con Stripe</span>
+        <div style={{ marginLeft: 'auto', display: 'flex', gap: 4 }}>
+          {['VISA', 'MC'].map(b => (
+            <span key={b} style={{ fontSize: 9, fontWeight: 700, padding: '2px 5px', borderRadius: 3, background: b === 'VISA' ? '#1A1F71' : '#EB001B', color: '#fff', letterSpacing: '0.05em' }}>{b}</span>
+          ))}
+        </div>
+      </div>
+
+      {/* Amount selector */}
+      <div>
+        <label style={{ fontFamily: 'var(--font-sans)', fontSize: 11, color: 'rgba(255,255,255,0.45)', textTransform: 'uppercase', letterSpacing: '0.06em', display: 'block', marginBottom: 8 }}>Importe</label>
+        <div style={{ display: 'flex', gap: 8 }}>
+          {AMOUNTS.map(a => (
+            <button key={a} onClick={() => setAmount(a)} style={{ flex: 1, padding: '8px 0', borderRadius: 6, border: `1.5px solid ${amount === a ? '#635BFF' : 'rgba(255,255,255,0.15)'}`, background: amount === a ? 'rgba(99,91,255,0.15)' : 'transparent', fontFamily: 'var(--font-sans)', fontSize: 13, fontWeight: 500, color: amount === a ? '#9B8FFF' : 'rgba(255,255,255,0.55)', cursor: 'pointer', transition: 'all 0.15s ease' }}>
+              {a}€
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Name */}
+      <div>
+        <label style={{ fontFamily: 'var(--font-sans)', fontSize: 11, color: 'rgba(255,255,255,0.45)', textTransform: 'uppercase', letterSpacing: '0.06em', display: 'block', marginBottom: 6 }}>Titular</label>
+        <input value={name} onChange={e => setName(e.target.value)} placeholder="Nombre en la tarjeta" style={inputStyle('name')} onFocus={() => setFieldFocus('name')} onBlur={() => setFieldFocus(null)} />
+      </div>
+
+      {/* Card number */}
+      <div>
+        <label style={{ fontFamily: 'var(--font-sans)', fontSize: 11, color: 'rgba(255,255,255,0.45)', textTransform: 'uppercase', letterSpacing: '0.06em', display: 'block', marginBottom: 6 }}>Número de tarjeta</label>
+        <input value={card} onChange={e => setCard(formatCard(e.target.value))} placeholder="1234 5678 9012 3456" style={inputStyle('card')} onFocus={() => setFieldFocus('card')} onBlur={() => setFieldFocus(null)} inputMode="numeric" />
+      </div>
+
+      {/* Expiry + CVC */}
+      <div style={{ display: 'flex', gap: 12 }}>
+        <div style={{ flex: 1 }}>
+          <label style={{ fontFamily: 'var(--font-sans)', fontSize: 11, color: 'rgba(255,255,255,0.45)', textTransform: 'uppercase', letterSpacing: '0.06em', display: 'block', marginBottom: 6 }}>Caducidad</label>
+          <input value={expiry} onChange={e => setExpiry(formatExpiry(e.target.value))} placeholder="MM / AA" style={inputStyle('expiry')} onFocus={() => setFieldFocus('expiry')} onBlur={() => setFieldFocus(null)} inputMode="numeric" />
+        </div>
+        <div style={{ flex: 1 }}>
+          <label style={{ fontFamily: 'var(--font-sans)', fontSize: 11, color: 'rgba(255,255,255,0.45)', textTransform: 'uppercase', letterSpacing: '0.06em', display: 'block', marginBottom: 6 }}>CVC</label>
+          <input value={cvc} onChange={e => setCvc(e.target.value.replace(/\D/g, '').slice(0, 4))} placeholder="123" style={inputStyle('cvc')} onFocus={() => setFieldFocus('cvc')} onBlur={() => setFieldFocus(null)} inputMode="numeric" />
+        </div>
+      </div>
+
+      {/* Buttons */}
+      <div style={{ display: 'flex', gap: 10, marginTop: 4 }}>
+        <button onClick={onCancel} style={{ flex: 1, padding: '11px 0', borderRadius: 6, border: '1px solid rgba(255,255,255,0.15)', background: 'transparent', fontFamily: 'var(--font-sans)', fontSize: 14, color: 'rgba(255,255,255,0.5)', cursor: 'pointer' }}>
+          Cancelar
+        </button>
+        <button onClick={handleSubmit} disabled={!isValid || loading} style={{ flex: 2, padding: '11px 0', borderRadius: 6, border: 'none', background: isValid && !loading ? '#635BFF' : 'rgba(99,91,255,0.3)', fontFamily: 'var(--font-sans)', fontSize: 14, fontWeight: 600, color: isValid && !loading ? '#fff' : 'rgba(255,255,255,0.35)', cursor: isValid && !loading ? 'pointer' : 'not-allowed', transition: 'all 0.2s ease' }}>
+          {loading ? 'Procesando...' : `Donar ${amount}€`}
+        </button>
+      </div>
+
+      <p style={{ fontFamily: 'var(--font-sans)', fontSize: 11, color: 'rgba(255,255,255,0.25)', textAlign: 'center', margin: 0 }}>
+        🔒 Pago cifrado · Datos no almacenados
+      </p>
+    </div>
+  )
+}
+
 function DonationChallenge({ challenge, completed }: SubProps) {
   const { completeDay } = useCalendarStore()
   const { closeChallenge, showToast } = useAppStore()
   const [done, setDone] = useState(completed)
+  const [showForm, setShowForm] = useState(false)
 
-  const handleDonate = () => {
+  const handleSuccess = () => {
     completeDay(challenge.day)
     setDone(true)
     showToast('¡Gracias por tu aportación!')
@@ -457,11 +562,15 @@ function DonationChallenge({ challenge, completed }: SubProps) {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
-      <HeroHeader challenge={challenge} />
-      <div style={{ padding: '24px 20px 20px', display: 'flex', flexDirection: 'column', gap: 24, alignItems: 'center' }}>
+      {!showForm && <HeroHeader challenge={challenge} />}
+      <div style={{ padding: showForm ? 0 : '24px 20px 20px', display: 'flex', flexDirection: 'column', gap: 24, alignItems: 'center' }}>
         {done ? (
-          <div style={{ background: 'rgba(34,197,94,0.1)', border: '1px solid rgba(34,197,94,0.2)', borderRadius: 8, padding: '14px 16px', textAlign: 'center', color: 'rgba(255,255,255,0.7)', fontSize: 14 }}>
+          <div style={{ padding: '24px 20px', width: '100%', boxSizing: 'border-box', background: 'rgba(34,197,94,0.1)', border: '1px solid rgba(34,197,94,0.2)', borderRadius: 8, textAlign: 'center', color: 'rgba(255,255,255,0.7)', fontSize: 14 }}>
             Ya realizaste tu aportación.<br />¡Gracias por tu generosidad!
+          </div>
+        ) : showForm ? (
+          <div style={{ width: '100%' }}>
+            <StripeForm onSuccess={handleSuccess} onCancel={() => setShowForm(false)} />
           </div>
         ) : (
           <>
@@ -474,7 +583,7 @@ function DonationChallenge({ challenge, completed }: SubProps) {
               )}
             </p>
             <button
-              onClick={handleDonate}
+              onClick={() => setShowForm(true)}
               style={{ width: 164, padding: '12px 0', borderRadius: 8, border: '1.5px solid #F4F5F0', background: 'transparent', fontFamily: 'var(--font-sans)', fontSize: 14, fontWeight: 500, color: '#F4F5F0', cursor: 'pointer', transition: 'all 0.2s ease', textAlign: 'center' }}
             >
               Hacer donación
