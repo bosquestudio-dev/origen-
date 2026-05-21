@@ -23,7 +23,8 @@ const App = () => (
         <AppProvider>
          
             <Toaster
-              position="bottom-center"
+              position="top-center"
+              closeButton
               toastOptions={{
                 unstyled: true,
                 classNames: {

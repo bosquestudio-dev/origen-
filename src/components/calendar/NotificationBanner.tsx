@@ -33,15 +33,10 @@ const NotificationBanner = ({ notifications }: NotificationBannerProps) => {
             </div>
 
             {/* Contenido */}
-            <div className="flex-1 min-w-0">
-              <p className="notification-banner-title">
-                {notification.title}
-              </p>
-              <p
-                className="notification-banner-message"
-                dangerouslySetInnerHTML={{ __html: notification.message }}
-              />
-            </div>
+            <p className="flex-1 min-w-0 notification-banner-message" style={{ margin: 0 }}>
+              <span className="notification-banner-title">{notification.title}&nbsp;&nbsp;</span>
+              <span dangerouslySetInnerHTML={{ __html: notification.message }} />
+            </p>
 
             {/* Botón cerrar */}
             <button

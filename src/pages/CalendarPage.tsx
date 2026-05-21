@@ -574,8 +574,19 @@ export default function CalendarPage() {
           <h3 className="text-lg font-medium text-foreground">¿Seguro que quieres salir?</h3>
           <p className="text-sm text-muted-foreground">Podrás volver a acceder cuando quieras con tu correo o DNI</p>
           <div className="flex gap-3 justify-center pt-2">
-            <AppButton variant="ghost" onClick={() => setShowLogoutModal(false)}>Cancelar</AppButton>
-            <AppButton onClick={handleLogout}>Salir</AppButton>
+            <button
+              onClick={() => setShowLogoutModal(false)}
+              style={{ padding: '10px 20px', borderRadius: 8, border: 'none', background: 'transparent', fontFamily: "'DM Sans', sans-serif", fontSize: 14, color: 'rgba(255,255,255,0.5)', cursor: 'pointer' }}
+            >
+              Cancelar
+            </button>
+            <button
+              onClick={handleLogout}
+              className="text-muted-foreground"
+              style={{ padding: '10px 24px', borderRadius: 8, border: 'none', background: '#F4F5F0', fontFamily: "'DM Sans', sans-serif", fontSize: 14, fontWeight: 600, cursor: 'pointer' }}
+            >
+              Salir
+            </button>
           </div>
         </div>
       </AppModal>
@@ -621,21 +632,23 @@ export default function CalendarPage() {
                 flexDirection: 'column',
               }}
             >
-              {/* X close — mobile only */}
-              {isMobile && (
-                <button
-                  onClick={handleDismiss}
-                  style={{
-                    position: 'absolute', top: 16, right: 16,
-                    width: 24, height: 24, background: 'none', border: 'none',
-                    cursor: 'pointer', color: 'rgba(255,255,255,0.5)',
-                    display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    padding: 0,
-                  }}
-                >
-                  <X size={24} />
-                </button>
-              )}
+              {/* X close */}
+              <button
+                onClick={handleDismiss}
+                style={{
+                  position: 'absolute', top: 16, right: 16,
+                  width: 20, height: 20, background: 'none', border: 'none',
+                  cursor: 'pointer', color: 'rgba(255,255,255,0.5)',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  padding: 0, transition: 'color 0.15s ease',
+                }}
+                onMouseEnter={e => { e.currentTarget.style.color = 'rgba(255,255,255,0.9)' }}
+                onMouseLeave={e => { e.currentTarget.style.color = 'rgba(255,255,255,0.5)' }}
+              >
+                <svg width="12" height="12" viewBox="0 0 12 12">
+                  <path d="M1 1L11 11M11 1L1 11" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+                </svg>
+              </button>
 
               {/* WA icon — top left */}
               <img src="/icon_wp.svg" alt="WhatsApp" style={{ width: 48, height: 48, marginBottom: 20, display: 'block' }} />

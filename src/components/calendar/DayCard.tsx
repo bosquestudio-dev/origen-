@@ -1,7 +1,9 @@
 import { motion } from 'framer-motion'
 import { useState, useLayoutEffect } from 'react'
 import type { CalendarDay } from '@/types/calendar.types'
+import { toast } from 'sonner'
 import { useAppStore } from '@/stores/app.store'
+import { useCalendarStore } from '@/stores/calendar.store'
 import { useCalendar } from '@/hooks/useCalendar'
 import { RefreshCw } from 'lucide-react'
 import { DAY_LABELS, HOLIDAY_DAYS, WEDNESDAY_DAYS } from '@/data/calendar.data'
@@ -86,6 +88,7 @@ const BADGE_CONFIG = {
 export default function DayCard({ day, index, dataStatus, dataSpecial }: DayCardProps) {
   const { openChallenge, showToast } = useAppStore()
   const { canAttemptDay } = useCalendar()
+  const { completedDays } = useCalendarStore()
   const [isMobile, setIsMobile] = useState(false)
 
   useLayoutEffect(() => {
@@ -102,7 +105,24 @@ export default function DayCard({ day, index, dataStatus, dataSpecial }: DayCard
       return
     }
     if (!canAttemptDay(day.day)) {
-      showToast('Completa al menos los dos retos anteriores primero')
+      toast.warning('Completa los dos retos anteriores primero', {
+        description: 'Debes tener completados los dos retos previos para desbloquear este.',
+        duration: 4000,
+      })
+      return
+    }
+    const type = day.challenge?.type
+    const isCompleted = completedDays.includes(day.day)
+    if (isCompleted && (type === 'raffle' || type === 'survey')) {
+      toast.info(
+        type === 'raffle' ? 'Ya participaste en este sorteo' : 'Ya respondiste esta encuesta',
+        {
+          description: type === 'raffle'
+            ? 'No puedes inscribirte dos veces en el mismo sorteo.'
+            : 'Tus respuestas ya han sido registradas.',
+          duration: 4000,
+        }
+      )
       return
     }
     openChallenge(day.day)

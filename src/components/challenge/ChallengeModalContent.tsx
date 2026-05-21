@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 import { toast } from 'sonner'
+
 import AppButton from '@/components/origen/AppButton'
 import { useCalendarStore } from '@/stores/calendar.store'
 import { useAppStore } from '@/stores/app.store'
@@ -13,20 +14,21 @@ interface SubProps {
 
 function TextChallenge({ challenge, completed }: SubProps) {
   const { completeDay } = useCalendarStore()
-  const { closeChallenge, showToast } = useAppStore()
+  const { closeChallenge } = useAppStore()
   const [done, setDone] = useState(completed)
 
   useEffect(() => {
     if (!completed) {
       completeDay(challenge.day)
       setDone(true)
+      toast.success('¡Reto completado!')
     }
   }, [])
 
   const handleComplete = () => {
     completeDay(challenge.day)
     setDone(true)
-    showToast('¡Reto completado!')
+    toast.success('¡Reto completado!')
     setTimeout(closeChallenge, 1200)
   }
 
@@ -91,15 +93,7 @@ function TextChallenge({ challenge, completed }: SubProps) {
         )}
       </div>
 
-      {/* Completado */}
-      {done ? (
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8, color: '#22C35D' }}>
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="draw-check">
-            <path d="M5 13l4 4L19 7" />
-          </svg>
-          <span style={{ fontFamily: 'var(--font-sans)', fontSize: 14 }}>Completado</span>
-        </div>
-      ) : (
+      {!done && (
         <AppButton onClick={handleComplete}>Marcar como completado</AppButton>
       )}
     </div>
@@ -120,11 +114,19 @@ function formatChallengeDate(dateLabel: string): string {
 
 function VideoChallenge({ challenge, completed }: SubProps) {
   const { completeDay } = useCalendarStore()
-  const { closeChallenge, showToast } = useAppStore()
+  const { closeChallenge } = useAppStore()
   const [done, setDone] = useState(completed)
   const [playing, setPlaying] = useState(false)
   const completedRef = useRef(false)
   const videoRef = useRef<HTMLVideoElement>(null)
+
+  useEffect(() => {
+    if (!completed) {
+      completeDay(challenge.day)
+      setDone(true)
+      toast.success('¡Reto completado!')
+    }
+  }, [])
 
   const handleTimeUpdate = (e: React.SyntheticEvent<HTMLVideoElement>) => {
     if (completedRef.current) return
@@ -133,7 +135,7 @@ function VideoChallenge({ challenge, completed }: SubProps) {
       completedRef.current = true
       completeDay(challenge.day)
       setDone(true)
-      showToast('¡Reto completado!')
+      toast.success('¡Reto completado!')
       setTimeout(closeChallenge, 1200)
     }
   }
@@ -242,21 +244,13 @@ function VideoChallenge({ challenge, completed }: SubProps) {
         </div>
       )}
 
-      {done && (
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8, color: '#22C35D' }}>
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="draw-check">
-            <path d="M5 13l4 4L19 7" />
-          </svg>
-          <span style={{ fontFamily: 'var(--font-sans)', fontSize: 14 }}>Completado</span>
-        </div>
-      )}
     </div>
   )
 }
 
 function SurveyChallenge({ challenge, completed }: SubProps) {
   const { completeDay } = useCalendarStore()
-  const { closeChallenge, showToast } = useAppStore()
+  const { closeChallenge } = useAppStore()
   const [answers, setAnswers] = useState<Record<string, string>>({})
   const [current, setCurrent] = useState(0)
   const [done, setDone] = useState(completed)
@@ -277,34 +271,11 @@ function SurveyChallenge({ challenge, completed }: SubProps) {
 
   const handleSubmit = () => {
     completeDay(challenge.day)
-    setDone(true)
-    showToast('¡Has completado el reto!')
-    setTimeout(closeChallenge, 1200)
+    toast.success('¡Has completado el reto!')
+    closeChallenge()
   }
 
-  if (done) {
-    return (
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 20, padding: '0 0 4px' }}>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-          <span style={{ fontFamily: 'var(--font-sans)', fontWeight: 400, fontSize: 10, letterSpacing: '0.04em', textTransform: 'uppercase' as const, color: '#989EA9', lineHeight: '13px' }}>
-            {dateLabel}
-          </span>
-          <h2 style={{ fontFamily: 'var(--font-sans)', fontWeight: 600, fontSize: 24, letterSpacing: '-0.2px', color: '#F4F5F0', lineHeight: '28px', margin: 0 }}>
-            {challenge.title}
-          </h2>
-        </div>
-        <div style={{ background: 'rgba(34,197,94,0.1)', border: '1px solid rgba(34,197,94,0.2)', borderRadius: 8, padding: '14px 16px', textAlign: 'center', color: 'rgba(255,255,255,0.7)', fontSize: 14 }}>
-          Ya respondiste esta encuesta.<br />Tus respuestas han sido registradas.
-        </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8, color: '#22C35D' }}>
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="draw-check">
-            <path d="M5 13l4 4L19 7" />
-          </svg>
-          <span style={{ fontFamily: 'var(--font-sans)', fontSize: 14 }}>Completado</span>
-        </div>
-      </div>
-    )
-  }
+  if (done) return null
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: '100%', minHeight: 400 }}>
@@ -340,8 +311,8 @@ function SurveyChallenge({ challenge, completed }: SubProps) {
                 onClick={() => handleSelect(opt)}
                 style={{
                   width: 180, height: 85, borderRadius: 8,
-                  border: selected ? '1.5px solid #7B6FE8' : '1px solid #DBDDE1',
-                  background: selected ? 'rgba(123,111,232,0.12)' : 'transparent',
+                  border: selected ? '1.5px solid #22C35D' : '1px solid #DBDDE1',
+                  background: selected ? 'rgba(34,195,93,0.12)' : 'transparent',
                   padding: '24px 16px', fontFamily: 'var(--font-sans)', fontSize: 14,
                   color: selected ? '#F4F5F0' : '#DBDDE1', textAlign: 'center',
                   cursor: 'pointer', transition: 'all 0.2s ease',
@@ -396,46 +367,29 @@ function HeroHeader({ challenge }: { challenge: Challenge }) {
 
 function RaffleChallenge({ challenge, completed }: SubProps) {
   const { completeDay } = useCalendarStore()
-  const { closeChallenge, showToast } = useAppStore()
-  const [done, setDone] = useState(completed)
+  const { closeChallenge } = useAppStore()
 
-  useEffect(() => {
-    if (completed) {
-      toast.info('Ya participaste en este sorteo', {
-        description: 'No puedes inscribirte dos veces en el mismo sorteo.',
-        duration: 4000,
-      })
-    }
-  }, [completed])
+  if (completed) return null
 
   const handleJoin = () => {
     completeDay(challenge.day)
-    setDone(true)
-    showToast('¡Has completado el reto!')
-    setTimeout(closeChallenge, 1200)
+    toast.success('¡Has completado el reto!')
+    closeChallenge()
   }
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
       <HeroHeader challenge={challenge} />
       <div style={{ padding: '24px 20px 20px', display: 'flex', flexDirection: 'column', gap: 24, alignItems: 'center' }}>
-        {done ? (
-          <div style={{ background: 'rgba(127,119,221,0.1)', border: '1px solid rgba(127,119,221,0.2)', borderRadius: 8, padding: '14px 16px', textAlign: 'center', color: 'rgba(255,255,255,0.7)', fontSize: 14 }}>
-            Ya estás inscrito en este sorteo.<br />No puedes participar dos veces.
-          </div>
-        ) : (
-          <>
-            <p style={{ fontFamily: 'var(--font-sans)', fontSize: 14, fontWeight: 400, color: 'rgba(255,255,255,0.85)', lineHeight: '20px', margin: 0, whiteSpace: 'pre-line', alignSelf: 'stretch' }}>
-              {challenge.description}
-            </p>
-            <button
-              onClick={handleJoin}
-              style={{ width: 164, padding: '12px 0', borderRadius: 8, border: '1.5px solid #F4F5F0', background: 'transparent', fontFamily: 'var(--font-sans)', fontSize: 14, fontWeight: 500, color: '#F4F5F0', cursor: 'pointer', transition: 'all 0.2s ease', textAlign: 'center' }}
-            >
-              Participar del sorteo
-            </button>
-          </>
-        )}
+        <p style={{ fontFamily: 'var(--font-sans)', fontSize: 14, fontWeight: 400, color: 'rgba(255,255,255,0.85)', lineHeight: '20px', margin: 0, whiteSpace: 'pre-line', alignSelf: 'stretch' }}>
+          {challenge.description}
+        </p>
+        <button
+          onClick={handleJoin}
+          style={{ width: 164, padding: '12px 0', borderRadius: 8, border: '1.5px solid #F4F5F0', background: 'transparent', fontFamily: 'var(--font-sans)', fontSize: 14, fontWeight: 500, color: '#F4F5F0', cursor: 'pointer', transition: 'all 0.2s ease', textAlign: 'center' }}
+        >
+          Participar del sorteo
+        </button>
       </div>
     </div>
   )
@@ -547,27 +501,27 @@ function StripeForm({ onSuccess, onCancel }: { onSuccess: () => void; onCancel: 
 
 function DonationChallenge({ challenge, completed }: SubProps) {
   const { completeDay } = useCalendarStore()
-  const { closeChallenge, showToast } = useAppStore()
+  const { closeChallenge } = useAppStore()
   const [done, setDone] = useState(completed)
   const [showForm, setShowForm] = useState(false)
 
   const handleSuccess = () => {
     completeDay(challenge.day)
     setDone(true)
-    showToast('¡Gracias por tu aportación!')
+    toast.success('¡Gracias por tu aportación!')
     setTimeout(closeChallenge, 1200)
   }
 
   const parts = (challenge.content.bodyText ?? '').split('\n')
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', flex: 1 }}>
       {!showForm && <HeroHeader challenge={challenge} />}
-      <div style={{ padding: showForm ? 0 : '24px 20px 20px', display: 'flex', flexDirection: 'column', gap: 24, alignItems: 'center' }}>
+      <div style={{ padding: showForm ? 0 : '24px 20px 20px', display: 'flex', flexDirection: 'column', gap: 24, alignItems: 'center', flex: 1, justifyContent: done ? 'center' : undefined }}>
         {done ? (
-          <div style={{ padding: '24px 20px', width: '100%', boxSizing: 'border-box', background: 'rgba(34,197,94,0.1)', border: '1px solid rgba(34,197,94,0.2)', borderRadius: 8, textAlign: 'center', color: 'rgba(255,255,255,0.7)', fontSize: 14 }}>
+          <p style={{ fontFamily: 'var(--font-sans)', fontSize: 15, fontWeight: 400, color: 'rgba(255,255,255,0.7)', lineHeight: '22px', textAlign: 'center', margin: 0 }}>
             Ya realizaste tu aportación.<br />¡Gracias por tu generosidad!
-          </div>
+          </p>
         ) : showForm ? (
           <div style={{ width: '100%' }}>
             <StripeForm onSuccess={handleSuccess} onCancel={() => setShowForm(false)} />
@@ -634,7 +588,7 @@ export default function ChallengeModalContent({ challenge, completed }: Challeng
   const noWrapPadding = ['raffle', 'donation'].includes(challenge.type)
 
   return (
-    <div style={{ padding: noWrapPadding ? 0 : hasOwnHeader ? '20px' : '32px 28px' }}>
+    <div style={{ padding: noWrapPadding ? 0 : hasOwnHeader ? '20px' : '32px 28px', height: noWrapPadding ? '100%' : undefined, display: noWrapPadding ? 'flex' : undefined, flexDirection: noWrapPadding ? 'column' : undefined }}>
       {!hasOwnHeader && !noWrapPadding && (
         <div style={{ marginBottom: '20px' }}>
           <span style={{

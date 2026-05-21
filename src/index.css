@@ -155,28 +155,28 @@
 /* Notification Banner */
 .notification-banner-item {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   gap: 12px;
-  padding: 12px 16px;
-  background: #17191C;
-  border: 1px solid #41454E;
-  border-radius: 12px;
+  padding: 16px 12px 16px 16px;
+  background: #6CA4ED33;
+  border: 1px solid #6CA4ED;
+  border-radius: 10px;
   margin-bottom: 40px;
   box-sizing: border-box;
+  opacity: 1;
 }
 @media (max-width: 767px) {
   .notification-banner-item { margin-bottom: 24px; }
 }
 .notification-banner-icon {
   flex-shrink: 0;
-  margin-top: 1px;
-  color: rgba(255, 255, 255, 0.5);
+  color: #6CA4ED;
 }
 .notification-banner-title {
   font-size: 13px;
   font-weight: 600;
-  color: rgba(255, 255, 255, 0.9);
-  margin-bottom: 3px;
+  color: #6CA4ED;
+  margin-bottom: 0;
   line-height: 1.4;
   font-family: var(--font-sans);
 }
@@ -217,7 +217,7 @@
 }
 
 /* ── Calendar grid & cards ── */
-.cal-grid-wrapper { padding: 20px; background: #17191C; border-radius: 16px; }
+.cal-grid-wrapper { padding: 0; background: transparent; border-radius: 0; }
 .cal-headers { display: grid; grid-template-columns: repeat(7, minmax(0, 182px)); gap: 12px; margin-bottom: 12px; }
 .cal-grid    { display: grid; grid-template-columns: repeat(7, minmax(0, 182px)); gap: 12px; }
 .cal-empty   { height: 160px; min-height: 160px; }

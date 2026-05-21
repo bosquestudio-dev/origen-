@@ -10,10 +10,11 @@
    =========================================================== */
 
 .toast-base {
+  position: relative;
   display: flex;
   align-items: flex-start;
   gap: 10px;
-  padding: 12px 16px;
+  padding: 12px 36px 12px 16px;
   border-radius: var(--radius-toast, 10px);
   font-family: var(--font-sans, 'DM Sans', sans-serif);
   font-size: var(--text-base, 13px);
@@ -53,19 +54,34 @@
 }
 
 .toast-close {
-  margin-left: auto;
-  flex-shrink: 0;
-  opacity: 0.5;
+  position: absolute !important;
+  top: 50% !important;
+  right: 14px !important;
+  left: auto !important;
+  transform: translateY(-50%) !important;
+  width: 16px !important;
+  height: 16px !important;
+  background: transparent !important;
+  border: none !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  padding: 0 !important;
   cursor: pointer;
-  background: transparent;
-  border: none;
-  padding: 0;
-  color: inherit;
-  transition: opacity 0.15s ease;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  color: #9BA1A8 !important;
+  transition: color 0.15s ease;
 }
 
 .toast-close:hover {
-  opacity: 1;
+  color: #292C32 !important;
+}
+
+/* Hide sonner's default SVG, show only our X */
+.toast-close svg {
+  width: 12px !important;
+  height: 12px !important;
 }
 
 /* Info — acento #0C65D8 */
