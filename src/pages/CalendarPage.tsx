@@ -390,9 +390,9 @@ export default function CalendarPage() {
           display: flex; align-items: center; box-sizing: border-box;
         }
         /* Mobile logout — hidden in desktop (shown via row1) */
-        .cal-logout-mobile { display: none; }
-        .cal-logout-desktop { display: flex; }
-        .cal-mobile-menu { display: none; }
+          .cal-logout-desktop { display: flex; }
+          .cal-hamburger-btn { display: none; }
+          .cal-mobile-menu { display: none; }
         .cal-metric-card-hoy { width: 226px; min-width: 226px; }
         .cal-main { padding: 40px 32px; }
 
@@ -406,8 +406,8 @@ export default function CalendarPage() {
           .cal-header { flex-direction: column; align-items: flex-start; gap: 12px; padding: 16px; }
           .cal-header-right { flex-direction: row; gap: 12px; width: calc(100% + 32px); margin-left: -16px; padding: 0 16px; flex-wrap: nowrap; box-sizing: border-box; }
           .cal-metric-card { display: none !important; }
-          .cal-logout-mobile { display: flex; }
           .cal-logout-desktop { display: none; }
+          .cal-hamburger-btn { display: flex !important; position: absolute; top: 16px; right: 16px; }
           .cal-mobile-menu { display: flex !important; }
           .cal-main { padding: 24px 20px !important; }
           .cal-metric-progreso-mobile { display: flex !important; }
@@ -417,10 +417,24 @@ export default function CalendarPage() {
         }
       `}</style>
       <div className="cal-header-outer">
+        {/* Hamburger button — mobile: absolute top-right */}
+        <button
+          className="cal-hamburger-btn"
+          onClick={() => setShowMobileMenu(true)}
+          title="Menú"
+          style={{
+            width: 40, height: 40, background: 'none', border: 'none',
+            cursor: 'pointer', color: 'rgba(255,255,255,0.5)',
+            alignItems: 'center', justifyContent: 'center',
+            padding: 0, zIndex: 41,
+          }}
+        >
+          <Menu size={22} />
+        </button>
         <div className="cal-header">
           <div className="cal-header-left">
-            {/* Row 1: greeting + logout (mobile only) */}
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            {/* Row 1: greeting */}
+            <div>
               <div
                 style={{
                   fontFamily: "'DM Sans', sans-serif",
@@ -430,14 +444,6 @@ export default function CalendarPage() {
               >
                 <TypewriterText prefix="Hola, " name={firstName} enabled={wowDone} />
               </div>
-              <button
-                className="cal-header-logout cal-logout-mobile"
-                onClick={() => setShowMobileMenu(true)}
-                title="Menú"
-                style={{ width: 40, height: 40, alignItems: 'center', justifyContent: 'center' }}
-              >
-                <Menu size={22} />
-              </button>
             </div>
             {/* Subtitle */}
             <div

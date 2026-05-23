@@ -1,5 +1,4 @@
 import { useState, useEffect, useMemo } from 'react';
-import { MeshGradient } from '@paper-design/shaders-react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -291,7 +290,7 @@ export default function LoginPage() {
     color: C.body,
   };
 
-  // Primary button — always dark fill, disabled state is grey
+  // Primary button — black fill, disabled state is grey
   const ctaBtn = (active: boolean): React.CSSProperties => ({
     width: '100%',
     height: 40,
@@ -306,8 +305,8 @@ export default function LoginPage() {
     fontWeight: 400,
     lineHeight: '16px',
     border: 'none',
-    background: active ? '#17181B' : '#E5E5E0',
-    color: active ? '#FFFFFF' : '#9B9B95',
+    background: active ? '#000000' : '#444444',
+    color: active ? '#F4F5F0' : '#9B9B95',
     cursor: active ? 'pointer' : 'not-allowed',
     transition: 'background 0.2s ease, color 0.2s ease',
   });
@@ -322,8 +321,8 @@ export default function LoginPage() {
         /* ── CTA button base ── */
         .btn-cta {
           border: none;
-          background: ${C.btnDark};
-          color: #FFFFFF;
+          background: #000000;
+          color: #F4F5F0;
           position: relative;
           overflow: hidden;
         }
@@ -334,19 +333,22 @@ export default function LoginPage() {
         .login-root { position: fixed; inset: 0; }
         .login-aurora {
           position: absolute; inset: 0;
-          background: #0D0D0D;
+          background: #E61D2B;
           overflow: hidden;
         }
         .login-form-wrap {
           position: absolute; inset: 0; z-index: 10;
           display: flex; align-items: center; justify-content: center;
-          padding: 20px; box-sizing: border-box;
+          padding: 0;
+          box-sizing: border-box;
         }
         .login-form-card {
           background: #F4F5F0;
           border-radius: 20px;
           padding: 28px 24px;
-          width: 100%; max-width: 480px;
+          margin: 0 24px;
+          width: 100%;
+          height: 540px;
           box-sizing: border-box;
           display: flex;
           flex-direction: column;
@@ -367,6 +369,13 @@ export default function LoginPage() {
         /* DESKTOP (>=1024px): split 50/50 */
         @media (min-width: 1024px) {
           .login-root { display: flex; }
+          .coca-cola-logo {
+            /* desktop: centered between top of red card and credits window */
+            top: calc(25% - 72.5px);
+            transform: translate(-50%, -50%);
+            width: 252px;
+            height: 79px;
+          }
           .login-aurora {
             position: relative;
             flex: 0 0 50%; height: 100%;
@@ -380,7 +389,7 @@ export default function LoginPage() {
             overflow: hidden;
             width: 100%;
             height: 100%;
-            background: #0D0D0D;
+            background: #E61D2B;
           }
           .login-form-wrap {
             position: relative; flex: 1;
@@ -452,6 +461,20 @@ export default function LoginPage() {
           border-radius: 6.5px !important;
         }
 
+        /* Mobile heading + subtext overrides */
+        @media (max-width: 1023px) {
+          .login-heading {
+            font-size: 24px !important;
+            line-height: 28px !important;
+            letter-spacing: -0.2px !important;
+          }
+          .login-subtext {
+            font-size: 16px !important;
+            line-height: 20px !important;
+            letter-spacing: 0px !important;
+          }
+        }
+
         /* Very small screens: allow title to wrap */
         @media (max-width: 380px) {
           .login-heading { white-space: normal !important; font-size: 20px !important; }
@@ -471,15 +494,27 @@ export default function LoginPage() {
         {/* ── Aurora ── (full-screen mobile / left-half desktop) */}
         <div className="login-aurora">
           <div className="login-aurora-inner">
-            {/* Imagen estática de fondo */}
-            <div style={{ position: 'absolute', inset: 0 }}>
-              <img
-                src="/login-bg.jpg"
-                alt=""
-                style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
-              />
-            </div>
+            {/* Coca-Cola logo — desktop: centered above pills / mobile: centered above form card */}
+            <img
+              src="/coca-cola-logo.png"
+              alt="Coca-Cola"
+              className="coca-cola-logo"
+              style={{
+                position: 'absolute',
+                left: '50%',
+                zIndex: 5,
+              }}
+            />
             <style>{`
+              @media (max-width: 1023px) {
+                .coca-cola-logo {
+                  /* mobile: centered between viewport top and login-form-card top */
+                  top: calc(25vh - 135px);
+                  transform: translate(-50%, -50%);
+                  width: 118px;
+                  height: auto;
+                }
+              }
               @keyframes aurora-stream-slow {
                 0%   { transform: translateY(0%); }
                 100% { transform: translateY(-50%); }
@@ -573,10 +608,10 @@ export default function LoginPage() {
                   >
                     <div className="step-content">
                       {/* Subtitle */}
-                      <p style={subtext}>
-                        ¿Utilizas en tu día a día el correo
+                      <p className="login-subtext" style={subtext}>
+                        ¿Utilizas en tu día a día el correo de la
                         <br />
-                        de la empresa?
+                        empresa?
                       </p>
 
                       {/* Options — gap: 8px (Figma: Frame 3 gap=8) */}
@@ -612,21 +647,24 @@ export default function LoginPage() {
                                 textAlign: 'left',
                                 cursor: 'pointer',
                                 transition: 'all 0.15s ease',
-                                border: (sel || pendingType === type)
-                                  ? `1px solid ${C.optSelBdr}`
-                                  : hoveredOption === type
-                                    ? `1px solid ${C.optSelBdr}`
-                                    : `1px solid ${C.optBdr}`,
-                                background: (sel || pendingType === type)
-                                  ? C.optSelBg
-                                  : hoveredOption === type
-                                    ? '#FFF4EE'
-                                    : C.pageBg,
-                                color: (sel || pendingType === type)
-                                  ? C.optSelTxt
-                                  : hoveredOption === type
-                                    ? C.optSelTxt
-                                    : C.optTxt,
+                                border:
+                                  sel || pendingType === type
+                                    ? '1px solid #000000'
+                                    : hoveredOption === type
+                                      ? '1px solid #111111'
+                                      : '1px solid #DBDDE1',
+                                background:
+                                  sel || pendingType === type
+                                    ? '#000000'
+                                    : hoveredOption === type
+                                      ? '#222222'
+                                      : 'transparent',
+                                color:
+                                  sel || pendingType === type
+                                    ? '#F4F5F0'
+                                    : hoveredOption === type
+                                      ? '#F4F5F0'
+                                      : '#2A2D32',
                               }}
                             >
                               {type === 'email'
@@ -856,7 +894,7 @@ export default function LoginPage() {
                         verificar tu {loginType === 'dni' ? 'DNI' : 'correo'}
                       </h1>
                       {/* Subtitle — Figma: DM Sans 400 18px, #000 */}
-                      <p style={subtext}>
+                      <p className="login-subtext" style={subtext}>
                         Rellena el formulario y revisaremos tu caso para que puedas acceder
                       </p>
 
