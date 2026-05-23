@@ -243,7 +243,7 @@ export default function DayCard({ day, index, dataStatus, dataSpecial }: DayCard
       {/* ── MOBILE layout ───────────────────────────────────────────────────── */}
 
       {/* Mobile catch-up: "PONTE" / "AL DÍA" */}
-      {day.status === 'catch-up' && (
+      {isDetox && isWednesday && (
         <div
           className="day-mobile-catchup"
           style={{
@@ -256,6 +256,7 @@ export default function DayCard({ day, index, dataStatus, dataSpecial }: DayCard
           <div style={{
             display: 'flex', flexDirection: 'column',
             alignItems: 'center', justifyContent: 'center',
+            gap: 6,
           }}>
             <span>PONTE</span>
             <span>AL DÍA</span>
@@ -296,7 +297,7 @@ export default function DayCard({ day, index, dataStatus, dataSpecial }: DayCard
       )}
 
       {/* Mobile detox weekday — blurred number */}
-      {isDetox && !isHoliday && (
+      {isDetox && !isHoliday && !isWednesday && (
         <div
           className="day-mobile-number"
           style={{
