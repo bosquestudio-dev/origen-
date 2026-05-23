@@ -293,6 +293,7 @@ export default function CalendarPage() {
   const [inputFocused, setInputFocused] = useState(false)
   const [iconHovered, setIconHovered] = useState(false)
   const inputRef = useRef<HTMLInputElement>(null)
+  const frozenMobile = useRef(window.innerWidth < 768)
 
   useEffect(() => {
     const t = setTimeout(() => setPageReady(true), 100)
@@ -309,7 +310,10 @@ export default function CalendarPage() {
   useEffect(() => {
     const hasNumber = localStorage.getItem(WA_NUMBER_KEY)
     if (!hasNumber) {
-      const t = setTimeout(() => setShowPopup(true), 800)
+      const t = setTimeout(() => {
+        frozenMobile.current = window.innerWidth < 768
+        setShowPopup(true)
+      }, 3000)
       return () => clearTimeout(t)
     }
   }, [])
@@ -605,37 +609,45 @@ export default function CalendarPage() {
       {/* WhatsApp Popup — desktop modal / mobile bottom sheet */}
       <AnimatePresence>
         {showPopup && (
-          <div
+          <motion.div
+            key="wa-overlay"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.25 }}
             style={{
               position: 'fixed', inset: 0,
               background: 'rgba(0,0,0,0.4)',
               backdropFilter: 'blur(4px)',
+              WebkitBackdropFilter: 'blur(4px)',
               zIndex: 100,
               display: 'flex',
-              alignItems: isMobile ? 'flex-end' : 'center',
+              alignItems: frozenMobile.current ? 'flex-end' : 'center',
               justifyContent: 'center',
             }}
-            onClick={(e) => { if (e.target === e.currentTarget) handleDismiss() }}
+            onClick={handleDismiss}
           >
             <motion.div
               key="wa-card"
-              initial={isMobile ? { y: '100%' } : { opacity: 0, y: 20 }}
-              animate={isMobile ? { y: 0 } : { opacity: 1, y: 0 }}
-              exit={isMobile ? { y: '100%' } : { opacity: 0, y: 20 }}
+              initial={frozenMobile.current ? { y: '100%', opacity: 0 } : { opacity: 0, y: 20 }}
+              animate={frozenMobile.current ? { y: 0, opacity: 1 } : { opacity: 1, y: 0 }}
+              exit={frozenMobile.current ? { y: '100%', opacity: 0 } : { opacity: 0, y: 20 }}
               transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
+              onClick={e => e.stopPropagation()}
               style={{
-                background: isMobile ? '#17191C' : '#1C1C1E',
-                borderRadius: isMobile ? '20px 20px 0 0' : 12,
-                padding: isMobile ? '24px 24px 40px' : '28px 20px',
-                width: isMobile ? '100%' : 420,
-                maxWidth: isMobile ? '100%' : '92vw',
-                height: isMobile ? 'auto' : 436,
+                background: frozenMobile.current ? '#17191C' : '#1C1C1E',
+                borderRadius: frozenMobile.current ? '20px 20px 0 0' : 12,
+                padding: frozenMobile.current ? '24px 24px 40px' : '28px 20px',
+                width: frozenMobile.current ? '100%' : 420,
+                maxWidth: frozenMobile.current ? '100%' : '92vw',
+                height: frozenMobile.current ? 'auto' : 436,
                 boxSizing: 'border-box',
                 border: '1px solid #41454E',
                 boxShadow: '0 24px 60px rgba(0,0,0,0.5)',
                 position: 'relative',
                 display: 'flex',
                 flexDirection: 'column',
+                willChange: 'transform',
               }}
             >
               {/* X close */}
@@ -750,7 +762,7 @@ export default function CalendarPage() {
                 </button>
               </div>
             </motion.div>
-          </div>
+          </motion.div>
         )}
       </AnimatePresence>
 
@@ -781,7 +793,7 @@ export default function CalendarPage() {
               </div>
 
               <motion.button
-                onClick={() => setShowPopup(true)}
+                onClick={() => { frozenMobile.current = window.innerWidth < 768; setShowPopup(true) }}
                 onHoverStart={() => setIconHovered(true)}
                 onHoverEnd={() => setIconHovered(false)}
                 whileHover={{ scale: 1.08, boxShadow: '0 6px 20px rgba(0,0,0,0.25)' }}
@@ -870,7 +882,7 @@ export default function CalendarPage() {
             {/* WhatsApp */}
             <div style={{ padding: '8px 0' }}>
               <button
-                onClick={() => { setShowMobileMenu(false); setShowPopup(true) }}
+                onClick={() => { setShowMobileMenu(false); frozenMobile.current = window.innerWidth < 768; setShowPopup(true) }}
                 style={{
                   width: '100%', background: 'none', border: 'none', cursor: 'pointer',
                   display: 'flex', alignItems: 'center', gap: 12,
