@@ -439,7 +439,7 @@ function StripeForm({ onSuccess, onCancel }: { onSuccess: () => void; onCancel: 
       <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><rect width="24" height="24" rx="4" fill="#635BFF"/><path d="M10.5 7.5c0-.83.67-1.5 1.5-1.5s1.5.67 1.5 1.5v1h1.5v1.5H13.5V12h1.5v1.5H13.5v3h-1.5v-3H10.5V12H12V10.5H10.5V9H12V7.5h-1.5z" fill="white"/></svg>
         <span style={{ fontFamily: 'var(--font-sans)', fontSize: 14, fontWeight: 600, color: '#F4F5F0' }}>Pago seguro con Stripe</span>
-        <div style={{ marginLeft: 'auto', display: 'flex', gap: 4 }}>
+        <div style={{ marginLeft: 'auto', display: 'flex', gap: 4, marginRight: 28 }}>
           {['VISA', 'MC'].map(b => (
             <span key={b} style={{ fontSize: 9, fontWeight: 700, padding: '2px 5px', borderRadius: 3, background: b === 'VISA' ? '#1A1F71' : '#EB001B', color: '#fff', letterSpacing: '0.05em' }}>{b}</span>
           ))}
