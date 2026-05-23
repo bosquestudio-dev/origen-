@@ -284,9 +284,7 @@
     display: flex !important;
     align-items: center !important;
     gap: 8px !important;
-    margin-top: -8px !important;
-    margin-bottom: 24px !important;
-    padding: 0 !important;
+    margin: -8px -20px 24px -20px !important;
   }
   .cal-weekend-line {
     flex: 1 !important;
