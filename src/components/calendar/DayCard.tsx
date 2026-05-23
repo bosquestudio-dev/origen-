@@ -144,17 +144,22 @@ export default function DayCard({ day, index, dataStatus, dataSpecial }: DayCard
       data-special={dataSpecial ?? (isSpecial ? 'true' : 'false')}
       style={isMobile ? {
         ...mobileCardStyle,
-        width: '100%',
-        height: 78.5,
-        minHeight: 78.5,
-        maxHeight: 78.5,
+        width: 60,
+        height: 60,
+        minWidth: 60,
+        maxWidth: 60,
+        minHeight: 60,
+        maxHeight: 60,
         borderRadius: 8,
         position: 'relative',
         overflow: 'hidden',
         cursor: isDetox ? 'default' : (day.status === 'locked' ? 'not-allowed' : 'pointer'),
         userSelect: 'none',
         boxSizing: 'border-box',
-        padding: 16,
+        padding: 0,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
       } : {
         ...desktopCardStyle,
         height: 160,
@@ -238,7 +243,7 @@ export default function DayCard({ day, index, dataStatus, dataSpecial }: DayCard
       {/* ── MOBILE layout ───────────────────────────────────────────────────── */}
 
       {/* Mobile catch-up: "PONTE" / "AL DÍA" */}
-      {isDetox && isWednesday && (
+      {day.status === 'catch-up' && (
         <div
           className="day-mobile-catchup"
           style={{
@@ -293,8 +298,8 @@ export default function DayCard({ day, index, dataStatus, dataSpecial }: DayCard
         </div>
       )}
 
-      {/* Mobile detox weekday (Wednesdays that are not catch-up themed) */}
-      {isDetox && !isHoliday && !isWednesday && (
+      {/* Mobile detox weekday — blurred number */}
+      {isDetox && !isHoliday && (
         <div
           className="day-mobile-number"
           style={{
