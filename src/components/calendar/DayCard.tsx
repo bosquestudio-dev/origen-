@@ -15,12 +15,6 @@ interface DayCardProps {
   dataSpecial?: string
 }
 
-// Returns 3-letter abbreviation from day label e.g. "Lunes 1" → "LUN"
-const getDayAbbr = (day: number) => {
-  const label = DAY_LABELS[day]?.split(' ')[0] ?? ''
-  return label.slice(0, 3).toUpperCase()
-}
-
 // ─── Desktop card styles ───────────────────────────────────────────────────────
 const CARD_STYLES_DESKTOP: Record<string, React.CSSProperties> = {
   completed:      { background: '#0f2f2e', border: '1px solid #305454' },
@@ -139,9 +133,6 @@ export default function DayCard({ day, index, dataStatus, dataSpecial }: DayCard
   const numColor = isSpecial ? SPECIAL_NUM_COLOR : (NUMBER_COLOR[day.status] ?? 'rgba(255,255,255,0.25)')
   const badge = BADGE_CONFIG[day.status as keyof typeof BADGE_CONFIG]
 
-  // Gap between number and day abbreviation (mobile)
-  const abbrGap = (day.status === 'locked' || isSpecial) ? 12.5 : 8
-
   return (
     <motion.div
       onClick={handleClick}
@@ -246,55 +237,77 @@ export default function DayCard({ day, index, dataStatus, dataSpecial }: DayCard
 
       {/* ── MOBILE layout ───────────────────────────────────────────────────── */}
 
-      {/* Mobile: number + abbr centered, only for non-detox */}
-      {!isDetox && (
+      {/* Mobile catch-up: "PONTE" / "AL DÍA" */}
+      {isDetox && isWednesday && (
         <div
-          className="day-mobile-content"
+          className="day-mobile-catchup"
           style={{
-            display: 'none', /* shown via CSS */
-            flexDirection: 'column',
+            display: 'none',
+            position: 'absolute', inset: 0, zIndex: 2,
             alignItems: 'center', justifyContent: 'center',
-            position: 'absolute', inset: 0, zIndex: 1,
+            pointerEvents: 'none',
           }}
         >
           <div style={{
-            fontFamily: "'DM Sans', sans-serif",
-            fontWeight: 500, fontSize: 34, lineHeight: 1,
-            color: numColor, textAlign: 'center',
+            display: 'flex', flexDirection: 'column',
+            alignItems: 'center', justifyContent: 'center',
           }}>
-            {day.day}
-          </div>
-          <div style={{
-            fontFamily: "'DM Sans', sans-serif",
-            fontWeight: 500, fontSize: 14, lineHeight: 1,
-            color: numColor, textAlign: 'center',
-            marginTop: abbrGap, letterSpacing: 0,
-            textTransform: 'uppercase',
-          }}>
-            {getDayAbbr(day.day)}
+            <span>PONTE</span>
+            <span>AL DÍA</span>
           </div>
         </div>
       )}
 
-      {/* Mobile: detox — texto centrado, sin candado */}
-      {isDetox && (
+      {/* Mobile holiday lock (day 8) */}
+      {isDetox && isHoliday && (
         <div
-          className="day-mobile-detox"
+          className="day-mobile-lock"
           style={{
-            display: 'none', /* shown via CSS */
-            flexDirection: 'column',
-            alignItems: 'center', justifyContent: 'center',
+            display: 'none',
             position: 'absolute', inset: 0, zIndex: 2,
-            gap: 4, pointerEvents: 'none', padding: '0 4px',
+            alignItems: 'center', justifyContent: 'center',
+            pointerEvents: 'none',
           }}
         >
-          <span style={{
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.3)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+            <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+          </svg>
+        </div>
+      )}
+
+      {/* Mobile number — for non-detox, non-catch-up */}
+      {!isDetox && (
+        <div
+          className="day-mobile-number"
+          style={{
+            display: 'none',
             fontFamily: "'DM Sans', sans-serif",
-            fontSize: 8, fontWeight: 500, color: '#F4F5F0',
-            textAlign: 'center', lineHeight: 1.3, whiteSpace: 'pre-line',
-          }}>
-            {isHoliday ? 'Festivo' : isWednesday ? 'Ponte al día\ncon tus retos' : 'Desconexión\ndigital'}
-          </span>
+            fontWeight: 700, fontSize: 24, lineHeight: 1,
+            color: numColor, textAlign: 'center',
+            position: 'absolute', inset: 0, zIndex: 1,
+            alignItems: 'center', justifyContent: 'center',
+          }}
+        >
+          {day.day}
+        </div>
+      )}
+
+      {/* Mobile detox weekday (Wednesdays that are not catch-up themed) */}
+      {isDetox && !isHoliday && !isWednesday && (
+        <div
+          className="day-mobile-number"
+          style={{
+            display: 'none',
+            fontFamily: "'DM Sans', sans-serif",
+            fontWeight: 700, fontSize: 24, lineHeight: 1,
+            color: numColor, textAlign: 'center',
+            position: 'absolute', inset: 0, zIndex: 1,
+            alignItems: 'center', justifyContent: 'center',
+            filter: 'blur(3px)',
+          }}
+        >
+          {day.day}
         </div>
       )}
     </motion.div>

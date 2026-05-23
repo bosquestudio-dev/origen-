@@ -222,32 +222,137 @@
 .cal-grid    { display: grid; grid-template-columns: repeat(7, minmax(0, 182px)); gap: 12px; }
 .cal-empty   { height: 160px; min-height: 160px; }
 
+/* ── Mobile grid (hidden on desktop) ── */
+.cal-headers-mobile { display: none; }
+.cal-grid-mobile    { display: none; }
+
 .day-card-root       { height: 160px; min-height: 160px; }
 .day-number-desktop  { display: block; }
 .day-detox-desktop   { display: flex; }
 .day-badge-desktop   { display: flex; }
-.day-mobile-content  { display: none !important; }
-.day-mobile-detox    { display: none !important; }
+.day-mobile-number   { display: none !important; }
+.day-mobile-catchup  { display: none !important; }
+.day-mobile-lock     { display: none !important; }
 
 @media (max-width: 767px) {
   .cal-grid-wrapper { padding: 0 !important; background: transparent !important; border-radius: 0 !important; }
-  .cal-headers { display: none !important; }
-  .cal-grid {
-    display: grid !important;
-    grid-template-columns: repeat(4, 1fr) !important;
-    gap: 12px !important;
-  }
-  .cal-empty { display: none !important; }
 
-  .day-card-root {
-    width: 100% !important;
-    height: 78.5px !important;
-    min-height: 78.5px !important;
-    max-height: 78.5px !important;
-    border-radius: 8px !important;
-    padding: 16px !important;
-    box-sizing: border-box !important;
+  /* Hide desktop headers + grid */
+  .cal-headers { display: none !important; }
+  .cal-grid    { display: none !important; }
+  .cal-empty   { display: none !important; }
+
+  /* Show mobile headers + grid */
+  .cal-headers-mobile {
+    display: grid !important;
+    grid-template-columns: repeat(5, 1fr) !important;
+    gap: 12.5px !important;
+    padding: 0 20px !important;
+    margin-bottom: 4px !important;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 11px;
+    font-weight: 400;
+    color: #989EA9;
+    text-align: center;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
   }
+  .cal-grid-mobile {
+    display: block !important;
+    padding: 0 20px !important;
+  }
+  .cal-grid-row-mobile {
+    display: grid !important;
+    grid-template-columns: repeat(5, 1fr) !important;
+    gap: 12.5px !important;
+    margin-bottom: 24px !important;
+  }
+  .cal-cell-mobile {
+    width: 100%;
+    aspect-ratio: 1;
+    max-width: 60px;
+    max-height: 60px;
+  }
+
+  /* Weekend separator */
+  .cal-weekend-sep {
+    display: flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+    margin-top: -8px !important;
+    margin-bottom: 24px !important;
+    padding: 0 !important;
+  }
+  .cal-weekend-line {
+    flex: 1 !important;
+    height: 0 !important;
+    border-top: 1px solid #585E6A !important;
+    opacity: 1 !important;
+  }
+  .cal-weekend-text {
+    font-family: 'DM Sans', sans-serif !important;
+    font-weight: 400 !important;
+    font-size: 12px !important;
+    line-height: 1 !important;
+    letter-spacing: 0 !important;
+    text-align: center !important;
+    color: #585E6A !important;
+    white-space: nowrap !important;
+    flex-shrink: 0 !important;
+  }
+
+  /* Day cards mobile */
+  .day-card-root {
+    width: 60px !important;
+    height: 60px !important;
+    min-height: 60px !important;
+    max-height: 60px !important;
+    border-radius: 8px !important;
+    padding: 0 !important;
+    box-sizing: border-box !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+  }
+  .day-number-desktop  { display: none !important; }
+  .day-detox-desktop   { display: none !important; }
+  .day-badge-desktop   { display: none !important; }
+
+  /* Mobile number — shown for all non-detox weekday cards */
+  .day-mobile-number {
+    font-family: 'DM Sans', sans-serif !important;
+    font-weight: 700 !important;
+    font-size: 24px !important;
+    line-height: 1 !important;
+    text-align: center !important;
+  }
+
+  /* Mobile detox overlay */
+  .day-mobile-detox-overlay {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 2px !important;
+    width: 100% !important;
+    height: 100% !important;
+  }
+
+  /* Mobile catch-up text */
+  .day-mobile-catchup {
+    display: flex !important;
+    font-family: 'DM Sans', sans-serif !important;
+    font-weight: 500 !important;
+    font-size: 12px !important;
+    line-height: 1 !important;
+    letter-spacing: 0 !important;
+    text-align: center !important;
+    text-transform: uppercase !important;
+    color: #7B6FE8 !important;
+  }
+
+  .day-mobile-number { display: flex !important; }
+  .day-mobile-lock   { display: flex !important; }
 
   .day-card-root[data-status="completed"]     { background: rgba(48,84,84,0.35) !important;    border: 2px solid #305454 !important; }
   .day-card-root[data-status="accessible"]    { background: rgba(247,247,248,0.25) !important; border: 2px solid #BCC0C7 !important; }
@@ -256,11 +361,6 @@
   .day-card-root[data-status="digital-detox"] { background: transparent !important;            border: 2px solid #2A2D32 !important; }
   .day-card-root[data-status="catch-up"]      { background: #1A1A2E !important;                border: 1.5px solid #7B6FE8 !important; }
   .day-card-root[data-special="true"]         { background: rgba(218,165,32,0.40) !important;  border: 2px solid #DAA520 !important; }
-
-  .day-number-desktop { display: none !important; }
-  .day-detox-desktop  { display: none !important; }
-  .day-badge-desktop  { display: none !important; }
-  .day-mobile-content { display: flex !important; }
-  .day-mobile-detox   { display: flex !important; }
 }
+
 
