@@ -144,12 +144,12 @@ export default function DayCard({ day, index, dataStatus, dataSpecial }: DayCard
       data-special={dataSpecial ?? (isSpecial ? 'true' : 'false')}
       style={isMobile ? {
         ...mobileCardStyle,
-        width: 60,
-        height: 60,
-        minWidth: 60,
-        maxWidth: 60,
-        minHeight: 60,
-        maxHeight: 60,
+        width: '100%',
+        height: '100%',
+        minWidth: 0,
+        maxWidth: 'none',
+        minHeight: 0,
+        maxHeight: 'none',
         borderRadius: 8,
         position: 'relative',
         overflow: 'hidden',

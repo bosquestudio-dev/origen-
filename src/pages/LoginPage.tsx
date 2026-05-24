@@ -514,6 +514,7 @@ export default function LoginPage() {
                   width: 118px;
                   height: auto;
                 }
+                .aurora-credits-window { display: none !important; }
               }
               @keyframes aurora-stream-slow {
                 0%   { transform: translateY(0%); }

@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useLayoutEffect } from 'react'
 import { toast } from 'sonner'
 
 import AppButton from '@/components/origen/AppButton'
@@ -254,6 +254,14 @@ function SurveyChallenge({ challenge, completed }: SubProps) {
   const [answers, setAnswers] = useState<Record<string, string>>({})
   const [current, setCurrent] = useState(0)
   const [done, setDone] = useState(completed)
+  const [isMobile, setIsMobile] = useState(false)
+
+  useLayoutEffect(() => {
+    const check = () => setIsMobile(window.innerWidth <= 767)
+    check()
+    window.addEventListener('resize', check)
+    return () => window.removeEventListener('resize', check)
+  }, [])
   const questions = challenge.content.questions || []
 
   const dateLabel = DAY_LABELS[challenge.day] ? formatChallengeDate(DAY_LABELS[challenge.day]) : `DÍA ${challenge.day}`
@@ -302,7 +310,7 @@ function SurveyChallenge({ challenge, completed }: SubProps) {
         <p style={{ fontFamily: 'var(--font-sans)', fontWeight: 400, fontSize: 16, color: '#F4F5F0', lineHeight: '22px', margin: 0, textAlign: 'center' }}>
           {q?.question}
         </p>
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12, justifyContent: 'center' }}>
+        <div style={{ display: 'flex', flexDirection: isMobile ? 'column' : 'row', flexWrap: isMobile ? 'nowrap' : 'wrap', gap: 12, justifyContent: 'center', width: '100%' }}>
           {q?.options.map(opt => {
             const selected = answers[q.id] === opt
             return (
@@ -310,10 +318,13 @@ function SurveyChallenge({ challenge, completed }: SubProps) {
                 key={opt}
                 onClick={() => handleSelect(opt)}
                 style={{
-                  width: 180, height: 85, borderRadius: 8,
+                  width: isMobile ? '100%' : 180,
+                  height: isMobile ? 'auto' : 85,
+                  borderRadius: 8,
                   border: selected ? '1.5px solid #22C35D' : '1px solid #DBDDE1',
                   background: selected ? 'rgba(34,195,93,0.12)' : 'transparent',
-                  padding: '24px 16px', fontFamily: 'var(--font-sans)', fontSize: 14,
+                  padding: isMobile ? '14px 16px' : '24px 16px',
+                  fontFamily: 'var(--font-sans)', fontSize: 14,
                   color: selected ? '#F4F5F0' : '#DBDDE1', textAlign: 'center',
                   cursor: 'pointer', transition: 'all 0.2s ease',
                   display: 'flex', alignItems: 'center', justifyContent: 'center', lineHeight: '18px',
@@ -331,7 +342,7 @@ function SurveyChallenge({ challenge, completed }: SubProps) {
         {isLast && answers[q?.id] && (
           <button
             onClick={handleSubmit}
-            style={{ width: 164, padding: '12px 0', borderRadius: 8, border: '1.5px solid #F4F5F0', background: 'transparent', fontFamily: 'var(--font-sans)', fontSize: 14, fontWeight: 500, color: '#F4F5F0', cursor: 'pointer', transition: 'all 0.2s ease', textAlign: 'center' }}
+            style={{ width: isMobile ? '100%' : 164, padding: '12px 0', borderRadius: 8, border: '1.5px solid #F4F5F0', background: 'transparent', fontFamily: 'var(--font-sans)', fontSize: 14, fontWeight: 500, color: '#F4F5F0', cursor: 'pointer', transition: 'all 0.2s ease', textAlign: 'center' }}
           >
             Enviar respuestas
           </button>
