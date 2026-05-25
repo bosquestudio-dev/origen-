@@ -348,22 +348,10 @@ export default function LoginPage() {
           padding: 28px 24px;
           margin: 0 24px;
           width: 100%;
-          height: 540px;
-          box-sizing: border-box;
-          display: flex;
-          flex-direction: column;
-        }
-        .login-form-card {
-          background: #F4F5F0;
-          border-radius: 20px;
-          padding: 28px 24px;
-          margin: 0 24px;
-          width: 100%;
           height: min(540px, 68vh);
           box-sizing: border-box;
           display: flex;
           flex-direction: column;
-        }
         }
         .step-motion-wrap {
           display: flex; flex-direction: column; flex: 1; min-height: 0;
