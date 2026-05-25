@@ -333,7 +333,7 @@ export default function LoginPage() {
         .login-root { position: fixed; inset: 0; }
         .login-aurora {
           position: absolute; inset: 0;
-          background: #E61D2B;
+          background: #004D44;
           overflow: hidden;
         }
         .login-form-wrap {
@@ -401,7 +401,7 @@ export default function LoginPage() {
             overflow: hidden;
             width: 100%;
             height: 100%;
-            background: #E61D2B;
+            background: #004D44;
           }
           .login-form-wrap {
             position: relative; flex: 1;
