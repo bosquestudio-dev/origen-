@@ -21,7 +21,7 @@ const CARD_STYLES_DESKTOP: Record<string, React.CSSProperties> = {
   accessible:     { background: '#434548', border: '1px solid #BCC0C7' },
   today:          { background: '#89573E', border: '2px solid #FB7026' },
   locked:         { background: '#1C1C20', border: '1px solid rgba(255,255,255,0.12)' },
-  'digital-detox':{ background: 'rgba(41,44,49,0.75)', border: '1px solid #41454E' },
+  'digital-detox':{ background: 'linear-gradient(180deg, rgba(255,255,255,0.06) 0%, rgba(230,230,230,0.2) 100%)', border: '1px solid #585E6A' },
   'catch-up':     { background: '#1A1A2E', border: '1.5px solid #7B6FE8' },
 }
 const SPECIAL_CARD_DESKTOP: React.CSSProperties = { background: '#3E351D', border: '2px solid #DAA520' }
@@ -43,7 +43,7 @@ const NUMBER_COLOR: Record<string, string> = {
   accessible:     '#727988',
   today:          '#FB7026',
   locked:         '#585E6A',
-  'digital-detox':'#41454E',
+  'digital-detox':'#17191C',
   'catch-up':     '#7B6FE8',
 }
 const SPECIAL_NUM_COLOR = '#DAA520'
@@ -188,7 +188,7 @@ export default function DayCard({ day, index, dataStatus, dataSpecial }: DayCard
         className="day-number-desktop"
         style={{
           position: 'absolute', bottom: 12, left: 16, zIndex: 1,
-          filter: isDetox ? 'blur(5px)' : undefined,
+          filter: isDetox && !isWednesday ? 'blur(5px)' : undefined,
         }}
       >
         <div style={{

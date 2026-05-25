@@ -14,7 +14,7 @@ import NotificationBanner from '@/components/calendar/NotificationBanner'
 import ChallengeModalContent from '@/components/challenge/ChallengeModalContent'
 import { MOCK_NOTIFICATIONS } from '@/data/notifications.data'
 import { useEffect, useState, useRef } from 'react'
-import { LogOut, X, Menu } from 'lucide-react'
+import { LogOut, X, Menu, RotateCcw } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import LoadingScreen from '@/components/auth/LoadingScreen'
 import { toast } from 'sonner'
@@ -277,7 +277,7 @@ function HelpModal({ onClose }: { onClose: () => void }) {
 export default function CalendarPage() {
   const { user, isSessionValid, logout } = useAuth()
   const { activeModal, closeChallenge } = useAppStore()
-  const { completedDays } = useCalendarStore()
+  const { completedDays, resetDays } = useCalendarStore()
   const { progressPercentage, companionPercentage, completedCount, totalAvailable } = useProgress()
   const navigate = useNavigate()
   const [showLogoutModal, setShowLogoutModal] = useState(false)
@@ -792,22 +792,41 @@ export default function CalendarPage() {
                 {tooltipText}
               </div>
 
-              <motion.button
-                onClick={() => { frozenMobile.current = window.innerWidth < 768; setShowPopup(true) }}
-                onHoverStart={() => setIconHovered(true)}
-                onHoverEnd={() => setIconHovered(false)}
-                whileHover={{ scale: 1.08, boxShadow: '0 6px 20px rgba(0,0,0,0.25)' }}
-                style={{
-                  width: 52, height: 52,
-                  borderRadius: '50%',
-                  background: 'transparent',
-                  border: 'none', cursor: 'pointer',
-                  display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  boxShadow: '0 4px 16px rgba(0,0,0,0.2)',
-                }}
-              >
-                <img src="/icon_wp.svg" alt="WhatsApp" style={{ width: 40, height: 40 }} />
-              </motion.button>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                <motion.button
+                  onClick={() => { resetDays(); toast.success('Calendario reiniciado') }}
+                  whileHover={{ scale: 1.08 }}
+                  title="Reiniciar calendario (demo)"
+                  style={{
+                    width: 36, height: 36,
+                    borderRadius: '50%',
+                    background: 'rgba(255,255,255,0.08)',
+                    border: '1px solid rgba(255,255,255,0.12)',
+                    cursor: 'pointer',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    color: 'rgba(255,255,255,0.35)',
+                  }}
+                >
+                  <RotateCcw size={14} strokeWidth={1.5} />
+                </motion.button>
+
+                <motion.button
+                  onClick={() => { frozenMobile.current = window.innerWidth < 768; setShowPopup(true) }}
+                  onHoverStart={() => setIconHovered(true)}
+                  onHoverEnd={() => setIconHovered(false)}
+                  whileHover={{ scale: 1.08, boxShadow: '0 6px 20px rgba(0,0,0,0.25)' }}
+                  style={{
+                    width: 52, height: 52,
+                    borderRadius: '50%',
+                    background: 'transparent',
+                    border: 'none', cursor: 'pointer',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    boxShadow: '0 4px 16px rgba(0,0,0,0.2)',
+                  }}
+                >
+                  <img src="/icon_wp.svg" alt="WhatsApp" style={{ width: 40, height: 40 }} />
+                </motion.button>
+              </div>
             </div>
           </motion.div>
         )}
@@ -891,6 +910,24 @@ export default function CalendarPage() {
               >
                 <img src="/icon_wp.svg" width={20} height={20} alt="WhatsApp" />
                 <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 14, fontWeight: 400, lineHeight: '16px', letterSpacing: 0 }}>Recibe tus retos en Whatsapp</span>
+              </button>
+            </div>
+
+            {/* Separador */}
+            <div style={{ height: 1, background: 'rgba(255,255,255,0.08)', margin: '0 24px' }} />
+
+            {/* Reiniciar calendario */}
+            <div style={{ padding: '8px 0' }}>
+              <button
+                onClick={() => { setShowMobileMenu(false); resetDays(); toast.success('Calendario reiniciado') }}
+                style={{
+                  width: '100%', background: 'none', border: 'none', cursor: 'pointer',
+                  display: 'flex', alignItems: 'center', gap: 12,
+                  padding: '16px 24px', color: 'rgba(255,255,255,0.3)',
+                }}
+              >
+                <RotateCcw size={20} strokeWidth={1.5} />
+                <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 14, fontWeight: 400, lineHeight: '16px', letterSpacing: 0 }}>Reiniciar calendario (demo)</span>
               </button>
             </div>
 

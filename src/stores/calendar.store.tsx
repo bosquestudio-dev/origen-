@@ -3,6 +3,7 @@ import { createContext, useContext, useState, useCallback, type ReactNode } from
 interface CalendarState {
   completedDays: number[]
   completeDay: (day: number) => void
+  resetDays: () => void
 }
 
 const CalendarContext = createContext<CalendarState | null>(null)
@@ -32,8 +33,13 @@ export function CalendarProvider({ children }: { children: ReactNode }) {
     })
   }, [])
 
+  const resetDays = useCallback(() => {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(DEMO_COMPLETIONS))
+    setCompletedDays([...DEMO_COMPLETIONS])
+  }, [])
+
   return (
-    <CalendarContext.Provider value={{ completedDays, completeDay }}>
+    <CalendarContext.Provider value={{ completedDays, completeDay, resetDays }}>
       {children}
     </CalendarContext.Provider>
   )
