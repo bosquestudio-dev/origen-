@@ -93,7 +93,14 @@ export default function DayCard({ day, index, dataStatus, dataSpecial }: DayCard
   }, [])
 
   const handleClick = () => {
-    if (day.status === 'digital-detox') return
+    if (day.status === 'digital-detox') {
+      if (isWednesday) {
+        toast.info('Hoy, ponte al día con tus retos para recuperar el ritmo', {
+          duration: 5000,
+        })
+      }
+      return
+    }
     if (day.status === 'locked') {
       showToast(`Disponible el ${DAY_LABELS[day.day]}`)
       return

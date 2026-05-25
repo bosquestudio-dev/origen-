@@ -213,8 +213,8 @@ export default function LoginPage() {
       toast.error('Introduce un DNI válido', { description: 'Formato: 12345678A', duration: 3000 });
       return;
     }
-    const MIN_LOADING_MS = 2800;
-    const SUCCESS_LOADING_MS = 3000;
+    const MIN_LOADING_MS = 2000;
+    const SUCCESS_LOADING_MS = 2000;
     setLoading(true);
     setHasError(false);
     const startTime = Date.now();
@@ -244,7 +244,7 @@ export default function LoginPage() {
     setGoingBack(true);
     setStep('selector');
     setHasError(false);
-    toast.success('Notificación enviada correctamente');
+    toast.success('Se ha registrado tu incidencia. Contactaremos contigo', { duration: 8000 });
   };
 
   /* ─── Navigation ─── */
@@ -886,9 +886,27 @@ export default function LoginPage() {
                             style={ctaBtn(canEntrar)}
                           >
                             <span>Entrar</span>
-                            <svg width="20" height="20" viewBox="0 0 16 16" fill="none" style={{ marginLeft: 8, flexShrink: 0 }}>
-                              <path d="M12.333 8L3.33301 8" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                              <path d="M8.66702 12C8.66702 12 12.667 9.05404 12.667 7.99997C12.667 6.94589 8.66699 4 8.66699 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                            <svg
+                              width="20"
+                              height="20"
+                              viewBox="0 0 16 16"
+                              fill="none"
+                              style={{ marginLeft: 8, flexShrink: 0 }}
+                            >
+                              <path
+                                d="M12.333 8L3.33301 8"
+                                stroke="currentColor"
+                                strokeWidth="1.5"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                              />
+                              <path
+                                d="M8.66702 12C8.66702 12 12.667 9.05404 12.667 7.99997C12.667 6.94589 8.66699 4 8.66699 4"
+                                stroke="currentColor"
+                                strokeWidth="1.5"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                              />
                             </svg>
                           </button>
                         </div>

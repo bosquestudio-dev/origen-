@@ -136,7 +136,7 @@ function VideoChallenge({ challenge, completed }: SubProps) {
       completeDay(challenge.day)
       setDone(true)
       toast.success('¡Reto completado!')
-      setTimeout(closeChallenge, 1200)
+    setTimeout(closeChallenge, 4000)
     }
   }
 
@@ -520,7 +520,7 @@ function DonationChallenge({ challenge, completed }: SubProps) {
     completeDay(challenge.day)
     setDone(true)
     toast.success('¡Gracias por tu aportación!')
-    setTimeout(closeChallenge, 1200)
+    setTimeout(closeChallenge, 4000)
   }
 
   const parts = (challenge.content.bodyText ?? '').split('\n')

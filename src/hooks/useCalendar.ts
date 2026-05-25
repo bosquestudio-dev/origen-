@@ -10,9 +10,9 @@ export function useCalendar() {
   const getDayStatus = (day: number): DayStatus => {
     if (DIGITAL_DETOX_DAYS.includes(day)) return 'digital-detox'
     if (CATCH_UP_DAYS.includes(day)) return 'catch-up'
+    if (completedDays.includes(day)) return 'completed'
     if (day > SIMULATED_TODAY) return 'locked'
     if (day === SIMULATED_TODAY) return 'today'
-    if (completedDays.includes(day)) return 'completed'
     return 'accessible'
   }
 
