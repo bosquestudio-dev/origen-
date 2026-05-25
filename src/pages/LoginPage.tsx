@@ -513,7 +513,7 @@ export default function LoginPage() {
               @media (max-width: 1023px) {
                 .ubik-logo {
                   /* mobile: centered between viewport top and login-form-card top */
-                  top: calc((100vh - min(540px, 68vh)) / 4);
+                  top: calc((100vh - min(540px, 68vh)) / 5);
                   transform: translate(-50%, -50%);
                   width: 118px;
                   height: auto;
