@@ -353,6 +353,18 @@ export default function LoginPage() {
           display: flex;
           flex-direction: column;
         }
+        .login-form-card {
+          background: #F4F5F0;
+          border-radius: 20px;
+          padding: 28px 24px;
+          margin: 0 24px;
+          width: 100%;
+          height: min(540px, 68vh);
+          box-sizing: border-box;
+          display: flex;
+          flex-direction: column;
+        }
+        }
         .step-motion-wrap {
           display: flex; flex-direction: column; flex: 1; min-height: 0;
         }
@@ -467,11 +479,15 @@ export default function LoginPage() {
             font-size: 24px !important;
             line-height: 28px !important;
             letter-spacing: -0.2px !important;
+            margin-bottom: 16px !important;
           }
           .login-subtext {
             font-size: 16px !important;
             line-height: 20px !important;
             letter-spacing: 0px !important;
+          }
+          .login-input {
+            font-size: 16px !important;
           }
         }
 
@@ -509,7 +525,7 @@ export default function LoginPage() {
               @media (max-width: 1023px) {
                 .coca-cola-logo {
                   /* mobile: centered between viewport top and login-form-card top */
-                  top: calc(25vh - 135px);
+                  top: calc((100vh - min(540px, 68vh)) / 4);
                   transform: translate(-50%, -50%);
                   width: 118px;
                   height: auto;
