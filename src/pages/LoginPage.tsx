@@ -381,12 +381,12 @@ export default function LoginPage() {
         /* DESKTOP (>=1024px): split 50/50 */
         @media (min-width: 1024px) {
           .login-root { display: flex; }
-          .coca-cola-logo {
+          .ubik-logo {
             /* desktop: centered between top of red card and credits window */
             top: calc(25% - 72.5px);
             transform: translate(-50%, -50%);
-            width: 252px;
-            height: 79px;
+            width: auto;
+            height: 80px;
           }
           .login-aurora {
             position: relative;
@@ -510,11 +510,11 @@ export default function LoginPage() {
         {/* ── Aurora ── (full-screen mobile / left-half desktop) */}
         <div className="login-aurora">
           <div className="login-aurora-inner">
-            {/* Coca-Cola logo — desktop: centered above pills / mobile: centered above form card */}
+            {/* Ubik logo — desktop: centered above pills / mobile: centered above form card */}
             <img
-              src="/coca-cola-logo.png"
-              alt="Coca-Cola"
-              className="coca-cola-logo"
+              src="/ubik-logo-v2.png"
+              alt="Ubik"
+              className="ubik-logo"
               style={{
                 position: 'absolute',
                 left: '50%',
@@ -523,7 +523,7 @@ export default function LoginPage() {
             />
             <style>{`
               @media (max-width: 1023px) {
-                .coca-cola-logo {
+                .ubik-logo {
                   /* mobile: centered between viewport top and login-form-card top */
                   top: calc((100vh - min(540px, 68vh)) / 4);
                   transform: translate(-50%, -50%);
