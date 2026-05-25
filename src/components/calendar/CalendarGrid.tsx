@@ -56,7 +56,7 @@ export default function CalendarGrid() {
   const WeekendSeparator = () => (
     <div className="cal-weekend-sep">
       <div className="cal-weekend-line" />
-      <span className="cal-weekend-text">Finde - Desconexión digital</span>
+      <span className="cal-weekend-text">Fin de semana - Desconexión digital</span>
       <div className="cal-weekend-line" />
     </div>
   )

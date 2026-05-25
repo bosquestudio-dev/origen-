@@ -109,8 +109,8 @@
 
 /* Toast slide */
 @keyframes slide-up-fade {
-  0% { transform: translateY(16px); opacity: 0; }
-  100% { transform: translateY(0); opacity: 1; }
+  0% { transform: translate(-50%, 16px); opacity: 0; }
+  100% { transform: translate(-50%, 0); opacity: 1; }
 }
 
 .toast-enter {
@@ -331,6 +331,7 @@
   .day-card-root[data-status="digital-detox"] { background: transparent !important;            box-shadow: inset 0 0 0 2px #2A2D32 !important; }
   .day-card-root[data-status="catch-up"]      { background: #1A1A2E !important;                box-shadow: inset 0 0 0 1.5px #7B6FE8 !important; }
   .day-card-root[data-special="true"]         { background: rgba(218,165,32,0.40) !important;  box-shadow: inset 0 0 0 2px #DAA520 !important; }
+  .day-card-root[data-holiday="true"]         { background: rgba(41, 44, 49, 0.75) !important; }
 
   /* Hide desktop card elements, show mobile */
   .day-number-desktop  { display: none !important; }

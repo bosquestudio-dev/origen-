@@ -142,6 +142,7 @@ export default function DayCard({ day, index, dataStatus, dataSpecial }: DayCard
       className="day-card-root"
       data-status={dataStatus ?? day.status}
       data-special={dataSpecial ?? (isSpecial ? 'true' : 'false')}
+      data-holiday={isHoliday && isDetox ? 'true' : 'false'}
       style={isMobile ? {
         ...mobileCardStyle,
         width: '100%',
@@ -264,19 +265,38 @@ export default function DayCard({ day, index, dataStatus, dataSpecial }: DayCard
         </div>
       )}
 
-      {/* Mobile holiday lock (day 8) */}
+      {/* Mobile holiday (day 8) — same look as desktop */}
       {isDetox && isHoliday && (
-        <div
-          className="day-mobile-lock"
-          style={{
-            display: 'none',
-            position: 'absolute', inset: 0, zIndex: 2,
-            alignItems: 'center', justifyContent: 'center',
-            pointerEvents: 'none',
-          }}
-        >
-          <img src="/locked-until-available.svg" alt="" style={{ width: 28, height: 28 }} />
-        </div>
+        <>
+          <div
+            className="day-mobile-number"
+            style={{
+              display: 'none',
+              fontFamily: "'DM Sans', sans-serif",
+              fontWeight: 700, fontSize: 24, lineHeight: 1,
+              color: numColor, textAlign: 'center',
+              position: 'absolute', inset: 0, zIndex: 1,
+              alignItems: 'center', justifyContent: 'center',
+              filter: 'blur(5px)',
+            }}
+          >
+            {day.day}
+          </div>
+          <div
+            className="day-mobile-lock"
+            style={{
+              display: 'none',
+              position: 'absolute', inset: 0, zIndex: 2,
+              alignItems: 'center', justifyContent: 'center',
+              pointerEvents: 'none',
+              fontFamily: "'DM Sans', sans-serif",
+              fontWeight: 500, fontSize: 12, lineHeight: 1,
+              color: '#F4F5F0', textAlign: 'center',
+            }}
+          >
+            Festivo
+          </div>
+        </>
       )}
 
       {/* Mobile number — for non-detox, non-catch-up */}
