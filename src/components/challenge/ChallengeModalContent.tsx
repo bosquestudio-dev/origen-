@@ -437,7 +437,7 @@ function StripeForm({ onSuccess, onCancel }: { onSuccess: () => void; onCancel: 
     padding: '10px 12px', borderRadius: 6,
     border: `1.5px solid ${fieldFocus === field ? '#635BFF' : 'rgba(255,255,255,0.15)'}`,
     background: 'rgba(255,255,255,0.04)',
-    fontFamily: 'var(--font-sans)', fontSize: 14,
+    fontFamily: 'var(--font-sans)', fontSize: 16,
     color: '#F4F5F0', outline: 'none',
     transition: 'border-color 0.15s ease',
   })
