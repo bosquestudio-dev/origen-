@@ -74,11 +74,11 @@ export const CHALLENGES_DATA: Challenge[] = [
   { id: 12, day: 12, type: 'text', title: 'Ponte al día con tus retos', description: 'Fin de semana. Recarga energías.', label: 'Desconexión', isActive: true, content: {} },
   { id: 13, day: 13, type: 'text', title: 'Ponte al día con tus retos', description: 'Sábado de descanso.', label: 'Desconexión', isActive: true, content: {} },
   {
-    id: 14, day: 14, type: 'text',
-    title: 'Un mensaje para inspirarte hoy',
-    description: 'La gratitud transforma lo que tenemos en suficiente.',
-    label: 'Propósito', isActive: true,
-    content: { actionText: 'Escribe una nota de agradecimiento a un compañero y dásela hoy.' },
+    id: 14, day: 14, type: 'video',
+    title: 'Un mensaje especial para ti',
+    description: 'Reproduce el video y descubre el contenido preparado para hoy.',
+    label: 'Inspiración', isActive: true,
+    content: { videoUrl: '/video-navidad.mp4' },
   },
   {
     id: 15, day: 15, type: 'survey',

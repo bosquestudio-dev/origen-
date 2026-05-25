@@ -272,7 +272,7 @@ export default function LoginPage() {
 
   /* ─── Shared styles ─── */
   const heading: React.CSSProperties = {
-    margin: '0 0 8px',
+    margin: '0 0 20px',
     fontFamily: DM,
     fontWeight: 700,
     color: C.title,
@@ -606,7 +606,7 @@ export default function LoginPage() {
 
             {/* 2. Fixed title — always visible on selector and input, hidden on soporte */}
             {step !== 'soporte' && (
-              <h1 className="login-heading" style={{ ...heading, marginBottom: 8 }}>
+              <h1 className="login-heading" style={{ ...heading, marginBottom: 20 }}>
                 Accede a tu calendario
               </h1>
             )}
