@@ -324,7 +324,7 @@ function SurveyChallenge({ challenge, completed }: SubProps) {
                   border: selected ? '1.5px solid #22C35D' : '1px solid #DBDDE1',
                   background: selected ? 'rgba(34,195,93,0.12)' : 'transparent',
                   padding: isMobile ? '14px 16px' : '24px 16px',
-                  fontFamily: 'var(--font-sans)', fontSize: 14,
+    fontFamily: 'var(--font-sans)', fontSize: 16,
                   color: selected ? '#F4F5F0' : '#DBDDE1', textAlign: 'center',
                   cursor: 'pointer', transition: 'all 0.2s ease',
                   display: 'flex', alignItems: 'center', justifyContent: 'center', lineHeight: '18px',
